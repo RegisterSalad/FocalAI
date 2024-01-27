@@ -1,4 +1,6 @@
 import requests
+import re
+import subprocess
 
 def get_readme_contents(repo_url):
     # Extract the repo's owner and name from the URL
@@ -27,5 +29,47 @@ def get_readme_contents(repo_url):
     else:
         return "Failed to fetch README.md file from GitHub."
 
-repo_link = "https://github.com/openai/whisper"  # Replace with actual GitHub repo URL
-print(get_readme_contents(repo_link))
+def extract_code_blocks(markdown_content) -> list[str]:
+    # Regex to find code blocks
+    code_blocks = re.findall(r'```[\s\S]+?```', markdown_content)
+    return code_blocks
+
+def check_for_install(code_block: str) -> bool:
+    '''This function returns true if a block of multiple commands contains the keyword "install" '''
+    # Using `lower()` method to convert the text to lowercase
+    confirmation = re.findall("install", code_block.lower())
+
+    # Check if the list `confirmation` is not empty
+    return bool(confirmation)
+
+def extract_commands(install_blocks: list[str]):
+    commands = []
+    for block in install_blocks:
+        # Remove the backticks and split the block into lines
+        lines = block.strip('```').strip().split('\n')
+        for line in lines:
+            # Ignore comments and empty lines
+            if not line.strip().startswith('#') and line.strip() and not re.findall("bash", line.lower()):
+                commands.append(line.strip())
+    return commands
+
+def main():
+    repo_link = "https://github.com/openai/whisper"  # Test repo link
+
+    # Get readme
+    readme = get_readme_contents(repo_url=repo_link)
+
+    code_blocks = extract_code_blocks(readme)
+
+    install_commands = [] 
+
+    for code_block in code_blocks:
+        if check_for_install(code_block):
+            install_commands.extend(extract_commands([code_block]))
+    
+    for command in install_commands:
+        print(command)
+
+
+if __name__ == "__main__":
+    main()
