@@ -1,7 +1,5 @@
 # model_downloader.py
 
-
-
 def download_model():
     pass
 
