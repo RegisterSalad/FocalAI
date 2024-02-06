@@ -16,8 +16,7 @@ class MyMainWindow(QtWidgets.QMainWindow):
 # python_script.py
 import sys
 import os
-from PyQt6.QtWidgets import QApplication, QMainWindow
-from PyQt6.uic import loadUi  # Import the loadUi function from PyQt6.uic
+from PySide6.QtWidgets import QApplication, QMainWindow
 
 class MyMainWindow(QMainWindow):
     def __init__(self, ui_file_path):
@@ -25,14 +24,14 @@ class MyMainWindow(QMainWindow):
 
         # Load the UI file
         self.ui_file_path = ui_file_path
-        self.load_ui()
+        # self.load_ui()
 
-    def load_ui(self):
-        # Load the UI file using PyQt6
-        loadUi(self.ui_file_path, self)
+    # def load_ui(self):
+    #     # Load the UI file using PyQt6
+    #     loadUi(self.ui_file_path, self)
 
-        # Connect widgets to functions
-        self.addLineEdit.textChanged.connect(self.calculate_sum)
+    #     # Connect widgets to functions
+    #     self.addLineEdit.textChanged.connect(self.calculate_sum)
 
     def calculate_sum(self, text):
         # Get values from input line edits

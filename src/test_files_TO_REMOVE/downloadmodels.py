@@ -37,6 +37,9 @@ def extract_code_blocks(markdown_content) -> list[str]:
 def check_for_install(code_block: str) -> bool:
     '''This function returns true if a block of multiple commands contains the keyword "install" '''
     # Using `lower()` method to convert the text to lowercase
+
+    print(code_block.lower())
+
     confirmation = re.findall("install", code_block.lower())
 
     # Check if the list `confirmation` is not empty
@@ -49,7 +52,9 @@ def extract_commands(install_blocks: list[str]):
         lines = block.strip('```').strip().split('\n')
         for line in lines:
             # Ignore comments and empty lines
+            print(line)
             if not line.strip().startswith('#') and line.strip() and not re.findall("bash", line.lower()):
+                
                 commands.append(line.strip())
     return commands
 
@@ -59,16 +64,17 @@ def main():
     # Get readme
     readme = get_readme_contents(repo_url=repo_link)
 
-    code_blocks = extract_code_blocks(readme)
+    print(readme)
+    # code_blocks = extract_code_blocks(readme)
 
-    install_commands = [] 
+    # install_commands = [] 
 
-    for code_block in code_blocks:
-        if check_for_install(code_block):
-            install_commands.extend(extract_commands([code_block]))
+    # for code_block in code_blocks:
+    #     if check_for_install(code_block):
+    #         install_commands.extend(extract_commands([code_block]))
     
-    for command in install_commands:
-        print(command)
+    # for command in install_commands:
+        # print(command)
 
 
 if __name__ == "__main__":
