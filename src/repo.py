@@ -16,7 +16,7 @@ class Repository:
         model_name (Optional[list[str] | str]): Names of models found in the repository.
         is_installed (bool): Placeholder for tracking installation status on the system.
         install_commands (list[str]): Extracted installation commands from the README.
-        tables (list[str]) 
+        tables (list[str])
     """
     def __init__(self, repo_url: str) -> None:
         """
@@ -43,11 +43,11 @@ class Repository:
         """
         readme_content = self.get_readme_contents()
         if readme_content:
+            commands = self.parse_commands(readme_content)
             self.has_docker_container(readme_content)
             self.find_install_types(readme_content)
             self.get_tables(readme_content)
             self.find_model_names(readme_content)
-            commands = self.parse_commands(readme_content)
             self.install_commands = self.filter_installation_commands(commands)
             self.has_install = bool(self.install_commands)
 
@@ -111,7 +111,6 @@ class Repository:
         Returns:
             list[str]: A list of command strings extracted from the README.
         """
-        code_block_pattern = r'```[a-z]*\n(.*?)```|^( {4,}|\t)(.*)$'
         command_lines = []
         lines = readme_content.split('\n')
         inside_code_block = False
@@ -133,7 +132,7 @@ class Repository:
             readme_content (str): The content of the README file.
         """
         # Regular expression to match simple markdown tables
-        table_pattern = r"\|(.+\|)+\n\|([ -:|]+)\n(\|(.+\|)+\n)+"
+        table_pattern = r'\|.*\|\n\|.*\|'
         self.tables = re.findall(table_pattern, readme_content, re.MULTILINE)
         # Flatten the list of tuples returned by findall into a list of strings
         self.tables = [''.join(table) for table in self.tables]
@@ -168,12 +167,11 @@ class Repository:
         f"Installation Types: {', '.join(self.install_types) if self.install_types else 'None'}",
         f"Model Name(s): {self.model_name if self.model_name else 'Not specified'}",
         f"Is Installed: {self.is_installed}",
-        "Installation Commands:" + ("\n".join(f"\t{cmd}" for cmd in self.install_commands) if self.install_commands else "\tNone"),
+        "Installation Commands:\n" + ("\n".join(f"\t{cmd}" for cmd in self.install_commands) if self.install_commands else "\tNone"),
         "Markdown Tables:\n" + ("\n\n".join(self.tables) if self.tables else "\tNone")
         ]
         return "\n".join(attributes)
     
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fetch Ubuntu installation commands from a GitHub repository.")
     parser.add_argument("repo_url", type=str, help="URL to the GitHub repository")
