@@ -112,6 +112,7 @@ class Repository:
             list[str]: A list of command strings extracted from the README.
         """
         command_lines = []
+        print(readme_content)
         lines = readme_content.split('\n')
         inside_code_block = False
         for line in lines:

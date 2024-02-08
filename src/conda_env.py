@@ -113,7 +113,7 @@ class CondaEnvironment:
             return
 
         self.activate()
-        args = ['pip', 'install', '-r', self.pip_list_directory, 'y']
+        args = ['pip', 'install', '-r', self.pip_list_directory]
         error_message = f"Error occurred while installing pip requirements from '{self.pip_list_directory}'"
         run_subprocess_with_logging(args, error_message, self.logging_directory, "pip_log.log")
 
