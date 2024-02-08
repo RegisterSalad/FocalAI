@@ -23,7 +23,7 @@ class Repository:
         Initializes the Repository object with a GitHub repo URL and fetches
         its features such as installation commands and model information.
 
-        Parameters:
+        Args:
             repo_url (str): URL of the GitHub repository to analyze.
         """
         self.repo_url: str = repo_url.rstrip('/')
@@ -72,7 +72,7 @@ class Repository:
         """
         Identifies the types of installations mentioned in the README.
 
-        Parameters:
+        Args:
             readme_content (str): The content of the README file.
         """
         install_keywords = ['pip install', 'git clone', 'docker pull', 'conda install']
@@ -83,7 +83,7 @@ class Repository:
         Extracts the model name from the README content, assuming it is presented
         as the first line in the format of a markdown heading.
 
-        Parameters:
+        Args:
             readme_content (str): The content of the README file.
         """
         # Adjusted pattern to match the first markdown heading as the model name
@@ -96,7 +96,7 @@ class Repository:
         """
         Determines if the README mentions Docker usage, indicating a Docker container.
 
-        Parameters:
+        Args:
             readme_content (str): The content of the README file.
         """
         self.has_docker = "docker" in readme_content.lower()
@@ -105,7 +105,7 @@ class Repository:
         """
         Parses and extracts command lines from the README content, preserving order.
 
-        Parameters:
+        Args:
             readme_content (str): The content of the README file.
 
         Returns:
@@ -128,7 +128,7 @@ class Repository:
         """
         Finds markdown tables within the README content and stores them in a list.
 
-        Parameters:
+        Args:
             readme_content (str): The content of the README file.
         """
         # Regular expression to match simple markdown tables
@@ -142,7 +142,7 @@ class Repository:
         """
         Filters the extracted commands to retain only those relevant for installation.
 
-        Parameters:
+        Args:
             commands (list[str]): A list of command strings extracted from the README.
 
         Returns:
