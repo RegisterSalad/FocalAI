@@ -18,7 +18,7 @@ def find_installed_environments() -> list[str]:
 # Get the absolute path of the current script directory
 script_directory = os.path.dirname(os.path.abspath(__file__))
 
-def run_subprocess_with_logging(args: list[str], error_message: str, logging_directory: str, log_file_name: str) -> None:
+def run_subprocess_with_logging(args: str, error_message: str, logging_directory: str, log_file_name: str) -> None:
     """
     Runs a subprocess with the given arguments and logs the output and any errors encountered.
 
@@ -30,7 +30,9 @@ def run_subprocess_with_logging(args: list[str], error_message: str, logging_dir
     try:
         log_file_path = os.path.join(logging_directory, log_file_name)
         with open(log_file_path, 'w') as log_file:
-            subprocess.run(args, check=True, stdout=log_file, stderr=subprocess.STDOUT)
+            command = " ".join(args)
+            print(f"Tried: {command}")
+            subprocess.run(command, check=True, stdout=log_file, stderr=subprocess.STDOUT,  shell=True)
     except subprocess.CalledProcessError as e:
         print(f"{error_message}: {e}")
 
@@ -70,8 +72,8 @@ class CondaEnvironment:
         """
         Deletes the Anaconda environment.
         """
-        args = ['conda', 'env', 'remove', '-n', self.python_version, '-y']
-        error_message = f"Error occurred while deleting environment '{self.python_version}'"
+        args = ['conda', 'env', 'remove', '-n', self.env_name, '-y']
+        error_message = f"Error occurred while deleting environment '{self.env_name}'"
         run_subprocess_with_logging(args, error_message, self.logging_directory, "delete_log.log")
         self.is_created = False
 
@@ -89,8 +91,8 @@ class CondaEnvironment:
         """
         if not self.is_created:
             return
-        self.conda_init()
-        args = ['conda', 'activate', self.env_name]
+        # self.conda_init()
+        args = ['source', '~/.bashrc', '&&', 'conda', 'activate', self.env_name]
         error_message = f"Error occurred while activating environment '{self.env_name}'"
         run_subprocess_with_logging(args, error_message, self.logging_directory, "activate_log.log")
 
@@ -100,8 +102,8 @@ class CondaEnvironment:
         """
         if not self.is_created:
             return
-        self.conda_init()
-        args = ['conda', 'activate', env_name]
+        # self.conda_init()
+        args = ['conda', 'init', '&&', 'conda', 'activate', env_name]
         error_message = f"Error occurred while activating environment '{env_name}'"
         run_subprocess_with_logging(args, error_message, self.logging_directory, "activate_log.log")
 
