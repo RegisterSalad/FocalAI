@@ -5,6 +5,7 @@ class CondaEnvironment:
     """
     Represents an Anaconda environment
     Attributes:
+        env_id (int | None): Primary key for database lookup
         python_version (str): The Python version of the conda environment
         is_created (bool): A result of the check that finds if the environment is already part of the system
         pip_list_directory (str): The location of the pip requirements
@@ -12,15 +13,46 @@ class CondaEnvironment:
         repository_name (str): Name of the repository, will be the name of the associated conda environment
         logging_directory (str): Directory where logging files are create and stored.
     """
-    def __init__(self, python_version: str, models: str | list[str], repository_name: str, pip_list_directory: str = "../pip_reqs", logging_directory: str = "../logging") -> None:
+    def __init__(self, python_version: str, models: str | list[str], repository_name: str, pip_list_directory: str = "../pip_reqs", logging_directory: str = "../logging", env_id: int | None = None) -> None:
+        self.env_id = env_id
         self.python_version = python_version
         self.is_created = False
         self.pip_list_directory = pip_list_directory
         self.models = models
         self.env_name = repository_name
         self.logging_directory = logging_directory
-        self.bash_scipt_dir = os.path.abspath("bash_scripts")
 
+    def __call__(self, command: str) -> None:
+        """
+        Allows the CondaEnvironment instance to be called directly to run a command within the environment.
+
+        Args:
+            command (str): The command to run.
+        """
+        # Ensure the environment is activated before running the command
+        args = ['conda', 'run', '-n', self.env_name, '--no-capture-output', 'bash', '-c', command]
+        error_message = f"Error occurred while running command in environment '{self.env_name}'"
+        log_file_name = "run_command_log.log"
+        self.run_subprocess_with_logging(args, error_message, self.logging_directory, log_file_name)
+    
+    def __str__(self) -> str:
+        if not self.is_created:
+            return "Conda env not created"
+        """
+        Provides a string representation of the CondaEnvironment object
+        Returns:
+            str: A summary of the environment's characteristics.
+        """
+        str_attributes: list = [
+            f"Environment Name: {self.env_name}",
+            f"Python Version: {self.python_version}",
+            f"Is Created: {self.is_created}",
+            f"PIP List Directory: {self.pip_list_directory}",
+            f"Models: {self.models}" 
+        ]
+
+        return "\n".join(str_attributes)
+    
     def create(self) -> None:
         """
         Creates the Anaconda environment if it does not exist already.
@@ -84,24 +116,6 @@ class CondaEnvironment:
         # Use the dedicated subprocess function for execution and logging
         self.run_subprocess_with_logging(args, error_message, self.logging_directory, "pip_log.log")
 
-    def __str__(self) -> str:
-        if not self.is_created:
-            return "Conda env not created"
-        """
-        Provides a string representation of the CondaEnvironment object
-        Returns:
-            str: A summary of the environment's characteristics.
-        """
-        str_attributes: list = [
-            f"Environment Name: {self.env_name}",
-            f"Python Version: {self.python_version}",
-            f"Is Created: {self.is_created}",
-            f"PIP List Directory: {self.pip_list_directory}",
-            f"Models: {self.models}" 
-        ]
-
-        return "\n".join(str_attributes)
-    
     def test_environment(self) -> bool:
         """
         Tests if running commands in the conda environment is successful by executing a simple command.
@@ -178,9 +192,8 @@ class CondaEnvironment:
 if __name__ == "__main__":
     # Get the absolute path of the logging directory
     logging_directory = os.path.abspath("../logging")
-    requirements_directory = os.path.abspath("../pip_reqs")
+    requirements_directory = os.path.abspath("../pip_reqs/requirements.txt")
     log_file_name = "logfile.log"
-
 
     # Create a CondaEnvironment instance
     env = CondaEnvironment(

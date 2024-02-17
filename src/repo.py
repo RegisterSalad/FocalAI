@@ -1,6 +1,5 @@
 import requests
 import re
-from typing import Optional
 import argparse
 
 class Repository:
@@ -13,7 +12,7 @@ class Repository:
         has_docker (bool): Indicates if the repository mentions Docker usage.
         has_install (bool): True if installation commands are found in the README.
         install_types (list[str]): Detected types of installations (e.g., pip, git clone).
-        model_name (Optional[list[str] | str]): Names of models found in the repository.
+        model_name list[str] | str]: Names of models found in the repository.
         is_installed (bool): Placeholder for tracking installation status on the system.
         install_commands (list[str]): Extracted installation commands from the README.
         tables (list[str])
@@ -30,7 +29,7 @@ class Repository:
         self.has_docker: bool = False
         self.has_install: bool = False
         self.install_types: list[str] = []
-        self.model_name: Optional[list[str] | str] = None
+        self.model_name: list[str] | str = None
         self.is_installed: bool = False  # Placeholder for future functionality
         self.install_commands: list[str] = []
 
@@ -51,12 +50,12 @@ class Repository:
             self.install_commands = self.filter_installation_commands(commands)
             self.has_install = bool(self.install_commands)
 
-    def get_readme_contents(self) -> Optional[str]:
+    def get_readme_contents(self) -> str | None:
         """
         Fetches the README.md content from the GitHub repository using GitHub API.
 
         Returns:
-            Optional[str]: The README.md file content if successful, None otherwise.
+            str | None: The README.md file content if successful, None otherwise.
         """
         api_url = f"https://api.github.com/repos/{'/'.join(self.repo_url.split('/')[-2:])}/readme"
         response = requests.get(api_url, headers={"Accept": "application/vnd.github+json"})

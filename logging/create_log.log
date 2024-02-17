@@ -18,7 +18,7 @@ Or to minimize the number of packages updated during conda update use
 
 ## Package Plan ##
 
-  environment location: /home/mldesk/.conda/envs/TestRepo
+  environment location: /home/mldesk/.conda/envs/my_test_env
 
   added / updated specs:
     - python=3.11.5
@@ -59,7 +59,7 @@ Executing transaction: ...working... done
 #
 # To activate this environment, use
 #
-#     $ conda activate TestRepo
+#     $ conda activate my_test_env
 #
 # To deactivate an active environment, use
 #
