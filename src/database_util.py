@@ -1,5 +1,6 @@
 import sqlite3
 from conda_env import CondaEnvironment
+import pickle
 
 class Database:
     """Represents a database connection to manage Conda environments.
@@ -15,23 +16,27 @@ class Database:
         self.cursor = self.connection.cursor()
         self.create_table()
 
+
     def __str__(self) -> str:
         """Returns a string representation of the first 10 environments in the database."""
-        self.cursor.execute("SELECT * FROM conda_environments LIMIT 10")
+        self.cursor.execute("SELECT id, env_name, python_version FROM conda_environments LIMIT 10")
         rows = self.cursor.fetchall()
-        environments_str = ["ID: {}, Name: {}, Python Version: {}, Models: {}, Pip List Directory: {}, Logging Directory: {}".format(*row) for row in rows]
+        environments_str = [f"ID: {row[0]}, Name: {row[1]}, Python Version: {row[2]}" for row in rows]
         return "\n".join(environments_str)
 
     def create_table(self) -> None:
-        """Creates a table for storing Conda environments if it doesn't exist."""
-        self.cursor.execute('''CREATE TABLE IF NOT EXISTS conda_environments (
-                               id INTEGER PRIMARY KEY,
-                               env_name TEXT,
-                               python_version TEXT,
-                               pip_list_directory TEXT,
-                               logging_directory TEXT,
-                               models TEXT)''')
+        """Creates a table for storing Conda environments, updating the schema if necessary."""
+        self.cursor.execute("DROP TABLE IF EXISTS conda_environments")  # This line drops the existing table
+        self.cursor.execute('''
+            CREATE TABLE conda_environments (
+                id INTEGER PRIMARY KEY,
+                env_name TEXT UNIQUE,
+                python_version TEXT,
+                serialized_env BLOB
+            )
+        ''')
         self.connection.commit()
+
 
     def insert_environment(self, environment: CondaEnvironment) -> None:
         """Inserts a new environment into the database if it doesn't already exist.
@@ -39,15 +44,18 @@ class Database:
         Args:
             environment: The CondaEnvironment object to insert.
         """
+        # Serialize the CondaEnvironment object
+        serialized_env = pickle.dumps(environment)
         # Check if an environment with the same name already exists
-        self.cursor.execute('SELECT * FROM conda_environments WHERE env_name = ?', (environment.env_name,))
+        self.cursor.execute('SELECT env_name FROM conda_environments WHERE env_name = ?', (environment.env_name,))
         if self.cursor.fetchone() is None:
-            self.cursor.execute('''INSERT INTO conda_environments(env_name, python_version, pip_list_directory, logging_directory, models)
-                                    VALUES (?, ?, ?, ?, ?)''', 
-                                (environment.env_name, environment.python_version, environment.pip_list_directory, environment.logging_directory, ','.join(environment.models)))
+            self.cursor.execute('''INSERT INTO conda_environments(env_name, python_version, serialized_env)
+                                    VALUES (?, ?, ?)''', 
+                                (environment.env_name, environment.python_version, serialized_env))
             self.connection.commit()
         else:
             print(f"Environment named '{environment.env_name}' already exists. Skipping insertion.")
+
 
     def remove_duplicates(self) -> None:
         """Removes duplicate environments based on their name, keeping only the first entry."""
@@ -88,14 +96,11 @@ class Database:
         Returns:
             A CondaEnvironment object if found, otherwise None.
         """
-        self.cursor.execute('SELECT * FROM conda_environments WHERE env_name = ?', (env_name,))
+        self.cursor.execute('SELECT serialized_env FROM conda_environments WHERE env_name = ?', (env_name,))
         row = self.cursor.fetchone()
         if row:
-            env_id, env_name, python_version, pip_list_directory, logging_directory, models = row
-            # Assuming CondaEnvironment's constructor is compatible with these arguments
-            return CondaEnvironment(python_version, models.split(','), env_name, pip_list_directory, logging_directory, env_id=env_id)
+            return pickle.loads(row[0])
         return None
-    
 
     def close(self) -> None:
         """Closes the database connection."""
@@ -131,7 +136,7 @@ if __name__ == "__main__":
                 command_number = int(input("Enter command number: "))
                 if command_number == -1:
                     print("Exiting...")
-                    db.close
+                    db.close()
                     break
                 elif command_number in commands:
                     commands[command_number][1]()

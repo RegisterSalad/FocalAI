@@ -25,7 +25,7 @@ def main() -> None:
     # Retrieve the environment from the database (optional, to verify insertion)
     retrieved_env = db.get_environment(repository_name)
     if retrieved_env:
-        print(f"Retreived Environment: \n {retrieved_env}")
+        print(f"Retreived Environment: \n{retrieved_env}")
     else:
         print("Environment not found in the database.")
     
