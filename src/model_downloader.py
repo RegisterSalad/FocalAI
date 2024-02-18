@@ -114,7 +114,7 @@ class UbuntuCommandFetcher:
             if any(keyword in command for keyword in installation_keywords):
                 filtered_commands.append(command)
                 
-        return list(set(filtered_commands))  # Remove duplicates
+        return list(dict.fromkeys(filtered_commands))  # Remove duplicates
 
     def __call__(self) -> list:
         """
