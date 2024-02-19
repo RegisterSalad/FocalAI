@@ -13,15 +13,17 @@ class Database:
     def __init__(self, db_path: str) -> None:
         """Initializes the database with a connection to the specified database path."""
         self.connection = sqlite3.connect(db_path)
+        print(self.connection)
         self.cursor = self.connection.cursor()
         self.create_table()
 
-
     def __str__(self) -> str:
         """Returns a string representation of the first 10 environments in the database."""
-        self.cursor.execute("SELECT id, env_name, python_version FROM conda_environments LIMIT 10")
+        self.cursor.execute("SELECT id, env_name, python_version FROM conda_environments")
         rows = self.cursor.fetchall()
         environments_str = [f"ID: {row[0]}, Name: {row[1]}, Python Version: {row[2]}" for row in rows]
+        if len(environments_str) == 0:
+            return "Database is empty"
         return "\n".join(environments_str)
 
     def create_table(self) -> None:
@@ -109,13 +111,23 @@ class Database:
 if __name__ == "__main__":
     import os
 
-    def delete_environment_cli(db: Database):
+    def delete_environment_cli(db: Database) -> None:
+        """
+        
+        """
         try:
             env_id = int(input("Enter the ID of the environment to delete: "))
             db.delete_environment_by_id(env_id)
         except ValueError:
             print("Please enter a valid integer for the environment ID.")
-    
+
+    def select_environment_cli(db: Database) -> None:
+        try:
+            env_name = str(input("Enter the ID of the environment to pull from database: "))
+            db.fetch_environment_by_id(env_name)
+        except ValueError:
+            print("Please enter a valid integer for the environment ID.")
+
     def main():
         db_path = os.path.abspath('../databases/conda_environments.db')
         db = Database(db_path)

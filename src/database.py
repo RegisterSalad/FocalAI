@@ -23,7 +23,7 @@ def main() -> None:
     db.insert_environment(env)
     
     # Retrieve the environment from the database (optional, to verify insertion)
-    retrieved_env = db.get_environment(repository_name)
+    retrieved_env = db.get_environment("my_test_env2")
     if retrieved_env:
         print(f"Retreived Environment: \n{retrieved_env}")
     else:
