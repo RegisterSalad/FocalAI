@@ -106,6 +106,13 @@ class Database:
         """Closes the database connection."""
         self.connection.close()
 
+    @property
+    def row_count(self) -> int:
+        """Returns the number of rows in the 'conda_environments' table."""
+        self.cursor.execute('SELECT COUNT(*) FROM conda_environments')
+        count = self.cursor.fetchone()[0]
+        return count
+
 if __name__ == "__main__":
     import os
 
