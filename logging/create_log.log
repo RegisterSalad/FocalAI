@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Collecting package metadata (current_repodata.json): ...working... done
 Solving environment: ...working... unsuccessful attempt using repodata from current_repodata.json, retrying with next repodata source.
 Collecting package metadata (repodata.json): ...working... done
@@ -21,6 +22,17 @@ Or to minimize the number of packages updated during conda update use
 ## Package Plan ##
 
   environment location: /home/mldesk/.conda/envs/Whisper
+=======
+Channels:
+ - defaults
+Platform: linux-64
+Collecting package metadata (repodata.json): ...working... done
+Solving environment: ...working... done
+
+## Package Plan ##
+
+  environment location: /home/mlmachine/anaconda3/envs/my_test_env
+>>>>>>> b79b1c6e1601ee114e338a96f8fa4db8800ffa15
 
   added / updated specs:
     - python=3.11.5
@@ -53,15 +65,23 @@ The following NEW packages will be INSTALLED:
 
 
 
+<<<<<<< HEAD
 Downloading and Extracting Packages
 
+=======
+Downloading and Extracting Packages: ...working... done
+>>>>>>> b79b1c6e1601ee114e338a96f8fa4db8800ffa15
 Preparing transaction: ...working... done
 Verifying transaction: ...working... done
 Executing transaction: ...working... done
 #
 # To activate this environment, use
 #
+<<<<<<< HEAD
 #     $ conda activate Whisper
+=======
+#     $ conda activate my_test_env
+>>>>>>> b79b1c6e1601ee114e338a96f8fa4db8800ffa15
 #
 # To deactivate an active environment, use
 #
