@@ -91,7 +91,9 @@ class DatabaseManager(Database):
         print(self)
         while True:
             try:
-                env_id = int(input("Enter the ID of the environment to fetch: "))
+                env_id = str(input("Enter the ID of the environment to fetch (-1 to exit): "))
+                if env_id == -1:
+                    break
                 self.running_env = self.get_environment(env_id)
                 if not self.running_env:
                     raise ValueError("Invalid environment ID.")
@@ -184,12 +186,14 @@ class DatabaseManager(Database):
         """
         options = {
             1: ("Create Environment", self.create_environment_cli),
-            2: ("Display All Environments", lambda: str(self)),
+            2: ("Display All Environments", lambda: print(self)),
             3: ("Select Environment", self.fetch_env_to_run_cli),
             4: ("Exit", self.exit_dbm),
             5: ("Cleanup", self.remove_duplicates) 
         }
         return options
+
+
 
     @property
     def selected_env_options(self) -> Dict[int, Tuple[str, Callable[..., Any]]]:
@@ -203,7 +207,7 @@ class DatabaseManager(Database):
             1: ("Delete Environment",  self.delete_environment_by_id),
             2: ("Run Command in Environment", self.run_command_cli),
             3: ("Print Environment Info", lambda: str(self.running_env)),
-            4: ("Back to Main Menu", self.print_main_menu)
+            4: ("Back to Main Menu", print(end=""))
         }
         return options
 
