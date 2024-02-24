@@ -25,7 +25,29 @@ class Database:
         if len(environments_str) == 0:
             return "Database is empty"
         return "\n".join(environments_str)
-
+    
+    def check_for_table(self, table_name: str) -> bool:
+        """
+        Checks if a specified table exists in a SQLite database.
+        Args:
+            database_path (str): Path to the SQLite database file.
+            table_name (str): Name of the table to check for.
+        Returns:
+            True if the table exists, False otherwise.
+        """
+        
+        # SQL query to check for the table's existence
+        check_table_query = f"SELECT name FROM sqlite_master WHERE type='table' AND name=?;"
+        
+        # Execute the query with parameter substitution to avoid SQL injection
+        self.cursor.execute(check_table_query, (table_name,))
+        
+        # Fetch the results
+        result = self.cursor.fetchone()
+            
+        # Return True if the table exists, False otherwise
+        return result is not None
+    
     def create_table(self) -> None:
         """
         Creates a table for storing Conda environments if it does not already exist,

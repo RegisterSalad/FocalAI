@@ -97,6 +97,7 @@ class DatabaseManager(Database):
                 self.running_env = self.get_environment(env_id)
                 if not self.running_env:
                     raise ValueError("Invalid environment ID.")
+                self.running_env.env_id = env_id
                 break
             except ValueError as e:
                 print(e)
