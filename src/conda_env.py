@@ -71,7 +71,7 @@ class CondaEnvironment:
             command (str): The command to run.
         """
         # Ensure the environment is activated before running the command
-        args = ['conda', 'run', '-n', self.env_name, '--no-capture-output', 'bash', '-c', command]
+        args = ['conda', 'run', '-n', self.env_name, '--no-capture-output', 'bash', '-c', '"'+command+'"']
         error_message = f"Error occurred while running command in environment '{self.env_name}'"
         log_file_name = "run_command_log.log"
         run_subprocess_with_logging(args, error_message, self.logging_directory, log_file_name)
