@@ -1,0 +1,9 @@
+# conda environments:
+#
+AdversarialAudio         /home/mldesk/.conda/envs/AdversarialAudio
+FocalAI               *  /home/mldesk/.conda/envs/FocalAI
+TTS                      /home/mldesk/.conda/envs/TTS
+VRB_Software             /home/mldesk/.conda/envs/VRB_Software
+tortoise                 /home/mldesk/.conda/envs/tortoise
+base                     /home/mldesk/anaconda3
+
