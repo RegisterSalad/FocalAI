@@ -22,6 +22,11 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_2.clicked.connect(self.switch_to_page2)  # Connecting pushButton_2 click to switch_to_page2 function
         self.ui.pushButton_3.clicked.connect(self.switch_to_page3)  # Connecting pushButton_3 click to switch_to_page3 function
 
+        self.ui.actionOpen_Dock.triggered.connect(self.openDock)
+
+    def openDock(self):
+        self.ui.dockWidget.show()
+
     # Function to switch to page 1
     def switch_to_page1(self):
         self.ui.stackedWidget.setCurrentIndex(0)  # Setting the index of stackedWidget to 0 (page 1)
@@ -33,6 +38,8 @@ class MainWindow(QMainWindow):
     # Function to switch to page 3
     def switch_to_page3(self):
         self.ui.stackedWidget.setCurrentIndex(2)  # Setting the index of stackedWidget to 2 (page 3)
+
+
 
 # Entry point of the program
 if __name__ == "__main__":
