@@ -3,12 +3,13 @@
 # Importing necessary modules
 import sys  # Importing sys module for system-related functionalities
 from PySide6.QtWidgets import QApplication, QMainWindow  # Importing necessary PySide6 modules
-
-# Important:
-# You need to run the following command to generate the ui_form.py file
-#     pyside6-uic form.ui -o ui_form.py, or
-#     pyside2-uic form.ui -o ui_form.py
 from ui_form import Ui_MainWindow  # Importing the user interface class
+import os
+
+# Calculate the path to the directory containing database.py
+module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if module_dir not in sys.path:
+    sys.path.append(module_dir)
 
 # Defining the main window class
 class MainWindow(QMainWindow):
