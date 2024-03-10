@@ -2,7 +2,8 @@
 
 # Importing necessary modules
 import sys  # Importing sys module for system-related functionalities
-from PySide6.QtWidgets import QApplication, QMainWindow  # Importing necessary PySide6 modules
+from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QVBoxLayout, QWidget, QFileDialog  # Importing necessary PySide6 modules
+from PySide6 import *
 from ui_form import Ui_MainWindow  # Importing the user interface class
 import os
 
@@ -13,6 +14,7 @@ if module_dir not in sys.path:
 
 # Defining the main window class
 class MainWindow(QMainWindow):
+    fname = None
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_MainWindow()  # Creating an instance of the user interface class
@@ -22,6 +24,9 @@ class MainWindow(QMainWindow):
         self.ui.pushButton.clicked.connect(self.switch_to_page1)  # Connecting pushButton click to switch_to_page1 function
         self.ui.pushButton_2.clicked.connect(self.switch_to_page2)  # Connecting pushButton_2 click to switch_to_page2 function
         self.ui.pushButton_3.clicked.connect(self.switch_to_page3)  # Connecting pushButton_3 click to switch_to_page3 function
+        self.ui.pushButton_5.clicked.connect(self.list_file)
+        self.ui.fileList.findChild(QLabel, "fileList")
+
 
         self.ui.actionOpen_Dock.triggered.connect(self.openDock)
 
@@ -39,6 +44,15 @@ class MainWindow(QMainWindow):
     # Function to switch to page 3
     def switch_to_page3(self):
         self.ui.stackedWidget.setCurrentIndex(2)  # Setting the index of stackedWidget to 2 (page 3)
+
+    def list_file(self, fname):
+        fName = QFileDialog.getOpenFileName(self, "File Opener", "", "All Files (*)") #(self, title, specify starting directory, filter file formats) [ex: any(*);;python(*.py)]
+
+        if fName:
+            self.ui.fileList.setText(str(fName))
+
+
+
 
 
 
