@@ -2,25 +2,32 @@ from typing import Optional, Dict
 from repo import Repository
 
 class Model:
-    '''
-    ## Description:
-    
-    This class will contain the 
+    """
+    This dataclass contains all the metadata about the an installed model.
 
-    ## Attributes
-    
-    - name: str
-        Name of the repository itself 
-    - owner: str
-        Name of repository owner
-    - github_url: str
-        Url for the github repository
-    - hugingface_url: Optional[str]
-        Url of the associated HuggingFace entry for the repo, can be None if not available on HuggingFace
-    - models_available_names: Dict[str, Model]
-    -  
-    '''
-    def __init__(self) -> None:
-        
+    Attributes:
+        on_disk_size_mbyte (float): Stores the value of the size of the model on disk
+        model_name (str): The name of the individual model
+        model_path (str): Path of the model within local file system
+    """
+    def __init__(self, model_path, model_name) -> None:
+        """
+        Sets and initializes class attributes
+
+        Args:
+            model_name (str): The name of the individual model
+            model_path (str): Path of the model within local file system
+        """
         pass
     
+    def _set_size() -> None:
+        """
+        Finds and sets the value of model_size in MB (Bytes)
+        """
+        pass
+
+
+
+    def __str__(self) -> str:
+        
+        pass
