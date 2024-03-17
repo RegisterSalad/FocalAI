@@ -21,39 +21,22 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)  # Setting up the user interface in the main window
 
         # Connecting button clicks to respective functions
-        self.ui.pushButton.clicked.connect(self.switch_to_page1)  # Connecting pushButton click to switch_to_page1 function
-        self.ui.pushButton_2.clicked.connect(self.switch_to_page2)  # Connecting pushButton_2 click to switch_to_page2 function
-        self.ui.pushButton_3.clicked.connect(self.switch_to_page3)  # Connecting pushButton_3 click to switch_to_page3 function
-        self.ui.pushButton_5.clicked.connect(self.list_file)
+        self.ui.pushButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(0))  # Connecting pushButton click to switch_to_page1 function
+        self.ui.pushButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(1))  # Connecting pushButton_2 click to switch_to_page2 function
+        self.ui.pushButton_3.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(2))  # Connecting pushButton_3 click to switch_to_page3 function
+        self.ui.pushButton_5.clicked.connect(self.nothing)
         self.ui.fileList.findChild(QLabel, "fileList")
 
 
-        self.ui.actionOpen_Dock.triggered.connect(self.openDock)
+        self.ui.actionOpen_Dock.triggered.connect(lambda: self.ui.dockWidget.show())
 
-    def openDock(self):
-        self.ui.dockWidget.show()
-
-    # Function to switch to page 1
-    def switch_to_page1(self):
-        self.ui.stackedWidget.setCurrentIndex(0)  # Setting the index of stackedWidget to 0 (page 1)
-
-    # Function to switch to page 2
-    def switch_to_page2(self):
-        self.ui.stackedWidget.setCurrentIndex(1)  # Setting the index of stackedWidget to 1 (page 2)
-
-    # Function to switch to page 3
-    def switch_to_page3(self):
-        self.ui.stackedWidget.setCurrentIndex(2)  # Setting the index of stackedWidget to 2 (page 3)
+    def nothing(self):
+        pass
 
     def list_file(self, fname):
         fName = QFileDialog.getOpenFileName(self, "File Opener", "", "All Files (*)") #(self, title, specify starting directory, filter file formats) [ex: any(*);;python(*.py)]
-
         if fName:
             self.ui.fileList.setText(str(fName))
-
-
-
-
 
 
 # Entry point of the program

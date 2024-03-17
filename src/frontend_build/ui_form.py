@@ -17,15 +17,16 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QDockWidget, QFontComboBox, QFrame,
-    QGridLayout, QHBoxLayout, QLineEdit, QMainWindow,
-    QMenu, QMenuBar, QPushButton, QSizePolicy,
-    QStackedWidget, QTextBrowser, QVBoxLayout, QWidget)
+    QGridLayout, QHBoxLayout, QLabel, QLineEdit,
+    QMainWindow, QMenu, QMenuBar, QPushButton,
+    QSizePolicy, QStackedWidget, QTextBrowser, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(914, 699)
+        MainWindow.resize(1175, 824)
         MainWindow.setMaximumSize(QSize(1920, 1080))
         MainWindow.setStyleSheet(u"alternate-background-color: rgb(255, 255, 255);")
         self.actionOpen_Dock = QAction(MainWindow)
@@ -49,6 +50,9 @@ class Ui_MainWindow(object):
 
         self.stackedWidget = QStackedWidget(self.centralwidget)
         self.stackedWidget.setObjectName(u"stackedWidget")
+        self.stackedWidget.setMinimumSize(QSize(600, 850))
+        self.stackedWidget.setSizeIncrement(QSize(500, 500))
+        self.stackedWidget.setBaseSize(QSize(500, 500))
         self.stackedWidget.setStyleSheet(u"background-color: rgb(222, 221, 218);")
         self.page = QWidget()
         self.page.setObjectName(u"page")
@@ -88,6 +92,9 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.dockWidget = QDockWidget(MainWindow)
         self.dockWidget.setObjectName(u"dockWidget")
+        self.dockWidget.setMinimumSize(QSize(500, 500))
+        self.dockWidget.setSizeIncrement(QSize(100, 100))
+        self.dockWidget.setBaseSize(QSize(100, 100))
         self.dockWidget.setStyleSheet(u"background-color: rgb(153, 193, 241);")
         self.dockWidgetContents = QWidget()
         self.dockWidgetContents.setObjectName(u"dockWidgetContents")
@@ -112,11 +119,29 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.pushButton_3)
 
+        self.verticalLayoutWidget_2 = QWidget(self.dockWidgetContents)
+        self.verticalLayoutWidget_2.setObjectName(u"verticalLayoutWidget_2")
+        self.verticalLayoutWidget_2.setGeometry(QRect(10, 550, 160, 80))
+        self.verticalLayout_2 = QVBoxLayout(self.verticalLayoutWidget_2)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.pushButton_5 = QPushButton(self.verticalLayoutWidget_2)
+        self.pushButton_5.setObjectName(u"pushButton_5")
+        self.pushButton_5.setCheckable(False)
+
+        self.verticalLayout_2.addWidget(self.pushButton_5)
+
+        self.fileList = QLabel(self.verticalLayoutWidget_2)
+        self.fileList.setObjectName(u"fileList")
+        self.fileList.setWordWrap(True)
+
+        self.verticalLayout_2.addWidget(self.fileList)
+
         self.dockWidget.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(Qt.LeftDockWidgetArea, self.dockWidget)
         self.menuBar = QMenuBar(MainWindow)
         self.menuBar.setObjectName(u"menuBar")
-        self.menuBar.setGeometry(QRect(0, 0, 914, 22))
+        self.menuBar.setGeometry(QRect(0, 0, 1175, 22))
         self.menuSettings = QMenu(self.menuBar)
         self.menuSettings.setObjectName(u"menuSettings")
         MainWindow.setMenuBar(self.menuBar)
@@ -126,7 +151,8 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(1)
+        self.pushButton_5.setDefault(False)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -139,6 +165,8 @@ class Ui_MainWindow(object):
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
         self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
+        self.pushButton_5.setText(QCoreApplication.translate("MainWindow", u"FileOpener", None))
+        self.fileList.setText(QCoreApplication.translate("MainWindow", u"No File Opened", None))
         self.menuSettings.setTitle(QCoreApplication.translate("MainWindow", u"Settings", None))
     # retranslateUi
 
