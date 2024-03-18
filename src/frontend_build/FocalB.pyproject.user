@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 12.0.2, 2024-03-16T16:42:20. -->
+<!-- Written by QtCreator 12.0.2, 2024-03-18T16:49:01. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -148,7 +148,8 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">mainwindow.py</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/mldesk/Desktop/Repos/FocalAI/src/frontend_build/mainwindow.py</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/mldesk/Desktop/Repos/FocalAI/src/frontend_build/mainwindow.py</value>
-    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">true</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{98dc0d2d-1890-4aa7-add3-28d1140bccef}</value>
     <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/mldesk/Desktop/Repos/FocalAI/src/frontend_build/mainwindow.py</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
