@@ -1,6 +1,8 @@
 {
     "files": [
         "mainwindow.py",
-        "model_uis.py"
+        "model_page.py",
+        "styler.py",
+        "vertical_menu.py"
     ]
 }
