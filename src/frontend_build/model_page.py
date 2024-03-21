@@ -1,36 +1,35 @@
-from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
-                               QHBoxLayout, QLineEdit, QListWidget, QPushButton,
-                               QLabel, QStackedWidget, QFrame, QSizePolicy, QMenu, QTextBrowser, QTextEdit)
-from PySide6.QtGui import QAction, QGuiApplication, QPalette, QColor
-from PySide6.QtCore import Slot, Qt, QCoreApplication
-import sys
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame, QSizePolicy
+from PySide6.QtCore import Qt
+from PySide6.QtWebEngineWidgets import QWebEngineView  # Import QWebEngineView
 import markdown
-
+from paperswithcode.models.repository import Repository
+from pygments.formatters import HtmlFormatter
 
 class ModelPage(QFrame):
-    def __init__(self, styler):
+    def __init__(self, styler, api_caller):
         super().__init__()
         self.styler = styler
+        self.html_text: str | None = None
+        self.css = self.styler.doc_css
+        self.caller = api_caller
 
-        # Initialize all components used in update_style before registering with the styler
         self.button1 = QPushButton("Button 1")
         self.button2 = QPushButton("Button 2")
         self.button3 = QPushButton("Button 3")
-        self.textDisplay = QTextBrowser()
-        self.textDisplay.setFrameStyle(QFrame.Panel | QFrame.Sunken)
+        self.textDisplay = QWebEngineView()  # Use QWebEngineView
+        self.textDisplay.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.textDisplay.setZoomFactor(0.9)
         self.thumbnail = QLabel()
         self.thumbnail.setFixedSize(100, 100)
 
         mainLayout = QVBoxLayout()
 
-        # Buttons layout
         buttonsLayout = QVBoxLayout()
         buttonsLayout.setAlignment(Qt.AlignRight | Qt.AlignTop)
         buttonsLayout.addWidget(self.button1)
         buttonsLayout.addWidget(self.button2)
         buttonsLayout.addWidget(self.button3)
 
-        # Configure layouts and components
         buttonsWrapperLayout = QHBoxLayout()
         buttonsWrapperLayout.addLayout(buttonsLayout)
         buttonsWrapperLayout.addStretch()
@@ -41,38 +40,37 @@ class ModelPage(QFrame):
 
         self.setLayout(mainLayout)
 
-        # Now that all attributes are defined, register this component with the styler
         self.styler.register_component(self)
 
-    def update_content(self, item_id):
-        def read_file(file_path):
-            try:
-                with open(file_path, 'r') as file:
-                    content = file.read()
-                    return content
-            except FileNotFoundError:
-                print("File not found.")
-                return None
+    def update_content(self, repo_url: str | None)-> None:
+        if repo_url is None:
+            if self.html_text is None:
+                self.html_text = markdown.markdown("  ", extensions=['tables', 'fenced_code', 'codehilite', 'extra'])
+            
+            self.html_text = f"<style>{self.css}</style>{self.html_text}"
+            self.textDisplay.setHtml(self.html_text)  # Set HTML content
+            return
 
-        file_path = "../../_assets/test_readme.md"
-        file_content = read_file(file_path)
+        readme = self.caller.get_readme_contents(repo_url=repo_url)
 
-        markdownText = f"**Item {item_id}:**\n{file_content}"
-        htmlText = markdown.markdown(markdownText, extensions=['tables'])
-        self.textDisplay.setHtml(htmlText)
+        if readme:
+            markdown_text = readme
+            self.html_text = markdown.markdown(markdown_text, extensions=['tables', 'fenced_code', 'codehilite', 'extra'])
+
+            self.html_text = f"<style>{self.css}</style>{self.html_text}"
+            
+            self.textDisplay.setHtml(self.html_text)  # Set HTML content
+
+
 
     def update_style(self):
         if self.styler.dark_mode_enabled:
             self.setStyleSheet("background-color: #333333; color: white;")
-            self.textDisplay.setStyleSheet("""
-                QTextBrowser { background-color: #333333; color: white; }
-                a { color: red; }
-            """)
+            # Update styles for QWebEngineView if necessary
             self.thumbnail.setStyleSheet("background-color: gray;")
         else:
             self.setStyleSheet("background-color: lightgray; color: black;")
-            self.textDisplay.setStyleSheet("""
-                QTextBrowser { background-color: lightgray; color: black; }
-                a { color: red; }
-            """)
+            # Update styles for QWebEngineView if necessary
             self.thumbnail.setStyleSheet("background-color: lightgray;")
+        self.css = self.styler.doc_css
+        self.update_content(repo_url=None)
