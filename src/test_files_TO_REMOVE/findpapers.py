@@ -24,19 +24,20 @@ def print_list(list: Repositories) -> None:
         print(f"ID: [{idx}]\n{repo.name}\n{repo.owner}\n{repo.description}\n{repo.url}\n{'-' * 10}\n\n")
 
 
-
-
-
 if __name__ == "__main__":
     '''This is strictly a test script'''
     client = PapersWithCodeClient(token=PWC_KEY)
+    repos = client.repository_list()
+    print(type(repos))
+    # print(papers.next_page)
+    exit()
     q = None
     while q != -1:
         q = input("Enter model name or -1 to exit: ")
         repo_list = get_repo_list(query=q)
         print_list(repo_list)
-        idx = input("Enter Selected Repo: ")
-        paper: Paper = find_paper_from_selected_repo(selected_index=int(idx), list=repo_list)
-        print(f"Paper Found:\nTitle: {paper.title}\nAuthors {paper.authors}\n{'-' * 10}\n\n")
+        # idx = input("Enter Selected Repo: ")
+        # paper: Paper = find_paper_from_selected_repo(selected_index=int(idx), list=repo_list)
+        # print(f"Paper Found:\nTitle: {paper.title}\nAuthors {paper.authors}\n{'-' * 10}\n\n")
         
 
