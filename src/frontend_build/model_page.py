@@ -4,6 +4,7 @@ from PySide6.QtWebEngineWidgets import QWebEngineView  # Import QWebEngineView
 import markdown
 from paperswithcode.models.repository import Repository
 from pygments.formatters import HtmlFormatter
+from pop_up import PopupWindow
 
 class ModelPage(QFrame):
     def __init__(self, styler, api_caller):
@@ -24,6 +25,10 @@ class ModelPage(QFrame):
 
         mainLayout = QVBoxLayout()
 
+        # Connect the button1 click signal to the method to open the popup
+        self.pop_up_window = PopupWindow(self.styler)
+        self.button1.clicked.connect(lambda: self.display_pop_up())
+
         buttonsLayout = QVBoxLayout()
         buttonsLayout.setAlignment(Qt.AlignRight | Qt.AlignTop)
         buttonsLayout.addWidget(self.button1)
@@ -41,6 +46,9 @@ class ModelPage(QFrame):
         self.setLayout(mainLayout)
 
         self.styler.register_component(self)
+
+    def display_pop_up(self):
+        self.pop_up_window.show()
 
     def update_content(self, repo_url: str | None)-> None:
         if repo_url is None:
@@ -60,8 +68,6 @@ class ModelPage(QFrame):
             self.html_text = f"<style>{self.css}</style>{self.html_text}"
             
             self.textDisplay.setHtml(self.html_text)  # Set HTML content
-
-
 
     def update_style(self):
         if self.styler.dark_mode_enabled:

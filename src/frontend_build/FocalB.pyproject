@@ -3,6 +3,7 @@
         "mainwindow.py",
         "model_page.py",
         "styler.py",
-        "vertical_menu.py"
+        "vertical_menu.py",
+        "pop_up.py"
     ]
 }

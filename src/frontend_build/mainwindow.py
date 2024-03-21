@@ -97,15 +97,6 @@ class MainWindow(QMainWindow):
         if searchText:  # Only search if there's text
             self.search_items(searchText)
 
-    # def search_items(self, text):
-    #     self.listWidget.clear()  # Clear current items
-    #     found_repos = self.caller.get_repo_list(text.lower())
-    #     for idx, repo in enumerate(found_repos.results):
-    #         repo_string = f"ID: [{idx}]\n{repo.name}\n{repo.owner}\n{repo.description}\n{repo.url}"
-    #         item = QListWidgetItem(repo_string)
-    #         item.setToolTip(repo_string)  # Set the tooltip to display full repo info on hover
-    #         self.listWidget.addItem(item)
-
     def search_items(self, text):
         self.listWidget.clear()  # Clear current items
         self.repos.clear()  # Clear the repository list
