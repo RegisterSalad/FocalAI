@@ -26,8 +26,10 @@ class ModelPage(QFrame):
         mainLayout = QVBoxLayout()
 
         # Connect the button1 click signal to the method to open the popup
-        self.pop_up_window = PopupWindow(self.styler)
-        self.button1.clicked.connect(lambda: self.display_pop_up())
+        # self.pop_up_window = PopupWindow(self.styler)
+        # self.button1.clicked.connect(lambda: self.display_pop_up())
+        
+        self.button1.clicked.connect(lambda: self.create_model_player())
 
         buttonsLayout = QVBoxLayout()
         buttonsLayout.setAlignment(Qt.AlignRight | Qt.AlignTop)
@@ -49,6 +51,9 @@ class ModelPage(QFrame):
 
     def display_pop_up(self):
         self.pop_up_window.show()
+
+    #def create_model_player(self):
+        
 
     def update_content(self, repo_url: str | None)-> None:
         if repo_url is None:

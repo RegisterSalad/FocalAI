@@ -13,7 +13,7 @@ from terminal_widget import TerminalWidget
 class NewWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("NewWindow")
+        self.setWindowTitle("Model Player")
         layout = QVBoxLayout()
 
 
