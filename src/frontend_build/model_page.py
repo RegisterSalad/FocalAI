@@ -5,7 +5,9 @@ import markdown
 from paperswithcode.models.repository import Repository
 from pygments.formatters import HtmlFormatter
 from pop_up import PopupWindow
-
+from new_window import NewWindow
+from PySide6.QtCore import QTimer
+import sys
 class ModelPage(QFrame):
     def __init__(self, styler, api_caller):
         super().__init__()
@@ -29,6 +31,7 @@ class ModelPage(QFrame):
         # self.pop_up_window = PopupWindow(self.styler)
         # self.button1.clicked.connect(lambda: self.display_pop_up())
         
+        self.model_player = NewWindow()
         self.button1.clicked.connect(lambda: self.create_model_player())
 
         buttonsLayout = QVBoxLayout()
@@ -52,8 +55,25 @@ class ModelPage(QFrame):
     def display_pop_up(self):
         self.pop_up_window.show()
 
-    #def create_model_player(self):
+    # def create_model_player(self):
+    #     print("Creating New Window")
+    #     self.model_player.show()
+    #     self.model_player.raise_()
+    #     self.model_player.activateWindow()
         
+    def create_model_player(self):
+        print("Creating New Window")
+        # Set the window to always stay on top when it's first opened
+        self.model_player.setWindowFlags(self.model_player.windowFlags() | Qt.WindowStaysOnTopHint)
+        self.model_player.show()
+        self.model_player.raise_()
+        self.model_player.activateWindow()
+        # Remove the always-on-top flag after it's displayed and focused
+        self.model_player.setWindowFlags(self.model_player.windowFlags() & ~Qt.WindowStaysOnTopHint)
+        # You need to call show() again after changing window flags
+        self.model_player.show()
+    
+    
 
     def update_content(self, repo_url: str | None)-> None:
         if repo_url is None:

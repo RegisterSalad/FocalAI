@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 12.0.2, 2024-03-22T00:38:34. -->
+<!-- Written by QtCreator 12.0.2, 2024-03-22T20:10:34. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -156,7 +156,197 @@
     <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/timbogg/Desktop/FocalAI/src/frontend_build</value>
     <value type="QString" key="RunConfiguration.X11Forwarding">:0</value>
    </valuemap>
-   <value type="qlonglong" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
+   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
+    <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
+    <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
+    <value type="int" key="Analyzer.Valgrind.Callgrind.CostFormat">0</value>
+    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
+    <valuelist type="QVariantList" key="CustomOutputParsers"/>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">model_page.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/timbogg/Desktop/FocalAI/src/frontend_build/model_page.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/timbogg/Desktop/FocalAI/src/frontend_build/model_page.py</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/timbogg/Desktop/FocalAI/src/frontend_build/model_page.py</value>
+    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/timbogg/Desktop/FocalAI/src/frontend_build</value>
+    <value type="QString" key="RunConfiguration.X11Forwarding">:0</value>
+   </valuemap>
+   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.10">
+    <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
+    <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
+    <value type="int" key="Analyzer.Valgrind.Callgrind.CostFormat">0</value>
+    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
+    <valuelist type="QVariantList" key="CustomOutputParsers"/>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">file_list_widget.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/timbogg/Desktop/FocalAI/src/frontend_build/file_list_widget.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/timbogg/Desktop/FocalAI/src/frontend_build/file_list_widget.py</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/timbogg/Desktop/FocalAI/src/frontend_build/file_list_widget.py</value>
+    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/timbogg/Desktop/FocalAI/src/frontend_build</value>
+    <value type="QString" key="RunConfiguration.X11Forwarding">:0</value>
+   </valuemap>
+   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.2">
+    <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
+    <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
+    <value type="int" key="Analyzer.Valgrind.Callgrind.CostFormat">0</value>
+    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
+    <valuelist type="QVariantList" key="CustomOutputParsers"/>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">styler.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/timbogg/Desktop/FocalAI/src/frontend_build/styler.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/timbogg/Desktop/FocalAI/src/frontend_build/styler.py</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/timbogg/Desktop/FocalAI/src/frontend_build/styler.py</value>
+    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/timbogg/Desktop/FocalAI/src/frontend_build</value>
+    <value type="QString" key="RunConfiguration.X11Forwarding">:0</value>
+   </valuemap>
+   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.3">
+    <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
+    <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
+    <value type="int" key="Analyzer.Valgrind.Callgrind.CostFormat">0</value>
+    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
+    <valuelist type="QVariantList" key="CustomOutputParsers"/>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">vertical_menu.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/timbogg/Desktop/FocalAI/src/frontend_build/vertical_menu.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/timbogg/Desktop/FocalAI/src/frontend_build/vertical_menu.py</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/timbogg/Desktop/FocalAI/src/frontend_build/vertical_menu.py</value>
+    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/timbogg/Desktop/FocalAI/src/frontend_build</value>
+    <value type="QString" key="RunConfiguration.X11Forwarding">:0</value>
+   </valuemap>
+   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.4">
+    <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
+    <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
+    <value type="int" key="Analyzer.Valgrind.Callgrind.CostFormat">0</value>
+    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
+    <valuelist type="QVariantList" key="CustomOutputParsers"/>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">pop_up.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/timbogg/Desktop/FocalAI/src/frontend_build/pop_up.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/timbogg/Desktop/FocalAI/src/frontend_build/pop_up.py</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/timbogg/Desktop/FocalAI/src/frontend_build/pop_up.py</value>
+    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/timbogg/Desktop/FocalAI/src/frontend_build</value>
+    <value type="QString" key="RunConfiguration.X11Forwarding">:0</value>
+   </valuemap>
+   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.5">
+    <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
+    <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
+    <value type="int" key="Analyzer.Valgrind.Callgrind.CostFormat">0</value>
+    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
+    <valuelist type="QVariantList" key="CustomOutputParsers"/>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">new_window_manager.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/timbogg/Desktop/FocalAI/src/frontend_build/new_window_manager.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/timbogg/Desktop/FocalAI/src/frontend_build/new_window_manager.py</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/timbogg/Desktop/FocalAI/src/frontend_build/new_window_manager.py</value>
+    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/timbogg/Desktop/FocalAI/src/frontend_build</value>
+    <value type="QString" key="RunConfiguration.X11Forwarding">:0</value>
+   </valuemap>
+   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.6">
+    <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
+    <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
+    <value type="int" key="Analyzer.Valgrind.Callgrind.CostFormat">0</value>
+    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
+    <valuelist type="QVariantList" key="CustomOutputParsers"/>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">new_window.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/timbogg/Desktop/FocalAI/src/frontend_build/new_window.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/timbogg/Desktop/FocalAI/src/frontend_build/new_window.py</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/timbogg/Desktop/FocalAI/src/frontend_build/new_window.py</value>
+    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/timbogg/Desktop/FocalAI/src/frontend_build</value>
+    <value type="QString" key="RunConfiguration.X11Forwarding">:0</value>
+   </valuemap>
+   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.7">
+    <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
+    <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
+    <value type="int" key="Analyzer.Valgrind.Callgrind.CostFormat">0</value>
+    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
+    <valuelist type="QVariantList" key="CustomOutputParsers"/>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">terminal_widget.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/timbogg/Desktop/FocalAI/src/frontend_build/terminal_widget.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/timbogg/Desktop/FocalAI/src/frontend_build/terminal_widget.py</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/timbogg/Desktop/FocalAI/src/frontend_build/terminal_widget.py</value>
+    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/timbogg/Desktop/FocalAI/src/frontend_build</value>
+    <value type="QString" key="RunConfiguration.X11Forwarding">:0</value>
+   </valuemap>
+   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.8">
+    <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
+    <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
+    <value type="int" key="Analyzer.Valgrind.Callgrind.CostFormat">0</value>
+    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
+    <valuelist type="QVariantList" key="CustomOutputParsers"/>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">window_menu_widget.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/timbogg/Desktop/FocalAI/src/frontend_build/window_menu_widget.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/timbogg/Desktop/FocalAI/src/frontend_build/window_menu_widget.py</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/timbogg/Desktop/FocalAI/src/frontend_build/window_menu_widget.py</value>
+    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/timbogg/Desktop/FocalAI/src/frontend_build</value>
+    <value type="QString" key="RunConfiguration.X11Forwarding">:0</value>
+   </valuemap>
+   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.9">
+    <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
+    <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
+    <value type="int" key="Analyzer.Valgrind.Callgrind.CostFormat">0</value>
+    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
+    <valuelist type="QVariantList" key="CustomOutputParsers"/>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">file_drop_widget.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/timbogg/Desktop/FocalAI/src/frontend_build/file_drop_widget.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/timbogg/Desktop/FocalAI/src/frontend_build/file_drop_widget.py</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/timbogg/Desktop/FocalAI/src/frontend_build/file_drop_widget.py</value>
+    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/timbogg/Desktop/FocalAI/src/frontend_build</value>
+    <value type="QString" key="RunConfiguration.X11Forwarding">:0</value>
+   </valuemap>
+   <value type="qlonglong" key="ProjectExplorer.Target.RunConfigurationCount">11</value>
   </valuemap>
  </data>
  <data>
