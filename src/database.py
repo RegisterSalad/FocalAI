@@ -4,7 +4,6 @@ import os
 from typing import Any, Dict, Callable, Tuple
 
 class DatabaseManager(Database):
-
     def __init__(self, db_path: str) -> None:
         """
         Initialize the DatabaseManager with error checking for database path.
@@ -95,7 +94,7 @@ class DatabaseManager(Database):
                 if env_id == -1:
                     break
                 self.running_env = self.get_environment(env_id)
-                if not self.running_env:
+                if not isinstance(self.running_env, CondaEnvironment):
                     raise ValueError("Invalid environment ID.")
                 self.running_env.env_id = env_id
                 break
@@ -116,6 +115,12 @@ class DatabaseManager(Database):
             f"Input command to run in {self.running_env.env_name}:\n"
         )
         self.running_env(command) # This runs the command and logs output
+
+    def run_command(self, input_command: str) -> bool:
+        if not isinstance(self.running_env, CondaEnvironment):
+            print("Error: No running environments")
+            return
+        return self.running_env(input_command) # This runs the command and logs output
 
     def exit_dbm(self) -> None:
         """
@@ -173,7 +178,10 @@ class DatabaseManager(Database):
         except Exception as e:
             print(f"Failed to create environment: {e}")
 
-    def delete_environment_by_id(self) -> None:
+    def delete_running_env(self) -> bool:
+        if not isinstance(self.running_env, CondaEnvironment):
+            print("Error: No running environments")
+            return
         self.running_env.delete() # Delete environment from system
         return super().delete_environment_by_id(self.running_env.env_id) # Delete environment from database
 
@@ -193,8 +201,6 @@ class DatabaseManager(Database):
             5: ("Cleanup", self.remove_duplicates) 
         }
         return options
-
-
 
     @property
     def selected_env_options(self) -> Dict[int, Tuple[str, Callable[..., Any]]]:
