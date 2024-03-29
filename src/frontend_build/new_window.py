@@ -65,11 +65,6 @@ class NewWindow(QWidget):
 
         # Adding a menu bar
         self.menu_bar = MenuBar()
-        
-
-
-
-
         self.menu_bar.setStyleSheet("""
                 QMenuBar {
                     background-color: #f0f0f0;

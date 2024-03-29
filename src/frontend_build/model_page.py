@@ -16,9 +16,9 @@ class ModelPage(QFrame):
         self.css = self.styler.doc_css
         self.caller = api_caller
 
-        self.button1 = QPushButton("Button 1")
-        self.button2 = QPushButton("Button 2")
-        self.button3 = QPushButton("Button 3")
+        self.button1 = QPushButton("Model Player")
+        self.button2 = QPushButton("Download Model")
+        self.button3 = QPushButton("Famoose the Goose")
         self.textDisplay = QWebEngineView()  # Use QWebEngineView
         self.textDisplay.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.textDisplay.setZoomFactor(0.9)
@@ -51,6 +51,7 @@ class ModelPage(QFrame):
         self.setLayout(mainLayout)
 
         self.styler.register_component(self)
+        self.styler.style_me()
 
     def display_pop_up(self):
         self.pop_up_window.show()

@@ -40,9 +40,11 @@ class RepoWidget(QWidget):
         self.setLayout(layout)
 
 class MainWindow(QMainWindow):
-    def __init__(self, styler):
+    def __init__(self, styler: Styler):
         super().__init__()
         self.styler = styler
+        self.styler.register_component(self)
+        self.styler.style_me()
         self.caller = APICaller()
         self.setWindowTitle("Main Window with Menu and Details")
 
@@ -109,6 +111,12 @@ class MainWindow(QMainWindow):
             item.setSizeHint(repo_widget.sizeHint())
             self.listWidget.addItem(item)
             self.listWidget.setItemWidget(item, repo_widget)
+
+    def update_style(self) -> None:
+        """
+        Function from styler, is not applicable to main window
+        """
+        pass
 
     @Slot()
     def display_item(self):

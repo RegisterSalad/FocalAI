@@ -10,6 +10,19 @@ class Styler:
         self.dark_mode_enabled = False
         self.components = []
 
+    def style_me(self) -> None:
+        for component in self.components:
+            component.setStyleSheet(
+                """
+                QWidget {
+                    border-radius: 5px;
+                }
+                QTextEdit, QLineEdit {
+                    border-radius: 15px;
+                    background-color: #f0f0f0;
+                }"""
+                                    )
+
     def register_component(self, component):
         self.components.append(component)
         component.update_style()
@@ -41,6 +54,8 @@ class Styler:
     def update_styles(self):
         for component in self.components:
             component.update_style()
+    
+
     @property
     def doc_css(self) -> HtmlFormatter:
         # Common CSS for both dark and light modes
