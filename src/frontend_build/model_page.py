@@ -2,28 +2,31 @@ from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFr
 from PySide6.QtCore import Qt
 from PySide6.QtWebEngineWidgets import QWebEngineView  # Import QWebEngineView
 import markdown
-from model_player import ModelPlayer
 import sys
 import os
-import database
-# Calculate the path to the directory containing database.py
+
+# Working dir imports
+from model_player import ModelPlayer
+from styler import Styler
+
+# Calculate the path to the directory containing
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
+# Project imports
+from repo import Repository
 from database import DatabaseManager
 
 class ModelPage(QFrame):
-    def __init__(self, styler, api_caller):
+    def __init__(self, styler: Styler):
         super().__init__()
-        self.init_ui(styler, api_caller)
+        self.init_ui(styler)
 
-    def init_ui(self, styler, api_caller) -> None:
+    def init_ui(self, styler: Styler) -> None:
         self.styler = styler
         self.html_text: str | None = None
         self.css = self.styler.doc_css
-        self.caller = api_caller
-
         self.button1 = QPushButton("Model Player")
         self.button2 = QPushButton("Download Model")
         self.button3 = QPushButton("Famoose the Goose")
@@ -59,7 +62,11 @@ class ModelPage(QFrame):
 
     def display_pop_up(self):
         self.pop_up_window.show()
-        
+    
+    def get_repo(self, repo_url: str) -> Repository:
+        return Repository(repo_url)
+
+
     def create_model_player(self):
         print("Creating New Window")
         # Set the window to always stay on top when it's first opened
@@ -81,11 +88,11 @@ class ModelPage(QFrame):
             self.html_text = f"<style>{self.css}</style>{self.html_text}"
             self.textDisplay.setHtml(self.html_text)  # Set HTML content
             return
+        self.repository = self.get_repo(repo_url)
+        install_commands = self.repository.install_commands
 
-        readme = self.caller.get_readme_contents(repo_url=repo_url)
-
-        if readme:
-            markdown_text = readme
+        if install_commands:
+            markdown_text = install_commands
             self.html_text = markdown.markdown(markdown_text, extensions=['tables', 'fenced_code', 'codehilite', 'extra'])
 
             self.html_text = f"<style>{self.css}</style>{self.html_text}"

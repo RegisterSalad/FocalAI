@@ -4,7 +4,6 @@ import os
 import shutil
 from PySide6.QtWidgets import QMenuBar, QMessageBox
 
-# Calculate the path to the directory containing database.py
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)

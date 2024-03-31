@@ -9,8 +9,9 @@ import sys
 from model_page import ModelPage
 from styler import Styler
 from vertical_menu import VerticalMenu
+from repo import Repository
 
-# Calculate the path to the directory containing database.py
+
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
@@ -86,14 +87,15 @@ class MainWindow(QMainWindow):
 
         # Initialize menu
         self.menu = VerticalMenu(self, self.styler)
-
+    
 
     def create_menus(self):
         self.menu.create_menus()
 
+    
     def setup_detail_views(self):
-        self.modelPage = ModelPage(self.styler, self.caller)
-        self.detailView.addWidget(self.modelPage)
+        self.model_page = ModelPage(self.styler)
+        self.detailView.addWidget(self.model_page)
 
     @Slot()
     def trigger_search(self):
@@ -126,8 +128,8 @@ class MainWindow(QMainWindow):
         current_row = self.listWidget.currentRow()  # Get the currently selected item's row
         if 0 <= current_row < len(self.repos):
             repo = self.repos[current_row]
-            self.modelPage.update_content(repo_url=repo.url)
-            self.detailView.setCurrentWidget(self.modelPage)
+            self.model_page.update_content(repo_url=repo.url)
+            self.detailView.setCurrentWidget(self.model_page)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

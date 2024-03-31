@@ -23,16 +23,22 @@ class Repository:
         """
         self.caller = APICaller()
         self.repo_url: str = repo_url.rstrip('/')
+        parts = repo_url.rstrip('/').split('/')
+        repo_owner, repo_name = parts[-2], parts[-1]
         self.install_commands: list[str] = None
         self.tables: list[str] | None = None
+        self.repo_name: str = repo_name
+        self.owner: str = repo_owner
         # Fetch and parse repository features
         self.fetch_features()
+    
+
 
     def fetch_features(self) -> None:
         """
         Fetch repository features from its README and update object attributes.
         """
-        self.readme_content = self.caller.get_readme_contents()
+        self.readme_content = self.caller.get_readme_contents(self.repo_url)
         if self.readme_content:
             self.install_commands = self.parse_readme_contents()
 
@@ -58,7 +64,7 @@ class Repository:
                 if line.strip() and re.search(r'\binstall\b', line, re.IGNORECASE):
                     code.append(line.strip())
         return code
-
+    @staticmethod
     def extract_commands(install_blocks: list[str]) -> list[str]:
         """
         Extract commands from code blocks.
@@ -77,7 +83,20 @@ class Repository:
                     commands.append(line.strip())
         return commands
     
-    def parse_readme_contents(self, repo_name: str)->str:
+    @staticmethod
+    def check_for_install(code_block: str) -> bool:
+        """
+        Check if a code block contains an installation command.
+
+        Args:
+            code_block (str): The code block to check.
+
+        Returns:
+            bool: True if an installation command is found, False otherwise.
+        """
+        return bool(re.search(r'\binstall\b', code_block, re.IGNORECASE))
+
+    def parse_readme_contents(self)->str:
         """
         Parses the readme text from getReadme and returns a formatted string that contains the installation commands.
         The Install commands are stored in a text file under the name of Install_commands_[the github repo's name].txt
@@ -94,15 +113,15 @@ class Repository:
         self.tables = self.get_tables()
 
         install = [command for block in code_blocks if self.check_for_install(block) for command in self.extract_commands([block])]
-        readme_contents: str
-        readme_contents = f"#{repo_name}\n##Install commands: \n\t"
+        install_commands: str
+        install_commands = f"#{self.repo_name}\n##Install commands: \n\t"
         for command in install:
-            readme_contents += command+"\n\t"
+            install_commands += command+"\n\t"
         for tabs in tab_code:
-            readme_contents += tabs+"\n\t"
-        return readme_contents
+            install_commands += tabs+"\n\t"
+        return install_commands
 
-    def get_tables(self, readme_content: str) -> None:
+    def get_tables(self) -> None:
         """
         Finds markdown tables within the README content and stores them in a list.
 
@@ -111,7 +130,7 @@ class Repository:
         """
         # Regular expression to match simple markdown tables
         table_pattern = r'\|.*\|\n\|.*\|'
-        self.tables = re.findall(table_pattern, readme_content, re.MULTILINE)
+        self.tables = re.findall(table_pattern, self.readme_content, re.MULTILINE)
         # Flatten the list of tuples returned by findall into a list of strings
         self.tables = [''.join(table) for table in self.tables]
 
