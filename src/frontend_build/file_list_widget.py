@@ -29,15 +29,3 @@ class FileListWidget(QListWidget):
     def update_file_list(self, file_paths):
         for file_path in file_paths:
             self.add_file(file_path)  # Assuming add_file is your method for adding items
-
-
-    """
-    def sizeHint(self):
-        return QSize(100, 100)  # Set an initial size hint
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        # Adjust the size of the list widget to match its parent frame
-        self.setMinimumSize(event.size())
-        self.setMaximumSize(event.size())
-    """

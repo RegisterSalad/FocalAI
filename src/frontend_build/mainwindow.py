@@ -40,8 +40,11 @@ class RepoWidget(QWidget):
         self.setLayout(layout)
 
 class MainWindow(QMainWindow):
-    def __init__(self, styler: Styler):
+    def __init__(self, styler: Styler) -> None:
         super().__init__()
+        self.init_ui(styler=styler)
+
+    def init_ui(self, styler: Styler) -> None:    
         self.styler = styler
         self.styler.register_component(self)
         self.styler.style_me()

@@ -1,17 +1,13 @@
-from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
-                               QHBoxLayout, QLineEdit, QListWidget, QPushButton,
-                               QLabel, QStackedWidget, QFrame, QSizePolicy, QMenu, QTextBrowser, QTextEdit, QMenuBar)
-from PySide6.QtWidgets import QMenu
-
-from PySide6.QtGui import QAction, QGuiApplication, QPalette, QColor
-from PySide6.QtCore import Slot, Qt, QCoreApplication
+from PySide6.QtWidgets import QMenuBar
 import sys
-
-
 import os
 import shutil
 from PySide6.QtWidgets import QMenuBar, QMessageBox
 
+# Calculate the path to the directory containing database.py
+module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if module_dir not in sys.path:
+    sys.path.append(module_dir)
 
 class MenuBar(QMenuBar):
     def __init__(self, parent=None):
@@ -55,17 +51,3 @@ class MenuBar(QMenuBar):
             if self.file_list_widget:
                 self.file_list_widget.clear()  # Clear the list in the UI
 
-
-# class MenuBar(QMenuBar):
-#     def __init__(self, parent=None):
-#         super().__init__(parent)
-#         self.init_ui()
-
-#     def init_ui(self):
-#         terminal_menu = self.addMenu("Terminal Selection")
-#         bash_action = terminal_menu.addAction("Bash")
-#         zsh_action = terminal_menu.addAction("Zsh")
-#         powershell_action = terminal_menu.addAction("PowerShell")
-#         anaconda_action = terminal_menu.addAction("Anaconda Prompt")
-
-#         # Connect actions to slots if needed
