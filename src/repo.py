@@ -1,6 +1,6 @@
-import requests
 import re
 import argparse
+from api_caller import APICaller
 
 class Repository:
     """
@@ -9,11 +9,7 @@ class Repository:
 
     Attributes:
         repo_url (str): URL of the GitHub repository.
-        has_docker (bool): Indicates if the repository mentions Docker usage.
         has_install (bool): True if installation commands are found in the README.
-        install_types (list[str]): Detected types of installations (e.g., pip, git clone).
-        model_name list[str] | str]: Names of models found in the repository.
-        is_installed (bool): Placeholder for tracking installation status on the system.
         install_commands (list[str]): Extracted installation commands from the README.
         tables (list[str])
     """
@@ -25,14 +21,10 @@ class Repository:
         Args:
             repo_url (str): URL of the GitHub repository to analyze.
         """
+        self.caller = APICaller()
         self.repo_url: str = repo_url.rstrip('/')
-        self.has_docker: bool = False
-        self.has_install: bool = False
-        self.install_types: list[str] = []
-        self.model_name: list[str] | str = None
-        self.is_installed: bool = False  # Placeholder for future functionality
-        self.install_commands: list[str] = []
-
+        self.install_commands: list[str] = None
+        self.tables: list[str] | None = None
         # Fetch and parse repository features
         self.fetch_features()
 
@@ -40,89 +32,75 @@ class Repository:
         """
         Fetch repository features from its README and update object attributes.
         """
-        readme_content = self.get_readme_contents()
-        if readme_content:
-            commands = self.parse_commands(readme_content)
-            self.has_docker_container(readme_content)
-            self.find_install_types(readme_content)
-            self.get_tables(readme_content)
-            self.find_model_names(readme_content)
-            self.install_commands = self.filter_installation_commands(commands)
-            self.has_install = bool(self.install_commands)
+        self.readme_content = self.caller.get_readme_contents()
+        if self.readme_content:
+            self.install_commands = self.parse_readme_contents()
 
-    def get_readme_contents(self) -> str | None:
+    def extract_code_blocks(self) -> list[str]:
         """
-        Fetches the README.md content from the GitHub repository using GitHub API.
+        Extract code blocks from Markdown content.
+
+        Args:
+            markdown_content (str): The Markdown content.
 
         Returns:
-            str | None: The README.md file content if successful, None otherwise.
+            List[str]: A list of code blocks.
         """
-        api_url = f"https://api.github.com/repos/{'/'.join(self.repo_url.split('/')[-2:])}/readme"
-        response = requests.get(api_url, headers={"Accept": "application/vnd.github+json"})
-        if response.status_code == 200:
-            download_url = response.json().get('download_url')
-            if download_url:
-                readme_response = requests.get(download_url)
-                return readme_response.text if readme_response.status_code == 200 else None
-        
-        return None
+        code_blocks = re.findall(r'```[\s\S]+?```', self.readme_content)
+        return code_blocks
+    
+    def extract_tab_code(self) -> list[str]:
+        tab_code = re.findall(r'    [\s\S]+?\n', self.readme_content)
+        code = []
+        for block in tab_code:
+            lines = block.strip('    ').strip().split('\n')
+            for line in lines:
+                if line.strip() and re.search(r'\binstall\b', line, re.IGNORECASE):
+                    code.append(line.strip())
+        return code
 
-    def find_install_types(self, readme_content: str) -> None:
+    def extract_commands(install_blocks: list[str]) -> list[str]:
         """
-        Identifies the types of installations mentioned in the README.
+        Extract commands from code blocks.
 
         Args:
-            readme_content (str): The content of the README file.
-        """
-        install_keywords = ['pip install', 'git clone', 'docker pull', 'conda install']
-        self.install_types = [keyword for keyword in install_keywords if keyword in readme_content]
-
-    def find_model_names(self, readme_content: str) -> None:
-        """
-        Extracts the model name from the README content, assuming it is presented
-        as the first line in the format of a markdown heading.
-
-        Args:
-            readme_content (str): The content of the README file.
-        """
-        # Adjusted pattern to match the first markdown heading as the model name
-        model_name_pattern = r"^# (.+)"
-        match = re.search(model_name_pattern, readme_content, re.MULTILINE)
-        self.model_name = match.group(1) if match else None
-
-
-    def has_docker_container(self, readme_content: str) -> None:
-        """
-        Determines if the README mentions Docker usage, indicating a Docker container.
-
-        Args:
-            readme_content (str): The content of the README file.
-        """
-        self.has_docker = "docker" in readme_content.lower()
-
-    def parse_commands(self, readme_content: str) -> list[str]:
-        """
-        Parses and extracts command lines from the README content, preserving order.
-
-        Args:
-            readme_content (str): The content of the README file.
+            install_blocks (List[str]): List of code blocks.
 
         Returns:
-            list[str]: A list of command strings extracted from the README.
+            List[str]: List of extracted commands.
         """
-        command_lines = []
-        print(readme_content)
-        lines = readme_content.split('\n')
-        inside_code_block = False
-        for line in lines:
-            if line.startswith('```'):
-                inside_code_block = not inside_code_block
-                continue
-            if inside_code_block or line.startswith(('    ', '\t')):
-                command = line.strip()
-                if command and not command.startswith('#'):
-                    command_lines.append(command)
-        return command_lines
+        commands = []
+        for block in install_blocks:
+            lines = block.strip('```').strip().split('\n')
+            for line in lines:
+                if not line.strip().startswith('#') and line.strip() and not re.search(r'\bbash\b', line, re.IGNORECASE) and re.search(r'\binstall\b', line, re.IGNORECASE):
+                    commands.append(line.strip())
+        return commands
+    
+    def parse_readme_contents(self, repo_name: str)->str:
+        """
+        Parses the readme text from getReadme and returns a formatted string that contains the installation commands.
+        The Install commands are stored in a text file under the name of Install_commands_[the github repo's name].txt
+        Any tables found in the readme file will be put in a text file under the name of [the github repo's name]_Tables.txt
+
+        Args:
+            The string containing the Readme text and the name of the github repository
+
+        Returns:
+            A String containing the installation commands for the AI model
+        """
+        code_blocks = self.extract_code_blocks()
+        tab_code = self.extract_tab_code()
+        self.tables = self.get_tables()
+
+        install = [command for block in code_blocks if self.check_for_install(block) for command in self.extract_commands([block])]
+        readme_contents: str
+        readme_contents = f"#{repo_name}\n##Install commands: \n\t"
+        for command in install:
+            readme_contents += command+"\n\t"
+        for tabs in tab_code:
+            readme_contents += tabs+"\n\t"
+        return readme_contents
 
     def get_tables(self, readme_content: str) -> None:
         """
@@ -137,21 +115,6 @@ class Repository:
         # Flatten the list of tuples returned by findall into a list of strings
         self.tables = [''.join(table) for table in self.tables]
 
-
-    def filter_installation_commands(self, commands: list[str]) -> list[str]:
-        """
-        Filters the extracted commands to retain only those relevant for installation.
-
-        Args:
-            commands (list[str]): A list of command strings extracted from the README.
-
-        Returns:
-            list[str]: A filtered list of installation command strings.
-        """
-        installation_keywords = ['git clone', 'apt install', 'apt-get install', 'pacman -S', 
-                                 'brew install', 'choco install', 'scoop install', 'pip install']
-        return list(set(filter(lambda cmd: any(kw in cmd for kw in installation_keywords), commands)))
-
     def __str__(self) -> str:
         """
         Provides a string representation of the Repository object, summarizing its
@@ -162,20 +125,8 @@ class Repository:
         """
         attributes = [
         f"Repository URL: {self.repo_url}",
-        f"Has Docker: {self.has_docker}",
-        f"Has Installation Commands: {self.has_install}",
-        f"Installation Types: {', '.join(self.install_types) if self.install_types else 'None'}",
-        f"Model Name(s): {self.model_name if self.model_name else 'Not specified'}",
-        f"Is Installed: {self.is_installed}",
         "Installation Commands:\n" + ("\n".join(f"\t{cmd}" for cmd in self.install_commands) if self.install_commands else "\tNone"),
         "Markdown Tables:\n" + ("\n\n".join(self.tables) if self.tables else "\tNone")
         ]
         return "\n".join(attributes)
-    
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Fetch Ubuntu installation commands from a GitHub repository.")
-    parser.add_argument("repo_url", type=str, help="URL to the GitHub repository")
-    args = parser.parse_args()
-    repo_url = args.repo_url
-    repo = Repository(repo_url=repo_url)
-    print(repo)
+
