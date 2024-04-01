@@ -4,6 +4,12 @@
         "model_page.py",
         "styler.py",
         "vertical_menu.py",
-        "pop_up.py"
+        "pop_up.py",
+        "new_window_manager.py",
+        "new_window.py",
+        "terminal_widget.py",
+        "window_menu_widget.py",
+        "file_drop_widget.py",
+        "file_list_widget.py"
     ]
 }
