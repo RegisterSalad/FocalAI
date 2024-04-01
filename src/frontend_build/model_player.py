@@ -161,6 +161,8 @@ class ModelPlayer(QWidget):
 
         bottom_layout.addWidget(bottom_widget)
         bottom_frame.setLayout(bottom_layout)
+        bottom_widget = QLabel("No Output to View")
+        bottom_widget = QLabel("This is the bottom frame")
 
         # Set the size policy for the bottom frame to expand
         bottom_frame.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)

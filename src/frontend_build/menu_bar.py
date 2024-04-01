@@ -3,10 +3,32 @@ import sys
 import os
 import shutil
 from PySide6.QtWidgets import QMenuBar, QMessageBox
+import textwrap
+import os
+import subprocess
+from pathlib import Path
+import pypandoc
+#from pypandoc.pandoc_download import download_pandoc
+import pdflatex
 
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
+
+class Logger:
+    def convert_md_to_pdf(self,input_file, output_file):
+
+        """
+        Attempts to convert a plain text file to PDF by treating it as Markdown.
+        """
+        try:
+            # Specify 'markdown' as the input format
+            output = pypandoc.convert_file(input_file, 'pdf', format='markdown', outputfile=output_file)
+            assert output == ""  # Output should be empty for PDF conversions
+            print(f"Conversion successful: {input_file} to {output_file}")
+
+        except RuntimeError as e:
+            print(f"Error during conversion: {e}")
 
 class MenuBar(QMenuBar):
     def __init__(self, parent=None):
@@ -49,4 +71,15 @@ class MenuBar(QMenuBar):
             # Update the FileListWidget if available
             if self.file_list_widget:
                 self.file_list_widget.clear()  # Clear the list in the UI
+                
+    def clip_my_output_placeholder(self):
+
+        input_txt = "run_command_log_test.txt"
+
+        output_pdf = "command_log.pdf"
+
+
+        logger = Logger()
+        logger.convert_md_to_pdf(input_txt , output_pdf )
+
 
