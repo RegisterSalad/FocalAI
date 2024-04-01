@@ -7,6 +7,7 @@ import sys
 
 #Local Imports
 from model_page import ModelPage
+from install_page import InstallPage
 from styler import Styler
 from vertical_menu import VerticalMenu
 from repo import Repository
@@ -45,7 +46,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.init_ui(styler=styler)
 
-    def init_ui(self, styler: Styler) -> None:    
+    def init_ui(self, styler: Styler) -> None:
         self.styler = styler
         self.styler.register_component(self)
         self.styler.style_me()
@@ -58,25 +59,25 @@ class MainWindow(QMainWindow):
         layout = QHBoxLayout()
 
         # List and search
-        self.listWidget = QListWidget()
-        self.searchBar = QLineEdit()
-        self.searchBar.setPlaceholderText("Search...")
+        self.list_widget = QListWidget()
+        self.search_bar = QLineEdit()
+        self.search_bar.setPlaceholderText("Search...")
 
-        self.searchBar.returnPressed.connect(self.trigger_search)  # Connect to returnPressed signal
+        self.search_bar.returnPressed.connect(self.trigger_search)  # Connect to returnPressed signal
 
         # Detail view
-        self.detailView = QStackedWidget()
+        self.detail_view = QStackedWidget()
 
         self.setup_detail_views()
 
         # Layout for list and search bar
-        listLayout = QVBoxLayout()
-        listLayout.addWidget(self.searchBar)
-        listLayout.addWidget(self.listWidget)
-        layout.addLayout(listLayout)
-        layout.addWidget(self.detailView)
+        list_layout = QVBoxLayout()
+        list_layout.addWidget(self.search_bar)
+        list_layout.addWidget(self.list_widget)
+        layout.addLayout(list_layout)
+        layout.addWidget(self.detail_view)
 
-        self.listWidget.itemClicked.connect(self.display_item)
+        self.list_widget.itemClicked.connect(self.display_item)
 
         self.repos = []  # List to store repo objects
         self.centralWidget.setLayout(layout)
@@ -87,25 +88,24 @@ class MainWindow(QMainWindow):
 
         # Initialize menu
         self.menu = VerticalMenu(self, self.styler)
-    
+
 
     def create_menus(self):
         self.menu.create_menus()
 
-    
     def setup_detail_views(self):
         self.model_page = ModelPage(self.styler)
-        self.detailView.addWidget(self.model_page)
+        self.detail_view.addWidget(self.model_page)
 
     @Slot()
     def trigger_search(self):
         # Get text from searchBar and initiate search
-        searchText = self.searchBar.text()
+        searchText = self.search_bar.text()
         if searchText:  # Only search if there's text
             self.search_items(searchText)
 
     def search_items(self, text):
-        self.listWidget.clear()  # Clear current items
+        self.list_widget.clear()  # Clear current items
         self.repos.clear()  # Clear the repository list
         found_repos = self.caller.get_repo_list(text.lower())
 
@@ -114,8 +114,8 @@ class MainWindow(QMainWindow):
             repo_widget = RepoWidget(repo)
             item = QListWidgetItem()
             item.setSizeHint(repo_widget.sizeHint())
-            self.listWidget.addItem(item)
-            self.listWidget.setItemWidget(item, repo_widget)
+            self.list_widget.addItem(item)
+            self.list_widget.setItemWidget(item, repo_widget)
 
     def update_style(self) -> None:
         """
@@ -125,11 +125,14 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def display_item(self):
-        current_row = self.listWidget.currentRow()  # Get the currently selected item's row
+        current_row = self.list_widget.currentRow()  # Get the currently selected item's row
         if 0 <= current_row < len(self.repos):
             repo = self.repos[current_row]
+            if self.model_page.install_page:
+                self.model_page.install_page.change_to_main_model_page() # Ensure that main model page is displayed
+                
             self.model_page.update_content(repo_url=repo.url)
-            self.detailView.setCurrentWidget(self.model_page)
+            self.detail_view.setCurrentWidget(self.model_page)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

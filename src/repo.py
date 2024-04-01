@@ -31,8 +31,6 @@ class Repository:
         self.owner: str = repo_owner
         # Fetch and parse repository features
         self.fetch_features()
-    
-
 
     def fetch_features(self) -> None:
         """
@@ -54,7 +52,7 @@ class Repository:
         """
         code_blocks = re.findall(r'```[\s\S]+?```', self.readme_content)
         return code_blocks
-    
+
     def extract_tab_code(self) -> list[str]:
         tab_code = re.findall(r'    [\s\S]+?\n', self.readme_content)
         code = []
@@ -64,6 +62,7 @@ class Repository:
                 if line.strip() and re.search(r'\binstall\b', line, re.IGNORECASE):
                     code.append(line.strip())
         return code
+
     @staticmethod
     def extract_commands(install_blocks: list[str]) -> list[str]:
         """
@@ -82,7 +81,7 @@ class Repository:
                 if not line.strip().startswith('#') and line.strip() and not re.search(r'\bbash\b', line, re.IGNORECASE) and re.search(r'\binstall\b', line, re.IGNORECASE):
                     commands.append(line.strip())
         return commands
-    
+
     @staticmethod
     def check_for_install(code_block: str) -> bool:
         """
@@ -113,12 +112,12 @@ class Repository:
         self.tables = self.get_tables()
 
         install = [command for block in code_blocks if self.check_for_install(block) for command in self.extract_commands([block])]
-        install_commands: str
-        install_commands = f"#{self.repo_name}\n##Install commands: \n\t"
+        install_commands: list[str] = [] 
         for command in install:
-            install_commands += command+"\n\t"
-        for tabs in tab_code:
-            install_commands += tabs+"\n\t"
+            install_commands.append(command)
+        for command in tab_code:
+            install_commands.append(command)
+
         return install_commands
 
     def get_tables(self) -> None:

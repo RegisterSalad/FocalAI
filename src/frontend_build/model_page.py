@@ -1,13 +1,15 @@
-from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame, QSizePolicy
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame, QSizePolicy, QWidget, QListWidget, QListWidgetItem, QToolTip
 from PySide6.QtCore import Qt
 from PySide6.QtWebEngineWidgets import QWebEngineView  # Import QWebEngineView
 import markdown
 import sys
 import os
+from PySide6.QtGui import QIcon
 
 # Working dir imports
 from model_player import ModelPlayer
 from styler import Styler
+from install_page import InstallPage
 
 # Calculate the path to the directory containing
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -21,25 +23,28 @@ from database import DatabaseManager
 class ModelPage(QFrame):
     def __init__(self, styler: Styler):
         super().__init__()
-        self.init_ui(styler)
-
-    def init_ui(self, styler: Styler) -> None:
+        self.install_page: InstallPage | None = None
         self.styler = styler
+        self.init_ui()
+
+    def init_ui(self) -> None:
         self.html_text: str | None = None
         self.css = self.styler.doc_css
         self.button1 = QPushButton("Model Player")
         self.button2 = QPushButton("Download Model")
         self.button3 = QPushButton("Famoose the Goose")
-        self.textDisplay = QWebEngineView()  # Use QWebEngineView
-        self.textDisplay.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.textDisplay.setZoomFactor(0.9)
+        self.text_display = QWebEngineView()  # Use QWebEngineView
+        self.text_display.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.text_display.setZoomFactor(0.9)
         self.thumbnail = QLabel()
         self.thumbnail.setFixedSize(100, 100)
-
+        
         mainLayout = QVBoxLayout()
         
         self.model_player = ModelPlayer()
         self.button1.clicked.connect(lambda: self.create_model_player())
+        
+        self.button2.clicked.connect(lambda: self.change_to_install_page())
         
         buttonsLayout = QVBoxLayout()
         buttonsLayout.setAlignment(Qt.AlignRight | Qt.AlignTop)
@@ -53,12 +58,18 @@ class ModelPage(QFrame):
 
         mainLayout.addWidget(self.thumbnail)
         mainLayout.addLayout(buttonsWrapperLayout)
-        mainLayout.addWidget(self.textDisplay)
+        mainLayout.addWidget(self.text_display)
 
         self.setLayout(mainLayout)
 
         self.styler.register_component(self)
         self.styler.style_me()
+
+        # Initially hide buttons
+        self.button1.hide()
+        self.button2.hide()
+        self.button3.hide()
+        
 
     def display_pop_up(self):
         self.pop_up_window.show()
@@ -66,7 +77,6 @@ class ModelPage(QFrame):
     def get_repo(self, repo_url: str) -> Repository:
         return Repository(repo_url)
 
-
     def create_model_player(self):
         print("Creating New Window")
         # Set the window to always stay on top when it's first opened
@@ -79,116 +89,61 @@ class ModelPage(QFrame):
         # You need to call show() again after changing window flags
         self.model_player.show()
     
+    def hide_all(self) -> None:
+        layout = self.layout()  # Get the layout of the frame
+        self.button1.hide()
+        self.button2.hide()
+        self.button3.hide()
+        if layout is not None:
+            for i in range(layout.count()):  
+                item = layout.itemAt(i)
+                widget = item.widget()
+                if widget is not None and widget != self.install_page:  # Check if the widget is not self.install_page
+                    widget.setDisabled(True)
+                    widget.hide()  # Hide the widget
 
-    def update_content(self, repo_url: str | None)-> None:
+    def show_all(self) -> None:
+        layout = self.layout()  # Get the layout of the frame
+        if layout is not None:
+            for i in range(layout.count()):  
+                item = layout.itemAt(i)
+                widget = item.widget()
+                if widget is not None:  # Check if the item is a widget
+                    widget.setEnabled(True)
+                    widget.show()  # Show the widget
+
+    def change_to_install_page(self):
+        self.hide_all()
+        self.install_page = InstallPage(self.styler, self, self.repository.install_commands)
+        self.layout().addWidget(self.install_page)
+        self.install_page.show_all()
+
+    def convert_to_markdown(self, name: str) -> str:
+        content = getattr(self.repository, name, None)
+        
+        if content:
+            markdown_text = content
+            self.html_text = markdown.markdown(markdown_text, extensions=['tables', 'fenced_code', 'codehilite', 'extra'])
+
+            self.html_text = f"<style>{self.css}</style>{self.html_text}"
+            
+            return self.html_text
+
+    def update_content(self, repo_url: str | None) -> None:
+        # Show buttons when content is updated
         if repo_url is None:
             if self.html_text is None:
                 self.html_text = markdown.markdown("  ", extensions=['tables', 'fenced_code', 'codehilite', 'extra'])
             
             self.html_text = f"<style>{self.css}</style>{self.html_text}"
-            self.textDisplay.setHtml(self.html_text)  # Set HTML content
+            self.text_display.setHtml(self.html_text)  # Set HTML content
             return
+            
+        self.button1.show()
+        self.button2.show()
+        self.button3.show()    
         self.repository = self.get_repo(repo_url)
-        install_commands = self.repository.install_commands
-
-        if install_commands:
-            markdown_text = install_commands
-            self.html_text = markdown.markdown(markdown_text, extensions=['tables', 'fenced_code', 'codehilite', 'extra'])
-
-            self.html_text = f"<style>{self.css}</style>{self.html_text}"
-            
-            self.textDisplay.setHtml(self.html_text)  # Set HTML content
-
-    def update_style(self):
-        if self.styler.dark_mode_enabled:
-            self.setStyleSheet("background-color: #333333; color: white;")
-            # Update styles for QWebEngineView if necessary
-            self.thumbnail.setStyleSheet("background-color: gray;")
-        else:
-            self.setStyleSheet("background-color: lightgray; color: black;")
-            # Update styles for QWebEngineView if necessary
-            self.thumbnail.setStyleSheet("background-color: lightgray;")
-        self.css = self.styler.doc_css
-        self.update_content(repo_url=None)
-
-class DownloadPlayer(QFrame):
-    def __init__(self, styler, api_caller):
-        super().__init__()
-        self.init_ui(styler, api_caller)
-
-    def init_ui(self, styler, api_caller) -> None:
-        self.styler = styler
-        self.html_text: str | None = None
-        self.css = self.styler.doc_css
-        self.caller = api_caller
-
-        self.button1 = QPushButton("Model Player")
-        self.button2 = QPushButton("Download Model")
-        self.button3 = QPushButton("Famoose the Goose")
-        self.textDisplay = QWebEngineView()  # Use QWebEngineView
-        self.textDisplay.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.textDisplay.setZoomFactor(0.9)
-        self.thumbnail = QLabel()
-        self.thumbnail.setFixedSize(100, 100)
-
-        mainLayout = QVBoxLayout()
-        
-        self.model_player = ModelPlayer()
-        self.button1.clicked.connect(lambda: self.create_model_player())
-        
-        buttonsLayout = QVBoxLayout()
-        buttonsLayout.setAlignment(Qt.AlignRight | Qt.AlignTop)
-        buttonsLayout.addWidget(self.button1)
-        buttonsLayout.addWidget(self.button2)
-        buttonsLayout.addWidget(self.button3)
-
-        buttonsWrapperLayout = QHBoxLayout()
-        buttonsWrapperLayout.addLayout(buttonsLayout)
-        buttonsWrapperLayout.addStretch()
-
-        mainLayout.addWidget(self.thumbnail)
-        mainLayout.addLayout(buttonsWrapperLayout)
-        mainLayout.addWidget(self.textDisplay)
-
-        self.setLayout(mainLayout)
-
-        self.styler.register_component(self)
-        self.styler.style_me()
-
-    def display_pop_up(self):
-        self.pop_up_window.show()
-        
-    def create_model_player(self):
-        print("Creating New Window")
-        # Set the window to always stay on top when it's first opened
-        self.model_player.setWindowFlags(self.model_player.windowFlags() | Qt.WindowStaysOnTopHint)
-        self.model_player.show()
-        self.model_player.raise_()
-        self.model_player.activateWindow()
-        # Remove the always-on-top flag after it's displayed and focused
-        self.model_player.setWindowFlags(self.model_player.windowFlags() & ~Qt.WindowStaysOnTopHint)
-        # You need to call show() again after changing window flags
-        self.model_player.show()
-    
-
-    def update_content(self, repo_url: str | None)-> None:
-        if repo_url is None:
-            if self.html_text is None:
-                self.html_text = markdown.markdown("  ", extensions=['tables', 'fenced_code', 'codehilite', 'extra'])
-            
-            self.html_text = f"<style>{self.css}</style>{self.html_text}"
-            self.textDisplay.setHtml(self.html_text)  # Set HTML content
-            return
-
-        readme = self.caller.get_readme_contents(repo_url=repo_url)
-
-        if readme:
-            markdown_text = readme
-            self.html_text = markdown.markdown(markdown_text, extensions=['tables', 'fenced_code', 'codehilite', 'extra'])
-
-            self.html_text = f"<style>{self.css}</style>{self.html_text}"
-            
-            self.textDisplay.setHtml(self.html_text)  # Set HTML content
+        self.text_display.setHtml(self.convert_to_markdown('readme_content'))  # Set HTML content
 
     def update_style(self):
         if self.styler.dark_mode_enabled:
