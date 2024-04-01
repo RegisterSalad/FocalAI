@@ -33,15 +33,15 @@ class Logger:
 class MenuBar(QMenuBar):
     def __init__(self, parent=None):
         super().__init__(parent)
-        #self.file_list_widget = parent.file_list_widget  # Assuming the parent passes a reference to the FileListWidget
+        self.file_list_widget = parent.file_list_widget  # Assuming the parent passes a reference to the FileListWidget
         self.init_ui()
 
     def init_ui(self):
         # Terminal selection menu
         terminal_menu = self.addMenu("Terminal Selection")
         terminal_menu.addAction("Bash")
-        terminal_menu.addAction("Zsh")
-        terminal_menu.addAction("PowerShell")
+        # terminal_menu.addAction("Zsh")
+        # terminal_menu.addAction("PowerShell")
         terminal_menu.addAction("Anaconda Prompt")
 
         # File list widget options menu
@@ -66,12 +66,12 @@ class MenuBar(QMenuBar):
                         shutil.rmtree(file_path)
                 except Exception as e:
                     QMessageBox.critical(self, 'Error', f'Failed to delete {filename}: {e}')
-                    return
+                    return  # Exit if there's an error
 
             # Update the FileListWidget if available
             if self.file_list_widget:
-                self.file_list_widget.clear()  # Clear the list in the UI
-                
+                self.file_list_widget.refresh_list()  # Refresh the list in the UI to reflect the cleared folder
+
     def clip_my_output_placeholder(self):
 
         input_txt = "run_command_log_test.txt"

@@ -14,12 +14,17 @@ class FileListWidget(QListWidget):
             os.makedirs(folder_path)
 
     def add_file(self, file_path):
+        basename = os.path.basename(file_path)
+        dest_path = os.path.join(self.folder_path, basename)
+        if os.path.exists(dest_path):
+            QMessageBox.warning(self, "File Exists", f"A file named {basename} already exists.")
+            return  # Exit the method to avoid overwriting the file and causing an error.
         try:
-            dest_path = os.path.join(self.folder_path, os.path.basename(file_path))
             shutil.copy(file_path, dest_path)
-            self.addItem(dest_path)
+            self.addItem(basename)  # Changed to add just the file name, not the full path.
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Could not add file: {e}")
+
 
     def populate_initial_list(self):
         for file_name in os.listdir(self.folder_path):
@@ -29,3 +34,19 @@ class FileListWidget(QListWidget):
     def update_file_list(self, file_paths):
         for file_path in file_paths:
             self.add_file(file_path)  # Assuming add_file is your method for adding items
+
+    def refresh_list(self):
+        self.clear()  # Clear the current list
+        self.populate_initial_list()  # Repopulate list based on the current folder content
+
+
+    """
+    def sizeHint(self):
+        return QSize(100, 100)  # Set an initial size hint
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        # Adjust the size of the list widget to match its parent frame
+        self.setMinimumSize(event.size())
+        self.setMaximumSize(event.size())
+    """

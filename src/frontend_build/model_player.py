@@ -12,11 +12,13 @@ module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
-class ModelPlayer(QWidget):
+class ModelPLayer(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Model Player")
         self.init_styles()  # Initialize styles for the window
+        self.file_list_widget = FileListWidget()
+        self.file_drop_widget = FileDropWidget()
         self.init_ui()  # Setup the UI components
 
     def init_styles(self):
@@ -60,10 +62,8 @@ class ModelPlayer(QWidget):
         layout = QVBoxLayout()
         layout.setContentsMargins(15, 15, 15, 15)  # Add margins for padding around the layout
         layout.setSpacing(10)  # Add some spacing between widgets
-
-
         # Adding a menu bar
-        self.menu_bar = MenuBar()
+        self.menu_bar = MenuBar(self)
         self.menu_bar.setStyleSheet("""
                 QMenuBar {
                     background-color: #f0f0f0;
@@ -116,21 +116,17 @@ class ModelPlayer(QWidget):
         top_layout = QHBoxLayout()
         top_layout.setSpacing(10)  # Add spacing between left and right sections
 
-        # File drop and list widget
-        drop_widget = FileDropWidget()
-        file_list_widget = FileListWidget()  # Assuming this is a custom widget similar to QListWidget
+        # Ensure this connection is correct, using file_drop_widget and file_list_widget
+        self.file_drop_widget.filesDropped.connect(self.file_list_widget.update_file_list)
 
-        drop_widget.filesDropped.connect(file_list_widget.update_file_list)
-
-        # Set the size policy for the top left widgets
-        left_top_frame.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)
-        drop_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        drop_widget.setMaximumHeight(200)  # Set a maximum height
-        file_list_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        # Set the size policy and layout for the drop widget and list widget
+        self.file_drop_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        self.file_drop_widget.setMaximumHeight(200)
+        self.file_list_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
 
         left_top_layout = QVBoxLayout(left_top_frame)
-        left_top_layout.addWidget(drop_widget)
-        left_top_layout.addWidget(file_list_widget)
+        left_top_layout.addWidget(self.file_drop_widget)
+        left_top_layout.addWidget(self.file_list_widget)
 
         # Assuming self.list_widget is your QListWidget instance
         #file_list_widget.clear()
@@ -161,12 +157,8 @@ class ModelPlayer(QWidget):
 
         bottom_layout.addWidget(bottom_widget)
         bottom_frame.setLayout(bottom_layout)
-        bottom_widget = QLabel("No Output to View")
-        bottom_widget = QLabel("This is the bottom frame")
 
         # Set the size policy for the bottom frame to expand
         bottom_frame.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
 
         main_layout.addWidget(bottom_frame)
-
-
