@@ -12,7 +12,7 @@ module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
-class ModelPLayer(QWidget):
+class ModelPlayer(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Model Player")
