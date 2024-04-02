@@ -1,14 +1,33 @@
-from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
-                               QHBoxLayout, QLineEdit, QListWidget, QPushButton,
-                               QLabel, QStackedWidget, QFrame, QSizePolicy, QMenu, QTextBrowser, QTextEdit)
-from PySide6.QtGui import QAction, QGuiApplication, QPalette, QColor
-from PySide6.QtCore import Slot, Qt, QCoreApplication
+from PySide6.QtWidgets import (QApplication)
+from PySide6.QtGui import QPalette, QColor
+from PySide6.QtCore import Qt
 from pygments.formatters import HtmlFormatter
+import os
+import sys
+
+module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if module_dir not in sys.path:
+    sys.path.append(module_dir)
 
 class Styler:
     def __init__(self):
         self.dark_mode_enabled = False
         self.components = []
+
+    def style_me(self) -> None:
+        pass
+
+        # for component in self.components:
+        #     component.setStyleSheet(
+        #         """
+        #         QWidget {
+        #             border-radius: 5px;
+        #         }
+        #         QTextEdit, QLineEdit {
+        #             border-radius: 15px;
+        #             background-color: #f0f0f0;
+        #         }"""
+        #                             )
 
     def register_component(self, component):
         self.components.append(component)
@@ -41,6 +60,8 @@ class Styler:
     def update_styles(self):
         for component in self.components:
             component.update_style()
+    
+
     @property
     def doc_css(self) -> HtmlFormatter:
         # Common CSS for both dark and light modes

@@ -3,7 +3,7 @@ import os
 
 general_logging_dir: str = "../logging"
 
-def run_subprocess_with_logging(args: str, error_message: str, logging_directory: str, log_file_name: str) -> None:
+def run_subprocess_with_logging(args: str, error_message: str, logging_directory: str, log_file_name: str) -> bool:
     """
     Runs a subprocess with the given arguments and logs the output and any errors encountered.
 
@@ -20,9 +20,11 @@ def run_subprocess_with_logging(args: str, error_message: str, logging_directory
             subprocess.run(command, check=True, stdout=log_file, stderr=subprocess.STDOUT,  shell=True)
     except subprocess.CalledProcessError as e:
         print(f"{error_message}: {e}")
+        return False
     except OSError:
         print("OS error occurred, possibly due to a missing executable or insufficient permissions.")
-
+        return False
+    return True
 
 def check_if_exists(env_name: str) -> bool:
     args = ['conda', 'env', 'list']
@@ -63,7 +65,7 @@ class CondaEnvironment:
         self.logging_directory = logging_directory
         self.create()
 
-    def __call__(self, command: str) -> None:
+    def __call__(self, command: str) -> bool:
         """
         Allows the CondaEnvironment instance to be called directly to run a command within the environment.
 
@@ -74,7 +76,7 @@ class CondaEnvironment:
         args = ['conda', 'run', '-n', self.env_name, '--no-capture-output', 'bash', '-c', '"'+command+'"']
         error_message = f"Error occurred while running command in environment '{self.env_name}'"
         log_file_name = "run_command_log.log"
-        run_subprocess_with_logging(args, error_message, self.logging_directory, log_file_name)
+        return run_subprocess_with_logging(args, error_message, self.logging_directory, log_file_name)
     
     def __str__(self) -> str:
         """
@@ -91,7 +93,7 @@ class CondaEnvironment:
 
         return "\n".join(str_attributes)
     
-    def create(self) -> None:
+    def create(self) -> bool:
         """
         Creates the Anaconda environment if it does not exist already.
         """
@@ -100,26 +102,25 @@ class CondaEnvironment:
 
         args = ['conda', 'create', '-n', self.env_name, '-y', f'python={self.python_version}']
         error_message = f"Error occurred while creating environment '{self.env_name}'"
-        run_subprocess_with_logging(args, error_message, self.logging_directory, "create_log.log")
+        return run_subprocess_with_logging(args, error_message, self.logging_directory, "create_log.log")
 
-    def delete(self) -> None:
+    def delete(self) -> bool:
         """
         Deletes the Anaconda environment.
         """
-        args = ['conda', 'env', 'remove', '-n', self.env_name, '-y']
+        args = ['conda', 'env', 'remove', '-n', self.env_name, '-y', '&&', 'conda', 'clean', '--all']
         error_message = f"Error occurred while deleting environment '{self.env_name}'"
-        run_subprocess_with_logging(args, error_message, self.logging_directory, "delete_log.log")
-        self.is_deleted = True
+        return run_subprocess_with_logging(args, error_message, self.logging_directory, "delete_log.log")
 
-    def conda_init(self) -> None:
+    def conda_init(self) -> bool:
         """
         Initializes Anaconda
         """
         args = ['conda', 'init']
         error_message = f"Error occurred while running 'conda init'"
-        run_subprocess_with_logging(args, error_message, self.logging_directory, "init_log.log")
+        return run_subprocess_with_logging(args, error_message, self.logging_directory, "init_log.log")
 
-    def activate_by_name(self, env_name: str) -> None:
+    def activate_by_name(self, env_name: str) -> bool:
         """
         Activates the Anaconda environment using a bash script.
 
@@ -130,9 +131,9 @@ class CondaEnvironment:
         activate_script_path = self.bash_scipt_dir + "/activate_conda_env.sh"
         args = ['bash', activate_script_path, env_name]
         error_message = f"Error occurred while activating environment '{env_name}'"
-        run_subprocess_with_logging(args, error_message, self.logging_directory, "activate_log.log")
+        return run_subprocess_with_logging(args, error_message, self.logging_directory, "activate_log.log")
 
-    def install_all_requirements(self) -> None:
+    def install_all_requirements(self) -> bool:
         """
         Installs all pip requirements through pip within the conda environment using 'conda run',
         leveraging the dedicated subprocess function for execution and logging.
@@ -143,7 +144,7 @@ class CondaEnvironment:
         error_message = f"Error occurred while installing pip requirements from '{self.pip_list_directory}'"
 
         # Use the dedicated subprocess function for execution and logging
-        run_subprocess_with_logging(args, error_message, self.logging_directory, "pip_log.log")
+        return run_subprocess_with_logging(args, error_message, self.logging_directory, "pip_log.log")
 
     def test_environment(self) -> bool:
         """
@@ -168,7 +169,7 @@ class CondaEnvironment:
             print(f"An error occurred during the environment test: {e}")
             return False
 
-    def find_installed_environments(self, logging_directory="../logging") -> list[str]:
+    def find_installed_environments(self, logging_directory="../logging") -> list[str] | None:
         """
         Finds all of the installed Anaconda environments and returns a list of their names using the dedicated
         subprocess function with logging.
@@ -180,7 +181,9 @@ class CondaEnvironment:
         args = ['conda', 'env', 'list']
 
         # Execute the command and log its output
-        run_subprocess_with_logging(args, "Error finding installed environments", logging_directory, log_file_name)
+        if not run_subprocess_with_logging(args, "Error finding installed environments", logging_directory, log_file_name):
+            print("Returning None")
+            return None
 
         # Path to the log file where the command output is saved
         log_file_path = os.path.join(logging_directory, log_file_name)

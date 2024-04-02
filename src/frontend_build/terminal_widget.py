@@ -1,8 +1,13 @@
 import re
 import sys
-from PySide6.QtWidgets import QApplication, QVBoxLayout, QWidget, QTextEdit, QLineEdit
-from PySide6.QtCore import Qt, QProcess, QByteArray
+import os
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextEdit, QLineEdit
+from PySide6.QtCore import QProcess
 from PySide6.QtGui import QTextCursor
+
+module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if module_dir not in sys.path:
+    sys.path.append(module_dir)
 
 class TerminalWidget(QWidget):
     def __init__(self, parent=None):
@@ -18,7 +23,7 @@ class TerminalWidget(QWidget):
                 border-radius: 15px;
                 background-color: #f0f0f0;
             }
-        """)
+            """)
 
         layout = QVBoxLayout()
         layout.setContentsMargins(5, 5, 5, 5)  # Add some padding to see the rounded corners
@@ -77,52 +82,4 @@ class TerminalWidget(QWidget):
             self.process.kill()  # Forcefully kill the process if it didn't terminate
         event.accept()  # Accept the close event
 
-
-
-
-# class TerminalWidget(QWidget):
-#     def __init__(self, parent=None):
-#         super().__init__(parent)
-#         self.init_ui()
-
-#     def init_ui(self):
-#         layout = QVBoxLayout()
-
-#         self.output_textedit = QTextEdit()
-#         self.output_textedit.setReadOnly(True)
-#         layout.addWidget(self.output_textedit)
-
-#         self.input_lineedit = QLineEdit()
-#         self.input_lineedit.returnPressed.connect(self.execute_command)
-#         layout.addWidget(self.input_lineedit)
-
-#         self.setLayout(layout)
-
-#         # Start the shell process
-#         self.process = QProcess()
-#         self.process.readyReadStandardOutput.connect(self.read_output)
-#         self.start_shell()
-
-#     def start_shell(self):
-#         # # Start a Bash shell process
-#         # self.process.start("bash")
-    
-#     def execute_command(self):
-#         # Get the command from the input line
-#         command = self.input_lineedit.text()
-
-#         # Send the command to the shell process
-#         self.process.write(f"{command}\n".encode())
-#         self.process.waitForBytesWritten()
-
-#         # Clear the input line
-#         self.input_lineedit.clear()
-
-#     def read_output(self):
-#         # Read the output from the shell process
-#         output = self.process.readAllStandardOutput().data().decode()
-
-#         # Append the output to the output text area
-#         self.output_textedit.moveCursor(QTextCursor.End)
-#         self.output_textedit.insertPlainText(output)
 

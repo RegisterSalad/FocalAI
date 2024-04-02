@@ -1,30 +1,47 @@
-from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
-                               QHBoxLayout, QLineEdit, QListWidget, QPushButton,
-                               QLabel, QStackedWidget, QFrame, QSizePolicy, QMenu, QTextBrowser, QTextEdit, QMenuBar)
-from PySide6.QtWidgets import QMenu
-
-from PySide6.QtGui import QAction, QGuiApplication, QPalette, QColor
-from PySide6.QtCore import Slot, Qt, QCoreApplication
+from PySide6.QtWidgets import QMenuBar
 import sys
-
-
 import os
 import shutil
 from PySide6.QtWidgets import QMenuBar, QMessageBox
+import textwrap
+import os
+import subprocess
+from pathlib import Path
+import pypandoc
+#from pypandoc.pandoc_download import download_pandoc
+import pdflatex
 
+module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if module_dir not in sys.path:
+    sys.path.append(module_dir)
+
+class Logger:
+    def convert_md_to_pdf(self,input_file, output_file):
+
+        """
+        Attempts to convert a plain text file to PDF by treating it as Markdown.
+        """
+        try:
+            # Specify 'markdown' as the input format
+            output = pypandoc.convert_file(input_file, 'pdf', format='markdown', outputfile=output_file)
+            assert output == ""  # Output should be empty for PDF conversions
+            print(f"Conversion successful: {input_file} to {output_file}")
+
+        except RuntimeError as e:
+            print(f"Error during conversion: {e}")
 
 class MenuBar(QMenuBar):
     def __init__(self, parent=None):
         super().__init__(parent)
-        #self.file_list_widget = parent.file_list_widget  # Assuming the parent passes a reference to the FileListWidget
+        self.file_list_widget = parent.file_list_widget  # Assuming the parent passes a reference to the FileListWidget
         self.init_ui()
 
     def init_ui(self):
         # Terminal selection menu
         terminal_menu = self.addMenu("Terminal Selection")
         terminal_menu.addAction("Bash")
-        terminal_menu.addAction("Zsh")
-        terminal_menu.addAction("PowerShell")
+        # terminal_menu.addAction("Zsh")
+        # terminal_menu.addAction("PowerShell")
         terminal_menu.addAction("Anaconda Prompt")
 
         # File list widget options menu
@@ -49,23 +66,20 @@ class MenuBar(QMenuBar):
                         shutil.rmtree(file_path)
                 except Exception as e:
                     QMessageBox.critical(self, 'Error', f'Failed to delete {filename}: {e}')
-                    return
+                    return  # Exit if there's an error
 
             # Update the FileListWidget if available
             if self.file_list_widget:
-                self.file_list_widget.clear()  # Clear the list in the UI
+                self.file_list_widget.refresh_list()  # Refresh the list in the UI to reflect the cleared folder
+
+    def clip_my_output_placeholder(self):
+
+        input_txt = "run_command_log_test.txt"
+
+        output_pdf = "command_log.pdf"
 
 
-# class MenuBar(QMenuBar):
-#     def __init__(self, parent=None):
-#         super().__init__(parent)
-#         self.init_ui()
+        logger = Logger()
+        logger.convert_md_to_pdf(input_txt , output_pdf )
 
-#     def init_ui(self):
-#         terminal_menu = self.addMenu("Terminal Selection")
-#         bash_action = terminal_menu.addAction("Bash")
-#         zsh_action = terminal_menu.addAction("Zsh")
-#         powershell_action = terminal_menu.addAction("PowerShell")
-#         anaconda_action = terminal_menu.addAction("Anaconda Prompt")
 
-#         # Connect actions to slots if needed
