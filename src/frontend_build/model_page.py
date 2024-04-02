@@ -103,6 +103,9 @@ class ModelPage(QFrame):
                     widget.hide()  # Hide the widget
 
     def show_all(self) -> None:
+        self.button1.show()
+        self.button2.show()
+        self.button3.show()   
         layout = self.layout()  # Get the layout of the frame
         if layout is not None:
             for i in range(layout.count()):  

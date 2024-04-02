@@ -30,8 +30,6 @@ class InstallPage(QFrame):
         self.command_count = len(self.install_commands_list)
         self.commands_to_run_set: set = set()
         self.init_ui()
-    
-
 
     def init_ui(self):
         self.css = self.styler.doc_css
