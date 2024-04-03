@@ -1,5 +1,6 @@
 import subprocess
 import os
+from repo import Repository
 
 general_logging_dir: str = "../logging"
 
@@ -43,25 +44,26 @@ def check_if_exists(env_name: str) -> bool:
     except Exception as e:
         print(f"An error occurred while processing environments list: {e}")
         return False
-        
+
 
 class CondaEnvironment:
     """
     Represents an Anaconda environment
     Attributes:
-        env_id (int | None): Primary key for database lookup
         python_version (str): The Python version of the conda environment
-        pip_list_directory (str): The location of the pip requirements
         models (str | list[str]): The names of the models currently installed
+        env_id (int | None): Primary key for database lookup
+        pip_list_directory (str): The location of the pip requirements
         repository_name (str): Name of the repository, will be the name of the associated conda environment
         logging_directory (str): Directory where logging files are create and stored.
     """
-    def __init__(self, python_version: str, models: str | list[str], repository_name: str = "", pip_list_directory: str = "../pip_reqs", logging_directory: str = "../logging", env_id: int | None = None) -> None:
+    def __init__(self, python_version: str, models: str | list[str], repository: Repository | None, pip_list_directory: str = "../pip_reqs", logging_directory: str = "../logging", env_id: int | None = None) -> None:
         self.env_id = env_id
         self.python_version = python_version
         self.pip_list_directory = pip_list_directory
         self.models = models
-        self.env_name = repository_name
+        self.repository = repository
+        self.env_name = repository.repo_name
         self.logging_directory = logging_directory
         self.create()
 
@@ -77,7 +79,7 @@ class CondaEnvironment:
         error_message = f"Error occurred while running command in environment '{self.env_name}'"
         log_file_name = "run_command_log.log"
         return run_subprocess_with_logging(args, error_message, self.logging_directory, log_file_name)
-    
+
     def __str__(self) -> str:
         """
         Provides a string representation of the CondaEnvironment object
@@ -88,11 +90,11 @@ class CondaEnvironment:
             f"Environment Name: {self.env_name}",
             f"Python Version: {self.python_version}",
             f"PIP List Directory: {self.pip_list_directory}",
-            f"Models: {self.models}" 
+            f"Models: {self.models}"
         ]
 
         return "\n".join(str_attributes)
-    
+
     def create(self) -> bool:
         """
         Creates the Anaconda environment if it does not exist already.
@@ -199,7 +201,7 @@ class CondaEnvironment:
         except Exception as e:
             print(f"An error occurred while processing environments list: {e}")
             return []
-        
+
     @property
     def is_created(self) -> bool:
         check_if_exists(self.env_name)
