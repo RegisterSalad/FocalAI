@@ -1,24 +1,10 @@
-from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
-                               QHBoxLayout, QLineEdit, QListWidget, QPushButton,
-                               QLabel, QStackedWidget, QFrame, QSizePolicy, QMenu, QTextBrowser, QTextEdit)
-from PySide6.QtGui import QAction, QGuiApplication, QPalette, QColor
-from PySide6.QtCore import Slot, Qt, QCoreApplication, Signal
-
-
-
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QPalette, QColor
-
 import os
 import shutil
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QApplication
-from PySide6.QtCore import Qt, QMimeData
-from PySide6.QtGui import QDragEnterEvent, QDropEvent
-
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
+from PySide6.QtCore import Qt, Signal
 
 class FileDropWidget(QWidget):
-    filesDropped = Signal(list)  # Signal to emit when files have been dropped
+    filesDropped = Signal(str)  # Signal to emit when files have been dropped
 
     def __init__(self):
         super().__init__()
@@ -53,19 +39,23 @@ class FileDropWidget(QWidget):
     def dropEvent(self, event):
         mime_data = event.mimeData()
         if mime_data.hasUrls():
-            file_paths = [url.toLocalFile() for url in mime_data.urls()]  # Get the list of file paths
-            copied_file_paths = []  # List to store paths of successfully copied files
+            # Consider only the first file from the drop
+            first_file_url = mime_data.urls()[0]
+            if first_file_url.isLocalFile():
+                src_path = first_file_url.toLocalFile()
+                if os.path.isfile(src_path):  # Check if it's a file not a directory
+                    file_name = os.path.basename(src_path)
+                    dest_path = os.path.join(self.stored_files_folder, file_name)
 
-            for src_path in file_paths:
-                file_name = os.path.basename(src_path)
-                dest_path = os.path.join(self.stored_files_folder, file_name)
-                try:
-                    shutil.copy(src_path, dest_path)  # Copy file to stored_files folder
-                    copied_file_paths.append(dest_path)  # Add path of copied file
-                except Exception as e:
-                    print(f"Could not copy file {src_path} to {dest_path}: {e}")
+                    # Clear existing files in the directory
+                    for existing_file in os.listdir(self.stored_files_folder):
+                        os.remove(os.path.join(self.stored_files_folder, existing_file))
 
-            # Update label to show copied files and reset style
-            self.label.setText("\n".join(os.path.basename(path) for path in copied_file_paths))
-            self.label.setStyleSheet("color: #000000; font-style: normal;")
-            self.filesDropped.emit(copied_file_paths)  # Emit signal with paths of copied files
+                    # Copy the new file
+                    try:
+                        shutil.copy(src_path, dest_path)
+                        self.label.setText(file_name)  # Update label to show copied file
+                        self.label.setStyleSheet("color: #000000; font-style: normal;")
+                        self.filesDropped.emit(dest_path)  # Emit signal with path of copied file
+                    except Exception as e:
+                        print(f"Could not copy file {src_path} to {dest_path}: {e}")

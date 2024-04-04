@@ -12,6 +12,7 @@ class Repository:
         - repo_name (str): Name of the repository.
         - owner (str): Owner of the repository.
         - readme_content (str): Content of the README file.
+        - model_type (str | None): Type of the model (ASR, OBJ, or LLM), or None if none found or unsupported
 
     Methods:
         - __init__(repo_url: str): Initialize with the repository's URL.
@@ -39,6 +40,7 @@ class Repository:
         self.tables: list[str] | None = None
         self.repo_name: str = repo_name
         self.owner: str = repo_owner
+        self.model_type: str | None = None
         self.fetch_features()
 
     def fetch_features(self) -> None:
@@ -115,6 +117,7 @@ class Repository:
         code_blocks = self.extract_code_blocks()
         tab_code = self.extract_tab_code()
         self.get_tables()
+        self.model_type = self.get_model_type()
 
         install = [command for block in code_blocks if self._check_for_install(block) for command in self.extract_commands([block])]
         install_commands: list[str] = [] 
@@ -132,7 +135,24 @@ class Repository:
         table_pattern = r'\|.*\|\n\|.*\|'
         self.tables = re.findall(table_pattern, self.readme_content, re.MULTILINE)
         self.tables = [''.join(table) for table in self.tables]
-        
+    
+    def get_model_type(self) -> str | None:
+        """
+        Looks through the readme to find the model type using regex patterns.
+        """
+
+        # Pattern for speech recognition
+        if re.search(r'speech recognition', self.readme_content, re.IGNORECASE):
+            return "ASR"
+        # Pattern for classification or segmentation
+        elif re.search(r'classification|segmentation', self.readme_content, re.IGNORECASE):
+            return "OBJ"
+        # Pattern for language model or <any_integer>B
+        elif re.search(r'language model|\d+B', self.readme_content, re.IGNORECASE):
+            return "LLM"
+        # If none of the patterns match
+        return None
+
 
     def __str__(self) -> str:
         """
@@ -143,6 +163,7 @@ class Repository:
         """
         attributes = [
             f"Repository URL: {self.repo_url}",
+            f"Model Type: {self.model_type}",
             "Installation Commands:\n" + ("\n".join(f"\t{cmd}" for cmd in self.install_commands) if self.install_commands else "\tNone"),
             "Markdown Tables:\n" + ("\n\n".join(self.tables) if self.tables else "\tNone")
         ]
