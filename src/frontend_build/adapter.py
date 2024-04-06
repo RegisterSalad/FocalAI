@@ -1,10 +1,14 @@
 from typing import Callable
-from model_player import ModelPlayer
+from model_player import ModelPlayer, LLMPlayer
+
 class Adapter:
-
-    def __init__(self, parent_page) -> None:
+    """
+    This adapter will speak to the pages in order to pass the AI model input and get display the AI model output
+    """
+    def __init__(self, parent_page, llm_player) -> None:
         self.parent_page: ModelPlayer  = parent_page # The parent page will have the input and output interface
-
+        self.llm_player: LLMPlayer = llm_player
+    
     def get_model_input(self, model_type: str | None = None) -> Callable:
         """
         Configures the model_page to the right model type and makes the input of the model come from the drag on drop
@@ -44,7 +48,7 @@ class Adapter:
         
         return None  # Return None if the file is not a valid audio file
     
-    def _obj_interface(self) -> str | None:
+    def _obj_interface(self) -> str | None: # Utilizes ModelPlayer
         """
         Fetches the file from the drag-and-drop, checks its type to make sure
         it is a valid image file, and returns the path if valid.
@@ -63,7 +67,7 @@ class Adapter:
         return None  # Return None if the file is not a valid image file
 
 
-    def _llm_interface(self) -> str | None:
+    def _llm_interface(self):
         pass
         
 

@@ -11,6 +11,7 @@ from model_player import ModelPlayer
 from styler import Styler
 from install_page import InstallPage
 
+
 # Calculate the path to the directory containing
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
@@ -41,7 +42,7 @@ class ModelPage(QFrame):
         
         mainLayout = QVBoxLayout()
         
-        self.model_player = ModelPlayer()
+        self.model_player = ModelPlayer(self)
         self.button1.clicked.connect(lambda: self.create_model_player())
         
         self.button2.clicked.connect(lambda: self.change_to_install_page())
@@ -146,6 +147,8 @@ class ModelPage(QFrame):
         self.button2.show()
         self.button3.show()    
         self.repository = self.get_repo(repo_url)
+        self.model_player.model_type = self.repository.model_type
+        print(self.model_player.model_type)
         self.text_display.setHtml(self.convert_to_markdown('readme_content'))  # Set HTML content
 
     def update_style(self):

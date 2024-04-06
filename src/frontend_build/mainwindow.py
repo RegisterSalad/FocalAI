@@ -7,10 +7,8 @@ import sys
 
 #Local Imports
 from model_page import ModelPage
-from install_page import InstallPage
 from styler import Styler
 from vertical_menu import VerticalMenu
-from repo import Repository
 
 
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -38,7 +36,6 @@ class RepoWidget(QWidget):
         layout.addWidget(self.owner_label)
         layout.addWidget(self.description_label)
         layout.addWidget(self.url_label)
-
         self.setLayout(layout)
 
 class MainWindow(QMainWindow):
@@ -104,10 +101,10 @@ class MainWindow(QMainWindow):
         if searchText:  # Only search if there's text
             self.search_items(searchText)
 
-    def search_items(self, text):
+    def search_items(self, text: str):
         self.list_widget.clear()  # Clear current items
         self.repos.clear()  # Clear the repository list
-        found_repos = self.caller.get_repo_list(text.lower())
+        found_repos = self.caller.get_repo_list(text.lower().replace(" ", "-"))
 
         for repo in found_repos.results:
             self.repos.append(repo)  # Add the repo object to the list

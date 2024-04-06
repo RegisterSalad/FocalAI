@@ -136,22 +136,38 @@ class Repository:
         self.tables = re.findall(table_pattern, self.readme_content, re.MULTILINE)
         self.tables = [''.join(table) for table in self.tables]
     
-    def get_model_type(self) -> str | None:
+
+    def get_model_type(self) -> str:
         """
-        Looks through the readme to find the model type using regex patterns.
+        Looks through the readme to find the model type using regex patterns and keyword lists, correcting syntax for raw strings.
         """
 
+        # Define keyword lists for each model type
+        asr_keywords = ['speech recognition', 'voice recognition', 'audio processing']
+        obj_keywords = ['classification', 'segmentation', 'object detection']
+        llm_keywords = ['language model', 'natural language processing', 'text generation']
+        llm_size_indicators = [r'\d+B parameters', r'\d+ billion parameters']  # Corrected with raw string notation
+
+        # Join keywords into patterns for regex search
+        asr_pattern = '|'.join(asr_keywords)
+        obj_pattern = '|'.join(obj_keywords)
+        llm_pattern = '|'.join(llm_keywords)
+        llm_size_pattern = '|'.join(llm_size_indicators)
+
         # Pattern for speech recognition
-        if re.search(r'speech recognition', self.readme_content, re.IGNORECASE):
+        if re.search(asr_pattern, self.readme_content, re.IGNORECASE):
             return "ASR"
         # Pattern for classification or segmentation
-        elif re.search(r'classification|segmentation', self.readme_content, re.IGNORECASE):
+        elif re.search(obj_pattern, self.readme_content, re.IGNORECASE):
             return "OBJ"
-        # Pattern for language model or <any_integer>B
-        elif re.search(r'language model|\d+B', self.readme_content, re.IGNORECASE):
+        # Pattern for language model
+        elif any(re.search(pattern, self.readme_content, re.IGNORECASE) for pattern in [llm_pattern, llm_size_pattern]) \
+            and re.search(r'large|massive|extensive', self.readme_content, re.IGNORECASE):
             return "LLM"
         # If none of the patterns match
-        return None
+        else:
+            return "N/A"
+
 
 
     def __str__(self) -> str:
