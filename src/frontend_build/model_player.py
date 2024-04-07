@@ -15,30 +15,19 @@ from file_drop_widget import FileDropWidget
 from terminal_widget import TerminalWidget
 from script_builder import ScriptBuilder
 
-class LLM(QObject):
-    # Define a signal that can carry string messages
-    sendMessage = Signal(str)
-
-    def __init__(self):
-        super().__init__()
-
-    def process_request(self, request: str):
-        # Dummy processing method
-        print(f"Processing: {request}")
-        # Emit a signal when processing is done
-        self.sendMessage.emit(f"Processed: {request}")
 
 
 class ModelPlayer(QWidget):
     def __init__(self, parent=None):  # Changed parent default value to None
         super().__init__(parent)
         self.parent_widget = parent
+        self.repository = parent.repository
         self.model_type: str | None = None
         self.setWindowTitle("Model Player")
         self.init_styles()
-        self.file_list_widget = FileListWidget()
+        self.file_list_widget = FileListWidget(parent=self)
         self.file_drop_widget = FileDropWidget()
-        self.script_builder = ScriptBuilder()
+        self.script_builder = ScriptBuilder(parent=self)
         self.input_path: str | None = None
         self.init_ui()
 
@@ -115,8 +104,8 @@ class ModelPlayer(QWidget):
         self.file_drop_widget.filesDropped.connect(self.file_list_widget.update_file_list)
         self.file_drop_widget.filesDropped.connect(self.get_user_input)
 
-        left_section_layout.addWidget(self.file_drop_widget)
-        left_section_layout.addWidget(self.file_list_widget)
+        # left_section_layout.addWidget(self.file_drop_widget)
+        # left_section_layout.addWidget(self.file_list_widget)
 
         # Add the terminal_widget to the vertical layout
         terminal_widget = TerminalWidget()

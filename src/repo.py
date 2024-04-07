@@ -66,14 +66,8 @@ class Repository:
         Returns:
             list[str]: A list of indented code lines with installation commands.
         """
-        tab_code = re.findall(r'    [\s\S]+?\n', self.readme_content)
-        code = []
-        for block in tab_code:
-            lines = block.strip('    ').strip().split('\n')
-            for line in lines:
-                if line.strip() and re.search(r'\binstall\b', line, re.IGNORECASE):
-                    code.append(line.strip())
-        return code
+        tab_code_blocks = re.findall(r'    .+', self.readme_content)
+        return [line.strip() for block in tab_code_blocks for line in block.split('\n') if self._check_for_install(line)]
 
     @staticmethod
     def extract_commands(install_blocks: list[str]) -> list[str]:
@@ -89,9 +83,7 @@ class Repository:
         commands = []
         for block in install_blocks:
             lines = block.strip('```').strip().split('\n')
-            for line in lines:
-                if not line.strip().startswith('#') and line.strip() and not re.search(r'\bbash\b', line, re.IGNORECASE) and re.search(r'\binstall\b', line, re.IGNORECASE):
-                    commands.append(line.strip())
+            commands.extend([line.strip() for line in lines if Repository._check_for_install(line) and not line.strip().startswith('#')])
         return commands
 
     @staticmethod
@@ -107,6 +99,27 @@ class Repository:
         """
         return bool(re.search(r'\binstall\b', code_block, re.IGNORECASE))
 
+    # def parse_readme_contents(self) -> list[str]:
+    #     """
+    #     Parses README for installation commands and tables.
+
+    #     Returns:
+    #         list[str]: A list of installation commands.
+    #     """
+    #     code_blocks = self.extract_code_blocks()
+    #     tab_code = self.extract_tab_code()
+    #     self.get_tables()
+    #     self.model_type = self.get_model_type()
+
+    #     install = [command for block in code_blocks if self._check_for_install(block) for command in self.extract_commands([block])]
+    #     install_commands: list[str] = [] 
+    #     for command in install:
+    #         install_commands.append(command)
+    #     for command in tab_code:
+    #         install_commands.append(command)
+
+    #     return install_commands
+    
     def parse_readme_contents(self) -> list[str]:
         """
         Parses README for installation commands and tables.
@@ -114,18 +127,10 @@ class Repository:
         Returns:
             list[str]: A list of installation commands.
         """
-        code_blocks = self.extract_code_blocks()
-        tab_code = self.extract_tab_code()
-        self.get_tables()
+        code_blocks = self.extract_code_blocks() + self.extract_tab_code()
+        install_commands = self.extract_commands(code_blocks)
+        self.tables = self.get_tables()
         self.model_type = self.get_model_type()
-
-        install = [command for block in code_blocks if self._check_for_install(block) for command in self.extract_commands([block])]
-        install_commands: list[str] = [] 
-        for command in install:
-            install_commands.append(command)
-        for command in tab_code:
-            install_commands.append(command)
-
         return install_commands
 
     def get_tables(self) -> None:
@@ -171,17 +176,14 @@ class Repository:
 
 
     def __str__(self) -> str:
-        """
-        String representation summarizing repository attributes.
-
-        Returns:
-            str: A summary of the repository's characteristics.
-        """
-        attributes = [
+        """String representation summarizing repository attributes."""
+        details = [
             f"Repository URL: {self.repo_url}",
-            f"Model Type: {self.model_type}",
-            "Installation Commands:\n" + ("\n".join(f"\t{cmd}" for cmd in self.install_commands) if self.install_commands else "\tNone"),
-            "Markdown Tables:\n" + ("\n\n".join(self.tables) if self.tables else "\tNone")
+            f"Repository Name: {self.repo_name}",
+            f"Owner: {self.owner}",
+            f"Model Type: {self.model_type or 'N/A'}",
+            "Installation Commands:" + ("\n" + "\n".join(f"  - {cmd}" for cmd in self.install_commands) if self.install_commands else " None"),
+            "Markdown Tables:" + ("\n" + "\n".join(self.tables) if self.tables else " None"),
+            f"README Content: {(self.readme_content[:75] + '...') if len(self.readme_content) > 75 else self.readme_content or 'N/A'}"
         ]
-        return "\n".join(attributes)
-
+        return "\n".join(details)

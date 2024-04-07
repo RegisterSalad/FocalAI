@@ -1,7 +1,22 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QTextEdit, QLineEdit)
+from PySide6.QtCore import QObject, Signal, QCoreApplication
 from menu_bar import MenuBar
 import os
 import sys
+
+class LLM(QObject):
+    # Define a signal that can carry string messages
+    sendMessage = Signal(str)
+
+    def __init__(self):
+        super().__init__()
+
+    def process_request(self, request: str):
+        # Dummy processing method
+        print(f"Processing: {request}")
+        # Emit a signal when processing is done
+        self.sendMessage.emit(f"Processed: {request}")
+
 
 class LLMPlayer(QWidget):
     def __init__(self, parent):
