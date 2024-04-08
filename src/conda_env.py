@@ -53,17 +53,40 @@ def check_if_exists(env_name: str) -> bool:
 
 class CondaEnvironment:
     """
-    Represents an Anaconda environment
+    Represents and manages operations for an Anaconda environment, including creation, deletion, 
+    activation, and package installation. This class facilitates the automation of environment 
+    management tasks and ensures consistent setup across different systems or projects.
+
+    Methods:
+    - __init__(python_version: str, repository_url: str = "", description: str = "", 
+        pip_list_directory: str = "../pip_reqs", logging_directory: str = general_logging_dir, 
+        env_id: int | None = None) -> None: Initializes the CondaEnvironment object.
+    - __call__(command: str) -> bool: Executes a given command within the conda environment.
+    - __str__() -> str: Returns a string representation of the CondaEnvironment object.
+    - create() -> bool: Creates the conda environment based on the provided specifications.
+    - delete() -> bool: Deletes the specified conda environment.
+    - conda_init() -> bool: Initializes the conda command line environment setup.
+    - activate_by_name(env_name: str) -> bool: Activates the specified conda environment by name.
+    - install_all_requirements() -> bool: Installs all pip requirements within the conda environment.
+    - test_environment() -> bool: Tests the conda environment by running a simple command.
+    - find_installed_environments() -> list[str] | None: Retrieves a list of all installed conda environments.
+    - is_created() -> bool: Checks if the conda environment is already created.
+
+    The class utilizes subprocesses for command execution, ensuring output and errors are logged for
+    troubleshooting and verification purposes. It supports dynamic environment management, enabling 
+    scripted setups and teardowns for reproducible research and development environments.
+
     Attributes:
-        env_id (int | None): Primary key for database lookup
-        description (str) : Description of the installed repository provided by paperswithcode
-        python_version (str): The Python version of the conda environment
-        pip_list_directory (str): The location of the pip requirements
-        installed_models (list[str] | None): The names of the models currently installed
-        repository (Repository): Repository Object containing all information about repository as well as formatted readme
-        env_name (str): Name conda environment
-        logging_directory (str): Directory where logging files are create and stored.
+        env_id (int | None): Optional identifier for database interactions.
+        description (str): Descriptive text about the environment's purpose or contents.
+        python_version (str): The Python version for the environment.
+        pip_list_directory (str): Path to the requirements file for pip installations.
+        installed_models (list[str] | None): List of models installed in the environment.
+        repository (Repository): Repository object containing additional metadata.
+        env_name (str): The name of the conda environment.
+        logging_directory (str): Path where log files are stored.
     """
+
     def __init__(self, python_version: str, repository_url: str = "", description: str = "", pip_list_directory: str = "../pip_reqs", logging_directory: str = general_logging_dir, env_id: int | None = None) -> None:
         self.env_id = env_id
         self.python_version = python_version

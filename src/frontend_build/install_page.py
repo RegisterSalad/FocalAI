@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame, QWidget, QSizePolicy, QListWidget
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QThread
 from PySide6.QtWebEngineWidgets import QWebEngineView  # Import QWebEngineView
 import markdown
 import sys
@@ -8,12 +8,10 @@ from PySide6.QtGui import QIcon
 from typing import Callable
 import subprocess
 
-
-
 # Working dir imports
 from model_player import ModelPlayer
 from styler import Styler
-
+from worker import Worker
 # Calculate the path to the directory containing
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
@@ -37,6 +35,32 @@ class InstallPage(QFrame):
             self.commands_to_run_set = set()  # It seems you wanted to use a set, but it's not used later in your code.
             self.commands_to_run_list = []  # Initialize the list for commands to run.
             self.init_ui()
+
+    def run_conda_command(self, command_name, *args):
+        """
+        Args:
+        - command_name: Is the name of the subprocess method that the worker will wrap around
+            valid options are:
+                - __call__(command: str) -> bool: Executes a given command within the conda environment.
+                - __str__() -> str: Returns a string representation of the CondaEnvironment object.
+                - create() -> bool: Creates the conda environment based on the provided specifications.
+                - delete() -> bool: Deletes the specified conda environment.
+                - conda_init() -> bool: Initializes the conda command line environment setup.
+
+        - *args: Any arguments for the method
+        """
+        # Create a worker and thread
+        self.thread = QThread()
+        self.worker = Worker(self.new_env, command_name, *args)
+        
+        # Move the worker to the thread and connect signals
+        self.worker.moveToThread(self.thread)
+        self.worker.finished.connect(self.thread.quit)
+        self.worker.output.connect(self.update_progress_widget)
+        
+        # Start the thread
+        self.thread.started.connect(self.worker.run)
+        self.thread.start()
 
     def init_ui(self):
         self.layout = QVBoxLayout(self)
@@ -85,9 +109,9 @@ class InstallPage(QFrame):
     def run_selected_commands(self):
         print(f"Running {self.commands_to_run_list}")
         formatted_command = " && ".join(self.commands_to_run_list)
-        if not self.new_env.create():
+        if not self.new_env.create(): # This is using __create__ modify accordingly
             print("Env Creation failed")
-        if self.new_env(formatted_command): # This runs the commands with logging
+        if self.new_env(formatted_command): # This runs the commands with logging, this is using __call__, modify accordingly
             self.db.insert_environment(self.new_env)
         else:
             print(f"Environment Deleted: {self.new_env.delete()}")
@@ -117,3 +141,5 @@ class InstallPage(QFrame):
     def change_to_main_model_page(self):
         self.hide_all()
         self.model_page.show_all()
+
+# This is NOT the main application
