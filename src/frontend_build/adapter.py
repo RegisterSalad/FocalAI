@@ -12,14 +12,16 @@ module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
+from database import DatabaseManager
+from conda_env import CondaEnvironment
     
 class Adapter(QWidget):
     """
     This adapter will speak to the pages in order to pass the AI model input and get display the AI model output
     """
-    def __init__(self, parent_page, llm_player) -> None:
-        self.parent_page: ModelPlayer  = parent_page # The parent page will have the input and output interface
-        self.llm_player: LLMPlayer = llm_player
+    def __init__(self, name: str = "") -> None:
+        self.db = DatabaseManager("databases/conda_environments.db")
+        self.running_env = self.db.get_environment_by_name
     
     def get_model_input(self, model_type: str | None = None) -> Callable:
         """
@@ -77,7 +79,6 @@ class Adapter(QWidget):
             return result_path  # Return path if it's a valid image file
         
         return None  # Return None if the file is not a valid image file
-
 
     def _llm_interface(self):
         pass

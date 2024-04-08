@@ -43,6 +43,10 @@ class PythonSyntaxHighlighter(QSyntaxHighlighter):
         selfFormat = QTextCharFormat()
         selfFormat.setForeground(QColor(255, 69, 0))  # Red
 
+        functionCallFormat = QTextCharFormat()
+        functionCallFormat.setForeground(QColor(0, 160, 0))  # Dark green color for function calls
+        self.highlightRules.append((QRegularExpression('\\b[A-Za-z_][A-Za-z0-9_]*(?=\\()'), functionCallFormat))
+
         # Rules
         keywords = ['\\bclass\\b', '\\bdef\\b', '\\bfrom\\b', '\\bimport\\b',
                     '\\bas\\b', '\\breturn\\b', '\\bif\\b', '\\belse\\b', '\\belif\\b',
@@ -84,34 +88,31 @@ class PythonSyntaxHighlighter(QSyntaxHighlighter):
 
 class ScriptBuilder(QWidget):
     def __init__(self, parent=None):
-        super(ScriptBuilder, self).__init__(parent)
-        
-        try:
-            self.repository = parent.repository
-            self.model_type = self.repository.model_type
-        except:
-            self.model_type = "N/A" 
+        super().__init__()
+        self.repository = None
+        self.repository = parent.repository
+        self.model_type = self.repository.model_type
         self.defaultText: str = f"""
-        # import <model> # Import model specific package
-        from adapter_util import Adapter
-        from typing import Callable
+# import <model> # Import model specific package
+from adapter_util import Adapter
+from typing import Callable
 
-        # Model Initialization and configuration  
+# Model Initialization and configuration  
 
 
 
-        # Initialize the adapter and set up pipes into and out of it
-        adapter = Adapter()
-        model_type: str = {self.model_type} # "ASR", "OBJ", or "LLM"
+# Initialize the adapter and set up pipes into and out of it
+adapter = Adapter({self.repository.repo_name})
+model_type: str = "{self.model_type}" # "ASR", "OBJ", or "LLM"
 
-        get_model_input: Callable = adapter.get_input_method(model_type) # This tells the adapter to return the str of the path of the audio that was drag-and-dropped
-        model_input = get_model_input()
+get_model_input: Callable = adapter.get_input_method(model_type) # This tells the adapter to return the str of the path of the audio that was drag-and-dropped
+model_input = get_model_input()
 
-        # Compute result based on model_input
-        # Ex: result = model(model_input)
+# Compute result based on model_input
+# Ex: result = model(model_input)
 
-        adapter.set_model_output(result) # Method that displays the output to the user
-        """
+adapter.set_model_output(result) # Method that displays the output to the user
+"""
         self.initUI()
 
     def initUI(self):
@@ -157,10 +158,8 @@ class ScriptBuilder(QWidget):
                 padding: 10px 24px;
                 text-align: center;
                 text-decoration: none;
-                display: inline-block;
                 font-size: 14px;
                 margin: 4px 2px;
-                cursor: pointer;
                 border-radius: 8px;
             }
             QPushButton:hover {

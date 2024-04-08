@@ -20,7 +20,7 @@ class LLM(QObject):
 
 class LLMPlayer(QWidget):
     def __init__(self, parent):
-        super().__init__(parent)
+        super().__init__()
         self.parent_widget = parent
         self.llm = None
         self.initUI()
@@ -54,10 +54,8 @@ class LLMPlayer(QWidget):
                 padding: 10px 24px;
                 text-align: center;
                 text-decoration: none;
-                display: inline-block;
                 font-size: 14px;
                 margin: 4px 2px;
-                cursor: pointer;
                 border-radius: 8px;
             }
             QPushButton:hover {

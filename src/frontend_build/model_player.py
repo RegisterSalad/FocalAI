@@ -15,20 +15,18 @@ from file_drop_widget import FileDropWidget
 from terminal_widget import TerminalWidget
 from script_builder import ScriptBuilder
 
-
-
 class ModelPlayer(QWidget):
     def __init__(self, parent=None):  # Changed parent default value to None
-        super().__init__(parent)
+        super().__init__()
         self.parent_widget = parent
-        # self.repository = parent.repository
+        self.repository = parent.repository
         self.model_type: str | None = None
         self.setWindowTitle("Model Player")
-        self.init_styles()
         self.file_list_widget = FileListWidget(parent=self)
         self.file_drop_widget = FileDropWidget()
         self.script_builder = ScriptBuilder(parent=self)
         self.input_path: str | None = None
+        self.init_styles()
         self.init_ui()
 
     def init_styles(self):
@@ -57,10 +55,8 @@ class ModelPlayer(QWidget):
                 padding: 10px 24px;
                 text-align: center;
                 text-decoration: none;
-                display: inline-block;
                 font-size: 14px;
                 margin: 4px 2px;
-                cursor: pointer;
                 border-radius: 8px;
             }
             QPushButton:hover {

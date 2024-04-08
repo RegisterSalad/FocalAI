@@ -11,7 +11,6 @@ from model_player import ModelPlayer
 from styler import Styler
 from install_page import InstallPage
 
-
 # Calculate the path to the directory containing
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
@@ -21,12 +20,14 @@ if module_dir not in sys.path:
 from repo import Repository
 from database import DatabaseManager
 from conda_env import CondaEnvironment
+
 class ModelPage(QFrame):
     def __init__(self, styler: Styler):
         super().__init__()
         self.install_page: InstallPage | None = None
         self.db = DatabaseManager("databases/conda_environments.db")
         self.styler = styler
+        self.repository = None
         self.init_ui()
 
     def init_ui(self) -> None:
@@ -43,11 +44,9 @@ class ModelPage(QFrame):
         
         mainLayout = QVBoxLayout()
         
-        self.model_player = ModelPlayer(self)
         self.button1.clicked.connect(lambda: self.create_model_player())
         
         self.button2.clicked.connect(lambda: self.change_to_install_page())
-        
         buttonsLayout = QVBoxLayout()
         buttonsLayout.setAlignment(Qt.AlignRight | Qt.AlignTop)
         buttonsLayout.addWidget(self.button1)
@@ -80,7 +79,6 @@ class ModelPage(QFrame):
         return Repository(repo_url)
 
     def create_model_player(self):
-        print("Creating New Window")
         # Set the window to always stay on top when it's first opened
         self.model_player.setWindowFlags(self.model_player.windowFlags() | Qt.WindowStaysOnTopHint)
         self.model_player.show()
@@ -88,7 +86,6 @@ class ModelPage(QFrame):
         self.model_player.activateWindow()
         # Remove the always-on-top flag after it's displayed and focused
         self.model_player.setWindowFlags(self.model_player.windowFlags() & ~Qt.WindowStaysOnTopHint)
-        # You need to call show() again after changing window flags
         self.model_player.show()
     
     def hide_all(self) -> None:
@@ -156,6 +153,7 @@ class ModelPage(QFrame):
         self.button2.show()
         self.button3.show()    
         self.repository = self.get_repo(repo_url)
+        self.model_player = ModelPlayer(self) # Model Player is inited here because it needs a repo befor initialization
         self.model_player.model_type = self.repository.model_type
         print(self.model_player.model_type)
         self.text_display.setHtml(self.convert_to_markdown('readme_content'))  # Set HTML content
