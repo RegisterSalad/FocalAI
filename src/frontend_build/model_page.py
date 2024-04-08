@@ -25,9 +25,9 @@ class ModelPage(QFrame):
     def __init__(self, styler: Styler):
         super().__init__()
         self.install_page: InstallPage | None = None
+        self.running_env: CondaEnvironment | None
         self.db = DatabaseManager("databases/conda_environments.db")
         self.styler = styler
-        self.repository = None
         self.init_ui()
 
     def init_ui(self) -> None:
@@ -45,7 +45,6 @@ class ModelPage(QFrame):
         mainLayout = QVBoxLayout()
         
         self.button1.clicked.connect(lambda: self.create_model_player())
-        
         self.button2.clicked.connect(lambda: self.change_to_install_page())
         buttonsLayout = QVBoxLayout()
         buttonsLayout.setAlignment(Qt.AlignRight | Qt.AlignTop)
@@ -79,6 +78,7 @@ class ModelPage(QFrame):
         return Repository(repo_url)
 
     def create_model_player(self):
+        self.model_player = ModelPlayer(self) # Model Player is inited here because it needs a repo before initialization
         # Set the window to always stay on top when it's first opened
         self.model_player.setWindowFlags(self.model_player.windowFlags() | Qt.WindowStaysOnTopHint)
         self.model_player.show()
@@ -119,12 +119,12 @@ class ModelPage(QFrame):
 
     def change_to_install_page(self):
         self.hide_all()
-        self.install_page = InstallPage(self.styler, self, self.repository.install_commands)
+        self.install_page = InstallPage(self.styler, self, self.running_env)
         self.layout().addWidget(self.install_page)
         self.install_page.show_all()
 
     def convert_to_markdown(self, name: str) -> str:
-        content = getattr(self.repository, name, None)
+        content = getattr(self.running_env.repository, name, None)
         
         if content:
             markdown_text = content
@@ -134,14 +134,9 @@ class ModelPage(QFrame):
             
             return self.html_text
 
-    def get_conda_env(self) -> CondaEnvironment:
-        return self.db.get_environment_by_name(self.repository.repo_name)
-
-    def update_content(self, repo_url: str | None) -> None:
-
-        
+    def update_content(self, repo_entry) -> None:
         # Show buttons when content is updated
-        if repo_url is None:
+        if repo_entry is None:
             if self.html_text is None:
                 self.html_text = markdown.markdown("  ", extensions=['tables', 'fenced_code', 'codehilite', 'extra'])
             
@@ -151,11 +146,11 @@ class ModelPage(QFrame):
             
         self.button1.show()
         self.button2.show()
-        self.button3.show()    
-        self.repository = self.get_repo(repo_url)
-        self.model_player = ModelPlayer(self) # Model Player is inited here because it needs a repo befor initialization
-        self.model_player.model_type = self.repository.model_type
-        print(self.model_player.model_type)
+        self.button3.show()
+        self.running_env = CondaEnvironment(python_version="3.10.0",
+                                            description=repo_entry.description,  
+                                            repository_url=repo_entry.url)
+        
         self.text_display.setHtml(self.convert_to_markdown('readme_content'))  # Set HTML content
 
     def update_style(self):
@@ -168,4 +163,4 @@ class ModelPage(QFrame):
             # Update styles for QWebEngineView if necessary
             self.thumbnail.setStyleSheet("background-color: lightgray;")
         self.css = self.styler.doc_css
-        self.update_content(repo_url=None)
+        self.update_content(repo_entry=None)

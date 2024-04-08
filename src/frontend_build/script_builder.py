@@ -90,7 +90,7 @@ class ScriptBuilder(QWidget):
     def __init__(self, parent=None):
         super().__init__()
         self.repository = None
-        self.repository = parent.repository
+        self.repository = parent.running_env.repository
         self.model_type = self.repository.model_type
         self.defaultText: str = f"""
 # import <model> # Import model specific package

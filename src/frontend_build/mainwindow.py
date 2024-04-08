@@ -128,7 +128,7 @@ class MainWindow(QMainWindow):
             if self.model_page.install_page:
                 self.model_page.install_page.change_to_main_model_page() # Ensure that main model page is displayed
                 
-            self.model_page.update_content(repo_url=repo.url)
+            self.model_page.update_content(repo_entry = repo)
             self.detail_view.setCurrentWidget(self.model_page)
 
 if __name__ == "__main__":

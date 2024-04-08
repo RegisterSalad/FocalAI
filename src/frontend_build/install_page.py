@@ -25,11 +25,13 @@ from repo import Repository
 from database import DatabaseManager
 
 class InstallPage(QFrame):
-    def __init__(self, styler, model_page, install_commands: list[str]):
+    def __init__(self, styler, model_page, new_env: CondaEnvironment):
             super().__init__()
             self.model_page = model_page
             self.styler = styler
-            self.install_commands_list = install_commands
+            self.new_env: CondaEnvironment = new_env
+            self.install_commands_list = self.new_env.repository.install_commands
+            self.db = DatabaseManager("databases/conda_environments.db")
             print(self.install_commands_list)
             self.command_count = len(self.install_commands_list)
             self.commands_to_run_set = set()  # It seems you wanted to use a set, but it's not used later in your code.
@@ -53,7 +55,7 @@ class InstallPage(QFrame):
         button_layout.addWidget(self.back_button)
 
         # Add the button layout to the main layout
-        
+
         # Buttons for adding/removing commands
         self.add_button = QPushButton("Add >>")
         self.add_button.clicked.connect(self.add_command_to_run)
@@ -81,17 +83,15 @@ class InstallPage(QFrame):
                 self.commands_to_run_widget.addItem(item.text())
 
     def run_selected_commands(self):
-        # for command in self.commands_to_run_list:
-        # # Prepend the command with 'bash -c' to ensure it runs in bash
-        #     bash_command = f"bash -c \"{command}\""
-        #     try:
-        #         # Use shell=True to run the command through the shell
-        #         subprocess.run(bash_command, shell=True, check=True)
-        #     except subprocess.CalledProcessError as e:
-        #         print(f"Error running command '{command}': {e}")
-        print("Commands to run:", self.commands_to_run_list)
+        print(f"Running {self.commands_to_run_list}")
+        formatted_command = " && ".join(self.commands_to_run_list)
+        if not self.new_env.create():
+            print("Env Creation failed")
+        if self.new_env(formatted_command): # This runs the commands with logging
+            self.db.insert_environment(self.new_env)
+        else:
+            print(f"Environment Deleted: {self.new_env.delete()}")
 
-    
     def hide_all(self) -> None:
         # Hide all child widgets
         for i in range(self.layout.count()):
@@ -114,22 +114,6 @@ class InstallPage(QFrame):
         # Show the frame itself
         self.show()
 
-    
-
     def change_to_main_model_page(self):
         self.hide_all()
         self.model_page.show_all()
-
-
-
-
-
-
-
-
-
-
-
-
-
-

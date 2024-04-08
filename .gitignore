@@ -12,3 +12,8 @@ src/__pycache__/conda_env.cpython-312.pyc
 src/__pycache__/
 src/frontend_build/__pycache__/
 src/frontend_build/databases/conda_environments.db
+databases/conda_environments.db
+~/FocalAI/logs/create_log.log
+~/FocalAI/Logs/create_log.log
+~/FocalAI/Logs/env_list_log.log
+~/FocalAI/logs/env_list_log.log

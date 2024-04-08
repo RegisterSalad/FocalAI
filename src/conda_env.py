@@ -2,9 +2,9 @@ import subprocess
 import os
 from repo import Repository
 
-general_logging_dir: str = "../logging"
+general_logging_dir: str = os.path.expanduser("~/FocalAI/logs/")
 
-def run_subprocess_with_logging(args: str, error_message: str, logging_directory: str, log_file_name: str) -> bool:
+def run_subprocess_with_logging(args: list[str], error_message: str, logging_directory: str, log_file_name: str) -> bool:
     """
     Runs a subprocess with the given arguments and logs the output and any errors encountered.
 
@@ -12,18 +12,23 @@ def run_subprocess_with_logging(args: str, error_message: str, logging_directory
         args (list[str]): The list of arguments to pass to the subprocess.
         error_message (str): The error message to display if the subprocess encounters an error.
         logging_directory (str): The directory to store logging information.
+        log_file_name (str): The name of the log file.
     """
     try:
+        # Ensure the logging directory exists
+        os.makedirs(logging_directory, exist_ok=True)
+        
         log_file_path = os.path.join(logging_directory, log_file_name)
+        
         with open(log_file_path, 'w') as log_file:
             command = " ".join(args)
-            print(f"Tried: {command}")
-            subprocess.run(command, check=True, stdout=log_file, stderr=subprocess.STDOUT,  shell=True)
+            print(f"Tried: {command} at {log_file_path}")
+            subprocess.run(command, check=True, stdout=log_file, stderr=subprocess.STDOUT, shell=True)
     except subprocess.CalledProcessError as e:
         print(f"{error_message}: {e}")
         return False
-    except OSError:
-        print("OS error occurred, possibly due to a missing executable or insufficient permissions.")
+    except OSError as e:
+        print(f"OS error occurred, possibly due to a missing executable or insufficient permissions.\n{e}")
         return False
     return True
 
@@ -51,6 +56,7 @@ class CondaEnvironment:
     Represents an Anaconda environment
     Attributes:
         env_id (int | None): Primary key for database lookup
+        description (str) : Description of the installed repository provided by paperswithcode
         python_version (str): The Python version of the conda environment
         pip_list_directory (str): The location of the pip requirements
         installed_models (list[str] | None): The names of the models currently installed
@@ -58,15 +64,15 @@ class CondaEnvironment:
         env_name (str): Name conda environment
         logging_directory (str): Directory where logging files are create and stored.
     """
-    def __init__(self, python_version: str, repository_url: str = "", pip_list_directory: str = "../pip_reqs", logging_directory: str = "../logging", env_id: int | None = None) -> None:
+    def __init__(self, python_version: str, repository_url: str = "", description: str = "", pip_list_directory: str = "../pip_reqs", logging_directory: str = general_logging_dir, env_id: int | None = None) -> None:
         self.env_id = env_id
         self.python_version = python_version
+        self.description = description
         self.pip_list_directory = pip_list_directory
         self.installed_models = None
         self.repository = Repository(repository_url)
         self.env_name = self.repository.repo_name
         self.logging_directory = logging_directory
-        self.create()
 
     def __call__(self, command: str) -> bool:
         """
@@ -112,7 +118,7 @@ class CondaEnvironment:
         """
         Deletes the Anaconda environment.
         """
-        args = ['conda', 'env', 'remove', '-n', self.env_name, '-y', '&&', 'conda', 'clean', '--all']
+        args = ['conda', 'env', 'remove', '-n', self.env_name, '-y', '&&', 'conda', 'clean', '--all', '-y']
         error_message = f"Error occurred while deleting environment '{self.env_name}'"
         return run_subprocess_with_logging(args, error_message, self.logging_directory, "delete_log.log")
 
@@ -173,7 +179,7 @@ class CondaEnvironment:
             print(f"An error occurred during the environment test: {e}")
             return False
 
-    def find_installed_environments(self, logging_directory="../logging") -> list[str] | None:
+    def find_installed_environments(self) -> list[str] | None:
         """
         Finds all of the installed Anaconda environments and returns a list of their names using the dedicated
         subprocess function with logging.
@@ -185,7 +191,7 @@ class CondaEnvironment:
         args = ['conda', 'env', 'list']
 
         # Execute the command and log its output
-        if not run_subprocess_with_logging(args, "Error finding installed environments", logging_directory, log_file_name):
+        if not run_subprocess_with_logging(args, "Error finding installed environments", self.logging_directory, log_file_name):
             print("Returning None")
             return None
 
@@ -208,9 +214,10 @@ class CondaEnvironment:
     def is_created(self) -> bool:
         check_if_exists(self.env_name)
 
+
 if __name__ == "__main__":
     # Get the absolute path of the logging directory
-    logging_directory = os.path.abspath("../logging")
+    logging_directory = os.path.abspath("../logging") # Values for testing
     requirements_directory = os.path.abspath("../pip_reqs")
     log_file_name = "logfile.log"
 
@@ -218,7 +225,6 @@ if __name__ == "__main__":
     env = CondaEnvironment(
         python_version="3.11.5",
         pip_list_directory=os.path.join(requirements_directory, "requirements.txt"),
-        models=[],
         logging_directory=logging_directory,
     )
 

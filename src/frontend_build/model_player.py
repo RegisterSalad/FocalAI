@@ -18,8 +18,6 @@ from script_builder import ScriptBuilder
 class ModelPlayer(QWidget):
     def __init__(self, parent=None):  # Changed parent default value to None
         super().__init__()
-        self.parent_widget = parent
-        self.repository = parent.repository
         self.model_type: str | None = None
         self.setWindowTitle("Model Player")
         self.file_list_widget = FileListWidget(parent=self)
