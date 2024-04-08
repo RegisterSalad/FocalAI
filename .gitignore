@@ -11,3 +11,4 @@ src/__pycache__/database_util.cpython-312.pyc
 src/__pycache__/conda_env.cpython-312.pyc
 src/__pycache__/
 src/frontend_build/__pycache__/
+src/frontend_build/databases/conda_environments.db

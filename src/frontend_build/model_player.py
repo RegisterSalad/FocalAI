@@ -21,7 +21,7 @@ class ModelPlayer(QWidget):
     def __init__(self, parent=None):  # Changed parent default value to None
         super().__init__(parent)
         self.parent_widget = parent
-        self.repository = parent.repository
+        # self.repository = parent.repository
         self.model_type: str | None = None
         self.setWindowTitle("Model Player")
         self.init_styles()

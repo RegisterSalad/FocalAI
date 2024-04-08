@@ -20,11 +20,12 @@ if module_dir not in sys.path:
 # Project imports
 from repo import Repository
 from database import DatabaseManager
-
+from conda_env import CondaEnvironment
 class ModelPage(QFrame):
     def __init__(self, styler: Styler):
         super().__init__()
         self.install_page: InstallPage | None = None
+        self.db = DatabaseManager("databases/conda_environments.db")
         self.styler = styler
         self.init_ui()
 
@@ -116,6 +117,9 @@ class ModelPage(QFrame):
                     widget.setEnabled(True)
                     widget.show()  # Show the widget
 
+        if self.install_page.success:
+            self.env = self.get_conda_env()
+
     def change_to_install_page(self):
         self.hide_all()
         self.install_page = InstallPage(self.styler, self, self.repository.install_commands)
@@ -133,7 +137,12 @@ class ModelPage(QFrame):
             
             return self.html_text
 
+    def get_conda_env(self) -> CondaEnvironment:
+        return self.db.get_environment_by_name(self.repository.repo_name)
+
     def update_content(self, repo_url: str | None) -> None:
+
+        
         # Show buttons when content is updated
         if repo_url is None:
             if self.html_text is None:

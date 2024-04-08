@@ -1,5 +1,6 @@
 import subprocess
 import os
+from repo import Repository
 
 general_logging_dir: str = "../logging"
 
@@ -52,16 +53,18 @@ class CondaEnvironment:
         env_id (int | None): Primary key for database lookup
         python_version (str): The Python version of the conda environment
         pip_list_directory (str): The location of the pip requirements
-        models (str | list[str]): The names of the models currently installed
-        repository_name (str): Name of the repository, will be the name of the associated conda environment
+        installed_models (list[str] | None): The names of the models currently installed
+        repository (Repository): Repository Object containing all information about repository as well as formatted readme
+        env_name (str): Name conda environment
         logging_directory (str): Directory where logging files are create and stored.
     """
-    def __init__(self, python_version: str, models: str | list[str], repository_name: str = "", pip_list_directory: str = "../pip_reqs", logging_directory: str = "../logging", env_id: int | None = None) -> None:
+    def __init__(self, python_version: str, repository_url: str = "", pip_list_directory: str = "../pip_reqs", logging_directory: str = "../logging", env_id: int | None = None) -> None:
         self.env_id = env_id
         self.python_version = python_version
         self.pip_list_directory = pip_list_directory
-        self.models = models
-        self.env_name = repository_name
+        self.installed_models = None
+        self.repository = Repository(repository_url)
+        self.env_name = self.repository.repo_name
         self.logging_directory = logging_directory
         self.create()
 
@@ -88,7 +91,8 @@ class CondaEnvironment:
             f"Environment Name: {self.env_name}",
             f"Python Version: {self.python_version}",
             f"PIP List Directory: {self.pip_list_directory}",
-            f"Models: {self.models}" 
+            f"Models: {self.installed_models}", 
+            f"Repository: {self.repository}"
         ]
 
         return "\n".join(str_attributes)
@@ -216,7 +220,6 @@ if __name__ == "__main__":
         pip_list_directory=os.path.join(requirements_directory, "requirements.txt"),
         models=[],
         logging_directory=logging_directory,
-        repository_name="TestRepo"
     )
 
     # Test your methods

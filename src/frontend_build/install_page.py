@@ -29,6 +29,7 @@ class InstallPage(QFrame):
         print(self.install_commands_list)
         self.command_count = len(self.install_commands_list)
         self.commands_to_run_set: set = set()
+        self.success = False
         self.init_ui()
 
     def init_ui(self):
