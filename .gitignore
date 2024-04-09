@@ -17,3 +17,4 @@ databases/conda_environments.db
 ~/FocalAI/Logs/create_log.log
 ~/FocalAI/Logs/env_list_log.log
 ~/FocalAI/logs/env_list_log.log
+databases/conda_environments.db

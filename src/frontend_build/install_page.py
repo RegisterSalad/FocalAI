@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame, QWidget, QSizePolicy, QListWidget
-from PySide6.QtCore import Qt, QThread
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame, QWidget, QSizePolicy, QListWidget, QTextEdit
+from PySide6.QtCore import Qt, QThread, QEventLoop
 from PySide6.QtWebEngineWidgets import QWebEngineView  # Import QWebEngineView
 import markdown
 import sys
@@ -36,32 +36,6 @@ class InstallPage(QFrame):
             self.commands_to_run_list = []  # Initialize the list for commands to run.
             self.init_ui()
 
-    def run_conda_command(self, command_name, *args):
-        """
-        Args:
-        - command_name: Is the name of the subprocess method that the worker will wrap around
-            valid options are:
-                - __call__(command: str) -> bool: Executes a given command within the conda environment.
-                - __str__() -> str: Returns a string representation of the CondaEnvironment object.
-                - create() -> bool: Creates the conda environment based on the provided specifications.
-                - delete() -> bool: Deletes the specified conda environment.
-                - conda_init() -> bool: Initializes the conda command line environment setup.
-
-        - *args: Any arguments for the method
-        """
-        # Create a worker and thread
-        self.thread = QThread()
-        self.worker = Worker(self.new_env, command_name, *args)
-        
-        # Move the worker to the thread and connect signals
-        self.worker.moveToThread(self.thread)
-        self.worker.finished.connect(self.thread.quit)
-        self.worker.output.connect(self.update_progress_widget)
-        
-        # Start the thread
-        self.thread.started.connect(self.worker.run)
-        self.thread.start()
-
     def init_ui(self):
         self.layout = QVBoxLayout(self)
 
@@ -92,9 +66,53 @@ class InstallPage(QFrame):
         list_layout.addWidget(self.add_button)
         list_layout.addWidget(self.commands_to_run_widget)
 
+        # Progress Widget initialization
+        self.progress_widget = QTextEdit(self)
+        self.progress_widget.setReadOnly(True)  # Make the progress widget read-only
+        self.progress_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)  # Adjust size policy
+
+        # Add the progress widget to the layout
+        self.layout.addWidget(self.progress_widget)
+
+
         self.layout.addLayout(list_layout)
         self.layout.addWidget(self.run_button)
         self.layout.addLayout(button_layout)
+
+        # Set the style as provided
+        self.setStyleSheet("""
+            QWidget {
+                font-family: 'Segoe UI', Arial, sans-serif;
+                font-size: 14px;
+            }
+            QFrame {
+                background-color: #F0F0F0;
+                border-radius: 10px;
+            }
+            QLineEdit, QTextEdit {
+                border: 2px solid #CCCCCC;
+                border-radius: 5px;
+                padding: 5px;
+                background-color: white;
+            }
+            QLabel {
+                color: #333333;
+            }
+            QPushButton {
+                background-color: #4CAF50;
+                border: none;
+                color: white;
+                padding: 10px 24px;
+                text-align: center;
+                text-decoration: none;
+                font-size: 14px;
+                margin: 4px 2px;
+                border-radius: 8px;
+            }
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+        """)
 
     def add_command_to_run(self):
         selected_items = self.install_commands_widget.selectedItems()
@@ -109,12 +127,21 @@ class InstallPage(QFrame):
     def run_selected_commands(self):
         print(f"Running {self.commands_to_run_list}")
         formatted_command = " && ".join(self.commands_to_run_list)
-        if not self.new_env.create(): # This is using __create__ modify accordingly
+
+        # Environment creation (blocking)
+        create_tuple = self.new_env.create()
+        creation_success = self.run_environment_command(worker_name="create",command=create_tuple[0], error_message=create_tuple[1])
+        if not creation_success:
             print("Env Creation failed")
-        if self.new_env(formatted_command): # This runs the commands with logging, this is using __call__, modify accordingly
+            return  # Stop further execution if environment creation fails
+
+        # Execute other commands (asynchronously or with a blocking pattern if necessary)
+        call_tuple = self.new_env(formatted_command)
+        if self.run_environment_command(worker_name="call" ,command=call_tuple[0], error_message=call_tuple[1]):
             self.db.insert_environment(self.new_env)
         else:
-            print(f"Environment Deleted: {self.new_env.delete()}")
+            delete_tuple = self.new_env.delete()
+            print(f"Environment Deleted: {self.run_environment_command(worker_name="delete", command=delete_tuple[0], error_message=delete_tuple[1])}")
 
     def hide_all(self) -> None:
         # Hide all child widgets
@@ -142,4 +169,42 @@ class InstallPage(QFrame):
         self.hide_all()
         self.model_page.show_all()
 
+    def run_environment_command(self, worker_name, command: str, error_message: str) -> bool:
+        # Create the worker and thread
+        worker = Worker(worker_name, command, error_message)
+        thread = QThread()
+        loop = QEventLoop()  # Event loop to wait for completion
+
+        # Move the worker to the thread and connect signals
+        worker.moveToThread(thread)
+        worker.output.connect(self.update_progress_widget)
+        thread.started.connect(worker.run_command)
+
+        # Use the finished signal to quit the loop and capture the success flag
+        success_flag = [False]  # Use a mutable type to capture the success flag
+
+        def on_finished(success):
+            success_flag[0] = success
+            loop.quit()
+
+        worker.finished.connect(on_finished)
+
+        # Cleanup
+        worker.finished.connect(thread.quit)
+        worker.finished.connect(worker.deleteLater)
+        thread.finished.connect(thread.deleteLater)
+
+        # Start the thread and the event loop
+        thread.start()
+        loop.exec()  # This will block until the worker emits `finished`
+
+        # Keep a reference to avoid premature garbage collection
+        self._thread = thread
+        self._worker = worker
+
+        return success_flag[0]
+
+    def update_progress_widget(self, text: str):
+            # Append text to the progress_widget, ensuring thread safety
+        self.progress_widget.append(text)
 # This is NOT the main application
