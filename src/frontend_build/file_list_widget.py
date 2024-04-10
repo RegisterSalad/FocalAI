@@ -38,15 +38,3 @@ class FileListWidget(QListWidget):
     def refresh_list(self):
         self.clear()  # Clear the current list
         self.populate_initial_list()  # Repopulate list based on the current folder content
-
-
-    """
-    def sizeHint(self):
-        return QSize(100, 100)  # Set an initial size hint
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        # Adjust the size of the list widget to match its parent frame
-        self.setMinimumSize(event.size())
-        self.setMaximumSize(event.size())
-    """
