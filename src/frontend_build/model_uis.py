@@ -191,7 +191,7 @@ class Model(QObject):
 class DragAndDropPlayer(QWidget):
     def __init__(self, model_type: str):
         self.model_type = model_type
-        self.model = model
+        # self.model = model
         super().__init__()
         self.initUI()
     
