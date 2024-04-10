@@ -76,10 +76,12 @@ class TerminalWidget(QWidget):
         self.output_textedit.insertPlainText(clean_output)
 
     def closeEvent(self, event):
-        if self.process.state() != QProcess.NotRunning:
-            self.process.terminate()  # Politely ask the process to terminate
-            self.process.waitForFinished(2000)  # Wait up to 2000 ms for the process to terminate
-            self.process.kill()  # Forcefully kill the process if it didn't terminate
+        if self.process.state() == QProcess.Running:
+            self.process.terminate()
+            self.process.waitForFinished()  # Wait indefinitely for the process to finish
+            if self.process.state() == QProcess.Running:
+                self.process.kill()  # Forcefully kill the process if it's still running
         event.accept()  # Accept the close event
+
 
 

@@ -1,171 +1,210 @@
-from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame, QWidget
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame, QWidget, QSizePolicy, QListWidget, QTextEdit
+from PySide6.QtCore import Qt, QThread, QEventLoop
 from PySide6.QtWebEngineWidgets import QWebEngineView  # Import QWebEngineView
 import markdown
 import sys
 import os
 from PySide6.QtGui import QIcon
 from typing import Callable
+import subprocess
 
 # Working dir imports
 from model_player import ModelPlayer
 from styler import Styler
-
+from worker import Worker
 # Calculate the path to the directory containing
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
 # Project imports
+from conda_env import CondaEnvironment
 from repo import Repository
 from database import DatabaseManager
 
 class InstallPage(QFrame):
-    def __init__(self, styler, model_page, install_commands: list[str]):
-        super().__init__()
-        self.model_page = model_page
-        self.styler = styler
-        self.install_commands_list = install_commands
-        print(self.install_commands_list)
-        self.command_count = len(self.install_commands_list)
-        self.commands_to_run_set: set = set()
-        self.init_ui()
-    
-
+    def __init__(self, styler, model_page, new_env: CondaEnvironment):
+            super().__init__()
+            self.model_page = model_page
+            self.styler = styler
+            self.new_env: CondaEnvironment = new_env
+            self.install_commands_list = self.new_env.repository.install_commands
+            self.db = DatabaseManager("databases/conda_environments.db")
+            print(self.install_commands_list)
+            self.command_count = len(self.install_commands_list)
+            self.commands_to_run_set = set()  # It seems you wanted to use a set, but it's not used later in your code.
+            self.commands_to_run_list = []  # Initialize the list for commands to run.
+            self.init_ui()
 
     def init_ui(self):
-        self.css = self.styler.doc_css
-        self.page_layout = QVBoxLayout()
-        ''' Level 1 Hierarchy '''
-        self.install_frame = QFrame()
-        self.to_run_frame = QFrame()
+        self.layout = QVBoxLayout(self)
 
-        self.install_frame_layout = QHBoxLayout()
-        self.to_run_frame_layout = QHBoxLayout()
-        
-        self.install_frame.setLayout(self.install_frame_layout)
-        self.to_run_frame.setLayout(self.to_run_frame_layout)
-        '''-------------------'''
+        # Install Commands List
+        self.install_commands_widget = QListWidget()
+        self.install_commands_widget.addItems(self.install_commands_list)
 
-        ''' Level 2 Hierarchy '''
-        self.install_display_widget = QWidget()
-        self.to_run_display_widget = QWidget()
+        # Commands to Run List
+        self.commands_to_run_widget = QListWidget()
 
-        self.install_display_layout = QHBoxLayout()
-        self.to_run_display_layout = QHBoxLayout()
-
-        self.install_display_widget.setLayout(self.install_display_layout)
-        self.to_run_display_widget.setLayout(self.to_run_display_layout)
-        '''-------------------'''
-
-        ''' Level 2 Hierarchy '''
-        self.install_button_widget = QWidget()
-        self.to_run_button_widget = QWidget()
-
-        self.install_button_layout = QVBoxLayout()
-        self.to_run_button_layout = QVBoxLayout()
-
-        self.install_button_widget.setLayout(self.install_button_layout)
-        self.to_run_button_widget.setLayout(self.to_run_button_layout)
-        '''-------------------'''
-
-        ''' Level 3 Hierarchy '''
-        self.commands_displayer_engine = QWebEngineView()
-        self.to_run_engine = QWebEngineView()
-
-        #Add engines to layouts
-        self.install_display_layout.addWidget(self.commands_displayer_engine)
-        self.to_run_display_layout.addWidget(self.to_run_engine)
-        '''-------------------'''
-
-        #Set the engine content for the original commands
-        self.set_engine_content(self.install_commands_list, self.commands_displayer_engine)
-        #Add the buttons for original commands
-        self.create_add_buttons()
-
-        self.run_button = QPushButton('Run Selected Commands')
-        self.run_button.clicked.connect(self.run_selected_commands)
-        self.back_button = QPushButton('<<')
-        self.back_button.setToolTip("Return to Model Page")
-        self.back_button.setMaximumSize(30, 30)
+        # Horizontal layout for buttons
+        button_layout = QHBoxLayout()
+        self.back_button = QPushButton("Back")
         self.back_button.clicked.connect(self.change_to_main_model_page)
-        self.page_layout.addWidget(self.back_button, 0, Qt.AlignTop | Qt.AlignLeft)
-        
-        self.page_layout.addWidget(QLabel('Install Commands:'))
-        self.install_frame_layout.addWidget(self.install_display_widget)
-        self.install_frame_layout.addWidget(self.install_button_widget)
-        self.page_layout.addWidget(self.install_frame)
+        button_layout.addWidget(self.back_button)
 
-        self.page_layout.addWidget(QLabel('Commands to Run:'))
-        self.to_run_frame_layout.addWidget(self.to_run_display_widget)
-        self.to_run_frame_layout.addWidget(self.to_run_button_widget)
-        self.page_layout.addWidget(self.to_run_frame)
-        self.page_layout.addWidget(self.run_button)
-        self.setLayout(self.page_layout)
+        # Add the button layout to the main layout
 
-    def set_engine_content(self, content: list[str] | set, engine: QWebEngineView) -> None:
-        lines = [markdown.markdown(line, extensions=['tables', 'fenced_code', 'codehilite', 'extra']) for line in content]
-        html_text: str = ""
-        for line in lines:
-            html_text += f"{markdown.markdown(line, extensions=['tables', 'fenced_code', 'codehilite', 'extra'])}\n"
+        # Buttons for adding/removing commands
+        self.add_button = QPushButton("Add >>")
+        self.add_button.clicked.connect(self.add_command_to_run)
+        self.run_button = QPushButton("Run Selected Commands")
+        self.run_button.clicked.connect(self.run_selected_commands)
 
-        html_text = f"<style>{self.css}</style>{html_text}"
-        engine.setHtml(html_text)
+        # Layout for lists and buttons
+        list_layout = QHBoxLayout()
+        list_layout.addWidget(self.install_commands_widget)
+        list_layout.addWidget(self.add_button)
+        list_layout.addWidget(self.commands_to_run_widget)
+
+        # Progress Widget initialization
+        self.progress_widget = QTextEdit(self)
+        self.progress_widget.setReadOnly(True)  # Make the progress widget read-only
+        self.progress_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)  # Adjust size policy
+
+        # Add the progress widget to the layout
+        self.layout.addWidget(self.progress_widget)
 
 
-    def create_add_buttons(self) -> None:
-        """
-        Creates the buttons for each command in install_commands and connects the the copy_command_to_run with the install command at that index to each.
-        Adds the buttons the correct layout: self.commands_layout
-        """
-        print(self.command_count)
+        self.layout.addLayout(list_layout)
+        self.layout.addWidget(self.run_button)
+        self.layout.addLayout(button_layout)
 
-        for idx in range((self.command_count)):
-            btn = QPushButton('+')
-            btn.setMaximumSize(30, 30)
-            btn.clicked.connect(lambda idx=idx: self.copy_command_to_run(self.install_commands_list[idx]))
-            self.install_button_layout.addWidget(btn) # Where should I put these buttons?
+        # Set the style as provided
+        self.setStyleSheet("""
+            QWidget {
+                font-family: 'Segoe UI', Arial, sans-serif;
+                font-size: 14px;
+            }
+            QFrame {
+                background-color: #F0F0F0;
+                border-radius: 10px;
+            }
+            QLineEdit, QTextEdit {
+                border: 2px solid #CCCCCC;
+                border-radius: 5px;
+                padding: 5px;
+                background-color: white;
+            }
+            QLabel {
+                color: #333333;
+            }
+            QPushButton {
+                background-color: #4CAF50;
+                border: none;
+                color: white;
+                padding: 10px 24px;
+                text-align: center;
+                text-decoration: none;
+                font-size: 14px;
+                margin: 4px 2px;
+                border-radius: 8px;
+            }
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+        """)
 
-    def copy_command_to_run(self, command: str) -> None:
-        """
-        Displays the command in the to_run engine
-        Add the button for it
-        """
-        self.commands_to_run_set.add(command)
-        self.set_engine_content(self.commands_to_run_set, self.to_run_engine)
-        btn = QPushButton('-')
-        btn.setMaximumSize(30, 30)
-        btn.clicked.connect(lambda: self.remove_command_from_run(command, btn))
-        self.to_run_button_layout.addWidget(btn)
-
-    def remove_command_from_run(self, command: str, btn: QPushButton) -> None:
-        self.commands_to_run_set.remove(command)
-        self.to_run_button_layout.removeWidget(btn)
+    def add_command_to_run(self):
+        selected_items = self.install_commands_widget.selectedItems()
+        if not selected_items:
+            return
+        for item in selected_items:
+            # Avoid adding duplicates
+            if item.text() not in self.commands_to_run_list:
+                self.commands_to_run_list.append(item.text())
+                self.commands_to_run_widget.addItem(item.text())
 
     def run_selected_commands(self):
-        # Implement command execution logic
-        print("Running commands:", self.commands_to_run_set)
+        print(f"Running {self.commands_to_run_list}")
+        formatted_command = " && ".join(self.commands_to_run_list)
+
+        # Environment creation (blocking)
+        create_tuple = self.new_env.create()
+        creation_success = self.run_environment_command(worker_name="create",command=create_tuple[0], error_message=create_tuple[1])
+        if not creation_success:
+            print("Env Creation failed")
+            return  # Stop further execution if environment creation fails
+
+        # Execute other commands (asynchronously or with a blocking pattern if necessary)
+        call_tuple = self.new_env(formatted_command)
+        if self.run_environment_command(worker_name="call" ,command=call_tuple[0], error_message=call_tuple[1]):
+            self.db.insert_environment(self.new_env)
+        else:
+            delete_tuple = self.new_env.delete()
+            print(f"Environment Deleted: {self.run_environment_command(worker_name="delete", command=delete_tuple[0], error_message=delete_tuple[1])}")
 
     def hide_all(self) -> None:
-        layout = self.layout()  # Get the layout of the frame
-        if layout is not None:
-            for i in range(layout.count()):
-                item = layout.itemAt(i)
-                widget = item.widget()
-                if widget is not None:  # Check if the item is a widget
-                    widget.setDisabled(True)
-                    widget.hide()  # Hide the widget
+        # Hide all child widgets
+        for i in range(self.layout.count()):
+            item = self.layout.itemAt(i)
+            widget = item.widget()
+            if widget is not None:
+                widget.hide()
+
+    # Hide the frame itself
+        self.hide()
 
     def show_all(self) -> None:
-        layout = self.layout()  # Get the layout of the frame
-        if layout is not None:
-            for i in range(layout.count()):
-                item = layout.itemAt(i)
-                widget = item.widget()
-                if widget is not None:  # Check if the item is a widget
-                    widget.setEnabled(True)
-                    widget.show()  # Show the widget
+        # Show all child widgets
+        for i in range(self.layout.count()):
+            item = self.layout.itemAt(i)
+            widget = item.widget()
+            if widget is not None:
+                widget.show()
+
+        # Show the frame itself
+        self.show()
 
     def change_to_main_model_page(self):
         self.hide_all()
         self.model_page.show_all()
+
+    def run_environment_command(self, worker_name, command: str, error_message: str) -> bool:
+        # Create the worker and thread
+        worker = Worker(worker_name, command, error_message)
+        thread = QThread()
+        loop = QEventLoop()  # Event loop to wait for completion
+
+        # Move the worker to the thread and connect signals
+        worker.moveToThread(thread)
+        worker.output.connect(self.update_progress_widget)
+        thread.started.connect(worker.run_command)
+
+        # Use the finished signal to quit the loop and capture the success flag
+        success_flag = [False]  # Use a mutable type to capture the success flag
+
+        def on_finished(success):
+            success_flag[0] = success
+            loop.quit()
+
+        worker.finished.connect(on_finished)
+
+        # Cleanup
+        worker.finished.connect(thread.quit)
+        worker.finished.connect(worker.deleteLater)
+        thread.finished.connect(thread.deleteLater)
+
+        # Start the thread and the event loop
+        thread.start()
+        loop.exec()  # This will block until the worker emits `finished`
+
+        # Keep a reference to avoid premature garbage collection
+        self._thread = thread
+        self._worker = worker
+
+        return success_flag[0]
+
+    def update_progress_widget(self, text: str):
+            # Append text to the progress_widget, ensuring thread safety
+        self.progress_widget.append(text)
+# This is NOT the main application

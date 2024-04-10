@@ -1,10 +1,8 @@
-from PySide6.QtWidgets import (QWidget, QVBoxLayout,
-                               QHBoxLayout, QLabel, QFrame, QSizePolicy)
-from PySide6.QtCore import Qt
-from file_drop_widget import FileDropWidget
-from file_list_widget import FileListWidget
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QApplication,
+                               QHBoxLayout, QLabel, QFrame, QSizePolicy, QTextEdit, QLineEdit)
+from PySide6.QtCore import QObject, Signal, QCoreApplication
+from PySide6.QtGui import QFont
 from menu_bar import MenuBar
-from terminal_widget import TerminalWidget
 import os
 import sys
 
@@ -12,14 +10,22 @@ module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
+from file_list_widget import FileListWidget
+from file_drop_widget import FileDropWidget
+from terminal_widget import TerminalWidget
+from script_builder import ScriptBuilder
+
 class ModelPlayer(QWidget):
-    def __init__(self):
+    def __init__(self, parent=None):  # Changed parent default value to None
         super().__init__()
+        self.model_type: str | None = None
         self.setWindowTitle("Model Player")
-        self.init_styles()  # Initialize styles for the window
-        self.file_list_widget = FileListWidget()
+        self.file_list_widget = FileListWidget(parent=self)
         self.file_drop_widget = FileDropWidget()
-        self.init_ui()  # Setup the UI components
+        self.script_builder = ScriptBuilder(parent=self)
+        self.input_path: str | None = None
+        self.init_styles()
+        self.init_ui()
 
     def init_styles(self):
         self.setStyleSheet("""
@@ -47,10 +53,8 @@ class ModelPlayer(QWidget):
                 padding: 10px 24px;
                 text-align: center;
                 text-decoration: none;
-                display: inline-block;
                 font-size: 14px;
                 margin: 4px 2px;
-                cursor: pointer;
                 border-radius: 8px;
             }
             QPushButton:hover {
@@ -59,106 +63,61 @@ class ModelPlayer(QWidget):
         """)
 
     def init_ui(self):
-        layout = QVBoxLayout()
-        layout.setContentsMargins(15, 15, 15, 15)  # Add margins for padding around the layout
-        layout.setSpacing(10)  # Add some spacing between widgets
-        # Adding a menu bar
+        main_layout = QHBoxLayout()  # Changed to QHBoxLayout
+        main_layout.setContentsMargins(15, 15, 15, 15)
+        main_layout.setSpacing(10)
+        
         self.menu_bar = MenuBar(self)
-        self.menu_bar.setStyleSheet("""
-                QMenuBar {
-                    background-color: #f0f0f0;
-                    color: #333333;
-                    border: 1px solid #cccccc;
-                    border-radius: 10px;  /* Rounded corners for the menu bar */
-                    padding: 2px;  /* Padding to ensure the border does not cut into the items */
-                }
-                QMenuBar::item {
-                    background-color: #f0f0f0;
-                    padding: 5px 10px;
-                    border-radius: 5px;  /* Rounded corners for each menu item */
-                }
-                QMenuBar::item:selected { /* When selected using mouse or keyboard */
-                    background-color: #a8a8a8;
-                    border-radius: 5px;  /* Maintain rounded corners on selection */
-                }
-                QMenuBar::item:pressed {
-                    background-color: #888888;
-                    border-radius: 5px;  /* Maintain rounded corners when pressed */
-                }
-                QMenu {
-                    background-color: #f0f0f0;
-                    border: 1px solid #cccccc;
-                    margin: 2px;  /* Some spacing around the menu */
-                    border-radius: 5px;  /* Rounded corners for the dropdowns */
-                }
-                QMenu::item {
-                    padding: 5px 25px;
-                    border-radius: 5px;  /* Rounded corners for each menu item */
-                }
-                QMenu::item:selected {
-                    background-color: #a8a8a8;
-                    border-radius: 5px;  /* Maintain rounded corners on selection */
-                }
-            """)
+        main_layout.setMenuBar(self.menu_bar)
+        
+        # Create a container for left side widgets
+        left_side_layout = QVBoxLayout()
+        self.init_left_section(left_side_layout)
+        
+        
+        # Add left_side_layout and ScriptBuilder to the main layout
+        left_side_container = QWidget()
+        left_side_container.setLayout(left_side_layout)
+        main_layout.addWidget(left_side_container)
+        main_layout.addWidget(self.script_builder)
+        
+        self.setLayout(main_layout)
+        #Initialize at full screen windowed
+        screen = QCoreApplication.instance().primaryScreen()
+        self.setGeometry(screen.geometry())
 
-        layout.setMenuBar(self.menu_bar)
-        self.init_top_section(layout)
-        self.init_bottom_section(layout)
-
-        self.setLayout(layout)
-        self.setGeometry(100, 100, 800, 600)  # Set the window geometry
-
-    def init_top_section(self, main_layout):
-        top_frame = QFrame()
-        left_top_frame = QFrame()
-        right_top_frame = QFrame()
-
-        top_layout = QHBoxLayout()
-        top_layout.setSpacing(10)  # Add spacing between left and right sections
-
-        # Ensure this connection is correct, using file_drop_widget and file_list_widget
-        self.file_drop_widget.filesDropped.connect(self.file_list_widget.update_file_list)
-
-        # Set the size policy and layout for the drop widget and list widget
+    def init_left_section(self, main_layout):
+        left_section_layout = QVBoxLayout()
+        
+        # Combine file_drop_widget and file_list_widget into a vertical layout
         self.file_drop_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.file_drop_widget.setMaximumHeight(200)
         self.file_list_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
 
-        left_top_layout = QVBoxLayout(left_top_frame)
-        left_top_layout.addWidget(self.file_drop_widget)
-        left_top_layout.addWidget(self.file_list_widget)
+        # Connect the file_drop_widget to the file_list_widget
+        self.file_drop_widget.filesDropped.connect(self.file_list_widget.update_file_list)
+        self.file_drop_widget.filesDropped.connect(self.get_user_input)
 
-        # Assuming self.list_widget is your QListWidget instance
-        #file_list_widget.clear()
+        # left_section_layout.addWidget(self.file_drop_widget)
+        # left_section_layout.addWidget(self.file_list_widget)
 
-        # Terminal widget with minimum size policy
+        # Add the terminal_widget to the vertical layout
         terminal_widget = TerminalWidget()
         terminal_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
-        terminal_widget.setMinimumSize(200, 150)  # Set a minimum size for the terminal widget
+        terminal_widget.setMinimumSize(200, 150)
+        left_section_layout.addWidget(terminal_widget)
 
-        right_top_layout = QVBoxLayout(right_top_frame)
-        right_top_layout.addWidget(terminal_widget)
+        left_section_container = QWidget()
+        left_section_container.setLayout(left_section_layout)
+        main_layout.addWidget(left_section_container)
 
-        # Add left and right sections to the top layout
-        top_layout.addWidget(left_top_frame)
-        top_layout.addWidget(right_top_frame)
-        top_frame.setLayout(top_layout)
-        main_layout.addWidget(top_frame)
 
-    def init_bottom_section(self, main_layout):
-        bottom_frame = QFrame()
-        bottom_layout = QVBoxLayout()
+    def get_user_input(self, input_path: str) -> None:
+        self.input_path = input_path
 
-        # Bottom widget with minimum size policy
-        bottom_widget = QLabel("This is the bottom frame")
-        bottom_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
-        bottom_widget.setMinimumHeight(100)  # Set a minimum height for the bottom widget
-        bottom_widget.setAlignment(Qt.AlignCenter)
 
-        bottom_layout.addWidget(bottom_widget)
-        bottom_frame.setLayout(bottom_layout)
-
-        # Set the size policy for the bottom frame to expand
-        bottom_frame.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
-
-        main_layout.addWidget(bottom_frame)
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    main_window = ModelPlayer()
+    main_window.show()
+    sys.exit(app.exec())

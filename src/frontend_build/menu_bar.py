@@ -37,6 +37,42 @@ class MenuBar(QMenuBar):
         self.init_ui()
 
     def init_ui(self):
+        self.setStyleSheet("""
+                QMenuBar {
+                    background-color: #f0f0f0;
+                    color: #333333;
+                    border: 1px solid #cccccc;
+                    border-radius: 10px;  /* Rounded corners for the menu bar */
+                    padding: 2px;  /* Padding to ensure the border does not cut into the items */
+                }
+                QMenuBar::item {
+                    background-color: #f0f0f0;
+                    padding: 5px 10px;
+                    border-radius: 5px;  /* Rounded corners for each menu item */
+                }
+                QMenuBar::item:selected { /* When selected using mouse or keyboard */
+                    background-color: #a8a8a8;
+                    border-radius: 5px;  /* Maintain rounded corners on selection */
+                }
+                QMenuBar::item:pressed {
+                    background-color: #888888;
+                    border-radius: 5px;  /* Maintain rounded corners when pressed */
+                }
+                QMenu {
+                    background-color: #f0f0f0;
+                    border: 1px solid #cccccc;
+                    margin: 2px;  /* Some spacing around the menu */
+                    border-radius: 5px;  /* Rounded corners for the dropdowns */
+                }
+                QMenu::item {
+                    padding: 5px 25px;
+                    border-radius: 5px;  /* Rounded corners for each menu item */
+                }
+                QMenu::item:selected {
+                    background-color: #a8a8a8;
+                    border-radius: 5px;  /* Maintain rounded corners on selection */
+                }
+            """)
         # Terminal selection menu
         terminal_menu = self.addMenu("Terminal Selection")
         terminal_menu.addAction("Bash")
@@ -73,11 +109,8 @@ class MenuBar(QMenuBar):
                 self.file_list_widget.refresh_list()  # Refresh the list in the UI to reflect the cleared folder
 
     def clip_my_output_placeholder(self):
-
         input_txt = "run_command_log_test.txt"
-
         output_pdf = "command_log.pdf"
-
 
         logger = Logger()
         logger.convert_md_to_pdf(input_txt , output_pdf )

@@ -1,7 +1,7 @@
 import sqlite3
 from conda_env import CondaEnvironment
 import pickle
-
+from repo import Repository
 class Database:
     """Represents a database connection to manage Conda environments."""
 
@@ -37,15 +37,14 @@ class Database:
             return False
     
     def create_environment(self, python_version: str, pip_list_directory: str,
-                           models: list[str], repository_name: str, logging_directory: str) -> bool:
+                            repository_url: str, logging_directory: str) -> bool:
         """
         Creates a new CondaEnvironment and inserts it into the database.
 
         Args:
             python_version (str): The Python version for the new conda environment.
             pip_list_directory (str): The directory for pip requirements.
-            models (list[str]): The names of models currently installed.
-            repository_name (str): The repository name, used as the environment name.
+            repository_url (str): The repository url, used to create a Repository object after CondaEnvironment init.
             logging_directory (str): The directory where logging files are stored.
 
         Returns:
@@ -56,8 +55,7 @@ class Database:
             new_env = CondaEnvironment(
                 python_version=python_version,
                 pip_list_directory=pip_list_directory,
-                models=models,
-                repository_name=repository_name,
+                repository_url=repository_url,
                 logging_directory=logging_directory
             )
             # Attempt to insert the new environment into the database
@@ -74,9 +72,9 @@ class Database:
         try:
             serialized_env = pickle.dumps(environment)
             self.cursor.execute('''
-                INSERT INTO conda_environments (env_name, python_version, serialized_env)
-                VALUES (?, ?, ?)
-            ''', (environment.env_name, environment.python_version, serialized_env))
+                INSERT INTO conda_environments (env_name, python_version, model_type serialized_env)
+                VALUES (?, ?, ?, ?)
+            ''', (environment.env_name, environment.python_version, environment.repository.model_type, serialized_env))
             self.connection.commit()
             return True
         except sqlite3.Error:
