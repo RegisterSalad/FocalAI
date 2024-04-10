@@ -4,3 +4,13 @@ src/__pycache__/database.cpython-312.pyc
 src/__pycache__/database_util.cpython-312.pyc
 src/__pycache__/conda_env.cpython-312.pyc
 src/__pycache__/api_caller.cpython-312.pyc
+src/frontend_build/__pycache__/menu_bar.cpython-311.pyc
+src/frontend_build/__pycache__/model_page.cpython-311.pyc
+src/frontend_build/__pycache__/model_player.cpython-311.pyc
+src/frontend_build/__pycache__/script_builder.cpython-312.pyc
+src/frontend_build/__pycache__/worker.cpython-312.pyc
+src/frontend_build/databases/conda_environments.db
+~/FocalAI/Logs/create_log.log
+~/FocalAI/logs/create_log.log
+~/FocalAI/Logs/env_list_log.log
+~/FocalAI/logs/env_list_log.log
