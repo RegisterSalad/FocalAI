@@ -32,6 +32,7 @@ class Repository:
         Args:
             repo_url (str): URL of the GitHub repository to analyze.
         """
+        
         self.caller = APICaller()
         self.repo_url: str = repo_url.rstrip('/')
         parts = repo_url.rstrip('/').split('/')
@@ -48,6 +49,25 @@ class Repository:
         self.readme_content = self.caller.get_readme_contents(self.repo_url)
         if self.readme_content:
             self.install_commands = self.parse_readme_contents()
+            self.tables = self.get_tables()
+            self.model_type = self.get_model_type()
+
+    def get_model_type(self) -> str | None:
+        """
+        Looks through the readme to find the model type using regex patterns.
+        """
+
+        # Pattern for speech recognition
+        if re.search(r'speech recognition', self.readme_content, re.IGNORECASE):
+            return "ASR"
+        # Pattern for classification or segmentation
+        elif re.search(r'classification|segmentation', self.readme_content, re.IGNORECASE):
+            return "OBJ"
+        # Pattern for language model or <any_integer>B
+        elif re.search(r'language model|\d+B', self.readme_content, re.IGNORECASE):
+            return "LLM"
+        # If none of the patterns match
+        return None
 
     def extract_code_blocks(self) -> list[str]:
         """
