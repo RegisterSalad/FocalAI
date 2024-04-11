@@ -4,7 +4,7 @@ from repo import Repository
 
 general_logging_dir: str = os.path.expanduser("~/FocalAI/logs/")
 
-def run_subprocess_with_logging(command: str, error_message: str, log_file_name: str, logging_directory: str = general_logging_dir):
+def run_subprocess_with_logging(command: str, error_message: str, log_file_name: str, logging_directory: str = general_logging_dir) -> str:
     """
     Runs a subprocess with the given arguments and logs the output and any errors encountered.
 
@@ -55,39 +55,16 @@ def check_if_exists(env_name: str) -> bool:
     except Exception as e:
         print(f"An error occurred while processing environments list: {e}")
         return False
-<<<<<<< HEAD
         
 class CondaEnvironment:
     def __init__(self, python_version: str, repository_url: str = "", description: str = "", pip_list_directory: str = "../pip_reqs", logging_directory: str = general_logging_dir, env_id: int | None = None) -> None:
-=======
-
-
-class CondaEnvironment:
-    """
-    Represents an Anaconda environment
-    Attributes:
-        python_version (str): The Python version of the conda environment
-        models (str | list[str]): The names of the models currently installed
-        env_id (int | None): Primary key for database lookup
-        pip_list_directory (str): The location of the pip requirements
-        repository_name (str): Name of the repository, will be the name of the associated conda environment
-        logging_directory (str): Directory where logging files are create and stored.
-    """
-    def __init__(self, python_version: str, models: str | list[str], repository: Repository | None, pip_list_directory: str = "../pip_reqs", logging_directory: str = "../logging", env_id: int | None = None) -> None:
->>>>>>> SeppBranch
         self.env_id = env_id
         self.python_version = python_version
         self.description = description
         self.pip_list_directory = pip_list_directory
-<<<<<<< HEAD
         self.installed_models = None
         self.repository = Repository(repository_url)
         self.env_name = self.repository.repo_name
-=======
-        self.models = models
-        self.repository = repository
-        self.env_name = repository.repo_name
->>>>>>> SeppBranch
         self.logging_directory = logging_directory
 
     def __call__(self, command: str) -> tuple[str, str]:
@@ -102,14 +79,8 @@ class CondaEnvironment:
         """
         args = f"conda run -n {self.env_name} --no-capture-output bash -c \"{command}\""
         error_message = f"Error occurred while running command in environment '{self.env_name}'"
-<<<<<<< HEAD
         return (args, error_message)
     
-=======
-        log_file_name = "run_command_log.log"
-        return run_subprocess_with_logging(args, error_message, self.logging_directory, log_file_name)
-
->>>>>>> SeppBranch
     def __str__(self) -> str:
         """
         Provides a string representation of the CondaEnvironment object
@@ -120,7 +91,6 @@ class CondaEnvironment:
             f"Environment Name: {self.env_name}",
             f"Python Version: {self.python_version}",
             f"PIP List Directory: {self.pip_list_directory}",
-<<<<<<< HEAD
             f"Models: {self.installed_models}", 
             f"Repository: {self.repository}"
         ]
@@ -128,14 +98,6 @@ class CondaEnvironment:
         return "\n".join(str_attributes)
     
     def create(self) -> tuple[str, str]:
-=======
-            f"Models: {self.models}"
-        ]
-
-        return "\n".join(str_attributes)
-
-    def create(self) -> bool:
->>>>>>> SeppBranch
         """
         Prepares the command to create the Anaconda environment.
         
@@ -165,90 +127,7 @@ class CondaEnvironment:
         error_message = f"Error occurred while running 'conda init'"
         return (command, error_message)
 
-<<<<<<< HEAD
         
-=======
-    def activate_by_name(self, env_name: str) -> bool:
-        """
-        Activates the Anaconda environment using a bash script.
-
-        Args:
-            env_name (str): Name of the Anaconda environment to be activated
-        """
-
-        activate_script_path = self.bash_scipt_dir + "/activate_conda_env.sh"
-        args = ['bash', activate_script_path, env_name]
-        error_message = f"Error occurred while activating environment '{env_name}'"
-        return run_subprocess_with_logging(args, error_message, self.logging_directory, "activate_log.log")
-
-    def install_all_requirements(self) -> bool:
-        """
-        Installs all pip requirements through pip within the conda environment using 'conda run',
-        leveraging the dedicated subprocess function for execution and logging.
-        """
-
-        # Construct the command to run 'pip install' within the conda environment
-        args = ['conda', 'run', '-n', self.env_name, 'pip', 'install', '-r', self.pip_list_directory]
-        error_message = f"Error occurred while installing pip requirements from '{self.pip_list_directory}'"
-
-        # Use the dedicated subprocess function for execution and logging
-        return run_subprocess_with_logging(args, error_message, self.logging_directory, "pip_log.log")
-
-    def test_environment(self) -> bool:
-        """
-        Tests if running commands in the conda environment is successful by executing a simple command.
-        Returns True if the command executes successfully and False otherwise.
-        """
-
-        # Use a simple command that provides predictable output, like checking the Python version
-        args = ['conda', 'run', '-n', self.env_name, 'python', '--version']
-        try:
-            # Execute the command and capture the output
-            result = subprocess.run(args, capture_output=True, text=True, check=True)
-            # Optionally, check the output for expected content (e.g., Python version)
-            expected_output_part = self.python_version.split('.')[0]  # Just check major version part for simplicity
-            if expected_output_part in result.stdout or expected_output_part in result.stderr:
-                print(f"Test successful: {result.stdout}")
-                return True
-            else:
-                print(f"Test failed: Python version mismatch or unexpected output: {result.stdout}")
-                return False
-        except subprocess.CalledProcessError as e:
-            print(f"An error occurred during the environment test: {e}")
-            return False
-
-    def find_installed_environments(self, logging_directory="../logging") -> list[str] | None:
-        """
-        Finds all of the installed Anaconda environments and returns a list of their names using the dedicated
-        subprocess function with logging.
-
-        Args:
-            logging_directory (str): The directory where the log file will be saved.
-        """
-        log_file_name = "env_list_log.log"
-        args = ['conda', 'env', 'list']
-
-        # Execute the command and log its output
-        if not run_subprocess_with_logging(args, "Error finding installed environments", logging_directory, log_file_name):
-            print("Returning None")
-            return None
-
-        # Path to the log file where the command output is saved
-        log_file_path = os.path.join(logging_directory, log_file_name)
-
-        try:
-            # Read the log file to process the output
-            with open(log_file_path, 'r') as log_file:
-                output_lines = log_file.readlines()
-
-            # Extract environment names from the output
-            env_names = [line.split()[0] for line in output_lines if not line.startswith('#') and line.strip()]
-            return env_names
-        except Exception as e:
-            print(f"An error occurred while processing environments list: {e}")
-            return []
-
->>>>>>> SeppBranch
     @property
     def is_created(self) -> bool:
         check_if_exists(self.env_name) # Separate function, no need for live capture
