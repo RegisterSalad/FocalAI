@@ -8,7 +8,8 @@ module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
-from conda_env import run_subprocess_with_logging
+from conda_env import CondaEnvironment, run_subprocess_with_logging
+from install_page import run_environment_command
 
 class PythonSyntaxHighlighter(QSyntaxHighlighter):
     def __init__(self, document):
@@ -87,31 +88,33 @@ class PythonSyntaxHighlighter(QSyntaxHighlighter):
 
 
 class ScriptBuilder(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, running_env: CondaEnvironment):
         super().__init__()
-        self.repository = None
-        self.repository = parent.running_env.repository
+        self.running_env = running_env
+        self.repository = self.running_env.repository
         self.model_type = self.repository.model_type
         self.defaultText: str = f"""
-# import <model> # Import model specific package
+# import <model> # Import model specific packages
+
+# Adapter import
 from adapter_util import Adapter
-from typing import Callable
 
 # Model Initialization and configuration  
 
 
-
 # Initialize the adapter and set up pipes into and out of it
-adapter = Adapter({self.repository.repo_name})
-model_type: str = "{self.model_type}" # "ASR", "OBJ", or "LLM"
 
-get_model_input: Callable = adapter.get_input_method(model_type) # This tells the adapter to return the str of the path of the audio that was drag-and-dropped
-model_input = get_model_input()
+adapter = Adapter({self.repository.repo_name}) # name automatically set from rest of app
+adapter.inputReady.connect(process_model_input)  # Connect the signal to processing function
 
-# Compute result based on model_input
-# Ex: result = model(model_input)
+def process_model_input(model_input: str): # Only runs when the app receives valid input from user
+    '''
+       model_input is the input received from the application  
+    '''
+    # Compute result based on model_input
+    # Ex: result = model(model_input)
 
-adapter.set_model_output(result) # Method that displays the output to the user
+    adapter.display_output(result) # Display model results
 """
         self.initUI()
 
@@ -186,13 +189,10 @@ adapter.set_model_output(result) # Method that displays the output to the user
             if not os.path.exists(logging_directory):
                 os.makedirs(logging_directory)
 
-            # Now, run the subprocess with logging
-            script_run_successful = run_subprocess_with_logging(
-                args=[sys.executable, fileName],  # sys.executable ensures the same Python interpreter is used
-                error_message=f"Error running {fileName}",
-                logging_directory=logging_directory,
-                log_file_name=log_file_name
-            )
+            command = f"{sys.executable} {fileName}"
+            call_tuple = self.new_env(command)
+
+            script_run_successful = run_environment_command(self, worker_name="call" ,command=call_tuple[0], error_message=call_tuple[1])
 
             if script_run_successful:
                 QMessageBox.information(self, "Success", "Script ran successfully, check log for details.")

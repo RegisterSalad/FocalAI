@@ -22,7 +22,7 @@ class ModelPlayer(QWidget):
         self.setWindowTitle("Model Player")
         self.file_list_widget = FileListWidget(parent=self)
         self.file_drop_widget = FileDropWidget()
-        self.script_builder = ScriptBuilder(parent=self)
+        self.script_builder = ScriptBuilder(parent=self, runnin_env = parent.running_env)
         self.input_path: str | None = None
         self.init_styles()
         self.init_ui()

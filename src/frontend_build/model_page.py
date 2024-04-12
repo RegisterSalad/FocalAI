@@ -9,7 +9,7 @@ from PySide6.QtGui import QIcon
 # Working dir imports
 from model_player import ModelPlayer
 from styler import Styler
-from install_page import InstallPage
+from install_page import InstallPage, run_environment_command
 from GPT_caller import GPTCaller
 
 # Calculate the path to the directory containing
@@ -141,7 +141,9 @@ class ModelPage(QFrame):
         super().__init__()
         self.install_page: InstallPage | None = None
         self.running_env: CondaEnvironment | None
-        self.db = DatabaseManager("databases/conda_environments.db")
+        db_path = os.path.abspath("../databases/conda_environments.db")
+        self.db = DatabaseManager(db_path)
+        self.is_showing_progress = False
         self.styler = styler
         self.init_ui()
 
@@ -149,7 +151,7 @@ class ModelPage(QFrame):
         self.html_text: str | None = None
         self.css = self.styler.doc_css
         self.button1 = QPushButton("Model Player")
-        self.button2 = QPushButton("Download Model")
+        self.button2 = QPushButton("Delete Installed Model")
         self.button3 = QPushButton("ChatGPT Window")
         self.text_display = QWebEngineView()  # Use QWebEngineView
         self.text_display.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -160,9 +162,11 @@ class ModelPage(QFrame):
         mainLayout = QVBoxLayout()
         
         self.button1.clicked.connect(lambda: self.create_model_player())
-        self.button2.clicked.connect(lambda: self.change_to_install_page())
-
+        self.b2_delete = True
+        self.b2_install = False
+        self.button2.clicked.connect(lambda: self.delete_running_env())
         self.button3.clicked.connect(lambda: self.create_GPT_interface())
+
         buttonsLayout = QVBoxLayout()
         buttonsLayout.setAlignment(Qt.AlignRight | Qt.AlignTop)
         buttonsLayout.addWidget(self.button1)
@@ -191,14 +195,30 @@ class ModelPage(QFrame):
     def display_pop_up(self):
         self.pop_up_window.show()
     
-    def get_repo(self, repo_url: str) -> Repository:
-        return Repository(repo_url)
+    def get_repo_name(self, repo_url: str) -> str:
+        return Repository(repo_url).repo_name
     
+    def delete_running_env(self) -> None:
+
+        self.is_showing_progress = True
+        self.progress_widget = QTextEdit(self)
+        self.progress_widget.setReadOnly(True)  
+        self.progress_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        self.progress_widget.show()
+        delete_tuple = self.running_env.delete()
+        is_deleted = run_environment_command(self, worker_name="delete", command=delete_tuple[0], error_message=delete_tuple[1])
+        print(f"Environment Deleted: {is_deleted}")
+        self.db.delete_environment_by_name(self.running_env.repository.repo_name)
+        self.update_content(repo_entry=None)
+
+    def update_progress_widget(self, text: str):
+            # Append text to the progress_widget, ensuring thread safety
+        self.progress_widget.append(text)
+
     def create_GPT_interface(self):
         print("GPT window")
         self.GPT_Window = GPTPlayer(self.repository.repo_url)
         self.GPT_Window.show()
-
 
     def create_model_player(self):
         self.model_player = ModelPlayer(self) # Model Player is inited here because it needs a repo before initialization
@@ -237,8 +257,6 @@ class ModelPage(QFrame):
                     widget.setEnabled(True)
                     widget.show()  # Show the widget
 
-        if self.install_page.success:
-            self.env = self.get_conda_env()
 
     def change_to_install_page(self):
         self.hide_all()
@@ -258,6 +276,9 @@ class ModelPage(QFrame):
             return self.html_text
 
     def update_content(self, repo_entry) -> None:
+        if self.is_showing_progress:
+            self.is_showing_progress = False
+            self.progress_widget.hide()
         # Show buttons when content is updated
         if repo_entry is None:
             if self.html_text is None:
@@ -267,13 +288,36 @@ class ModelPage(QFrame):
             self.text_display.setHtml(self.html_text)  # Set HTML content
             return
             
-        self.button1.show()
-        self.button2.show()
-        self.button3.show()
-        self.running_env = CondaEnvironment(python_version="3.10.0",
-                                            description=repo_entry.description,  
-                                            repository_url=repo_entry.url)
+
+        # Attempt to get env from database
+        repo_name = self.get_repo_name(repo_url=repo_entry.url)
+        print(repo_name)
+        self.running_env = self.db.get_environment_by_name(env_name = repo_name)
+        print(type(self.running_env))
+        # Create a new one if 
+        if not isinstance(self.running_env, CondaEnvironment):
+            self.running_env = CondaEnvironment(python_version="3.10.0",
+                                                description=repo_entry.description,  
+                                                repository_url=repo_entry.url)
+            self.button2.setText("Install Model")
+            if self.b2_delete: # remove connection to deletion function if it exists
+                self.button2.clicked.disconnect(lambda: self.delete_running_env())
+                self.b2_delete = False
+            self.button2.clicked.connect(lambda: self.change_to_install_page())
+            self.b2_install = True
+        else:
+            self.button2.setText("Delete Model")
+            if self.b2_install: # remove connection to install page function if it exists
+                self.button2.clicked.disconnect(lambda: self.change_to_install_page())
+                self.b2_install = False
+
+            self.button2.clicked.connect(lambda: self.delete_running_env())
+            self.b2_delete = True
         
+        
+        self.button2.show()
+        self.button1.show()
+        self.button3.show()
         self.text_display.setHtml(self.convert_to_markdown('readme_content'))  # Set HTML content
 
     def update_style(self):

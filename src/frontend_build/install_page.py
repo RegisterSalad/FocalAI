@@ -9,7 +9,6 @@ from typing import Callable
 import subprocess
 
 # Working dir imports
-from model_player import ModelPlayer
 from styler import Styler
 from worker import Worker
 # Calculate the path to the directory containing
@@ -22,6 +21,41 @@ from conda_env import CondaEnvironment
 from repo import Repository
 from database import DatabaseManager
 
+def run_environment_command(widget, worker_name, command: str, error_message: str) -> bool:
+        # Create the worker and thread
+        worker = Worker(worker_name, command, error_message)
+        thread = QThread()
+        loop = QEventLoop()  # Event loop to wait for completion
+
+        # Move the worker to the thread and connect signals
+        worker.moveToThread(thread)
+        worker.output.connect(widget.update_progress_widget)
+        thread.started.connect(worker.run_command)
+
+        # Use the finished signal to quit the loop and capture the success flag
+        success_flag = [False]  # Use a mutable type to capture the success flag
+
+        def on_finished(success):
+            success_flag[0] = success
+            loop.quit()
+
+        worker.finished.connect(on_finished)
+
+        # Cleanup
+        worker.finished.connect(thread.quit)
+        worker.finished.connect(worker.deleteLater)
+        thread.finished.connect(thread.deleteLater)
+
+        # Start the thread and the event loop
+        thread.start()
+        loop.exec()  # This will block until the worker emits `finished`
+
+        # Keep a reference to avoid premature garbage collection
+        widget._thread = thread
+        widget._worker = worker
+
+        return success_flag[0]
+
 class InstallPage(QFrame):
     def __init__(self, styler, model_page, new_env: CondaEnvironment):
             super().__init__()
@@ -30,7 +64,7 @@ class InstallPage(QFrame):
             self.new_env: CondaEnvironment = new_env
             self.install_commands_list = self.new_env.repository.install_commands
             self.db = DatabaseManager("databases/conda_environments.db")
-            print(self.install_commands_list)
+            print(f"Old DB size: {self.db.count}")
             self.command_count = len(self.install_commands_list)
             self.commands_to_run_set = set()  # It seems you wanted to use a set, but it's not used later in your code.
             self.commands_to_run_list = []  # Initialize the list for commands to run.
@@ -130,18 +164,24 @@ class InstallPage(QFrame):
 
         # Environment creation (blocking)
         create_tuple = self.new_env.create()
-        creation_success = self.run_environment_command(worker_name="create",command=create_tuple[0], error_message=create_tuple[1])
+        creation_success = run_environment_command(self, worker_name="create",command=create_tuple[0], error_message=create_tuple[1])
         if not creation_success:
             print("Env Creation failed")
             return  # Stop further execution if environment creation fails
 
         # Execute other commands (asynchronously or with a blocking pattern if necessary)
         call_tuple = self.new_env(formatted_command)
-        if self.run_environment_command(worker_name="call" ,command=call_tuple[0], error_message=call_tuple[1]):
-            self.db.insert_environment(self.new_env)
+        if run_environment_command(self, worker_name="call" ,command=call_tuple[0], error_message=call_tuple[1]):
+            self.new_env.is_installed = True
+            if not self.db.insert_environment(self.new_env):
+                self._premature_delete()
         else:
-            delete_tuple = self.new_env.delete()
-            print(f"Environment Deleted: {self.run_environment_command(worker_name="delete", command=delete_tuple[0], error_message=delete_tuple[1])}")
+            self._premature_delete()
+        print(f"New DB size: {self.db.count}")
+
+    def _premature_delete(self) -> None:
+        delete_tuple = self.new_env.delete()
+        print(f"Environment Deleted: {run_environment_command(self, worker_name="delete", command=delete_tuple[0], error_message=delete_tuple[1])}")
 
     def hide_all(self) -> None:
         # Hide all child widgets
@@ -168,41 +208,6 @@ class InstallPage(QFrame):
     def change_to_main_model_page(self):
         self.hide_all()
         self.model_page.show_all()
-
-    def run_environment_command(self, worker_name, command: str, error_message: str) -> bool:
-        # Create the worker and thread
-        worker = Worker(worker_name, command, error_message)
-        thread = QThread()
-        loop = QEventLoop()  # Event loop to wait for completion
-
-        # Move the worker to the thread and connect signals
-        worker.moveToThread(thread)
-        worker.output.connect(self.update_progress_widget)
-        thread.started.connect(worker.run_command)
-
-        # Use the finished signal to quit the loop and capture the success flag
-        success_flag = [False]  # Use a mutable type to capture the success flag
-
-        def on_finished(success):
-            success_flag[0] = success
-            loop.quit()
-
-        worker.finished.connect(on_finished)
-
-        # Cleanup
-        worker.finished.connect(thread.quit)
-        worker.finished.connect(worker.deleteLater)
-        thread.finished.connect(thread.deleteLater)
-
-        # Start the thread and the event loop
-        thread.start()
-        loop.exec()  # This will block until the worker emits `finished`
-
-        # Keep a reference to avoid premature garbage collection
-        self._thread = thread
-        self._worker = worker
-
-        return success_flag[0]
 
     def update_progress_widget(self, text: str):
             # Append text to the progress_widget, ensuring thread safety

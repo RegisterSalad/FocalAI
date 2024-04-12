@@ -29,7 +29,6 @@ class APICaller:
         if response.status_code == 200:
             data = response.json()
             download_url = data.get('download_url')
-            print(download_url)
             if download_url:
                 readme_response = requests.get(download_url)
                 if readme_response.status_code == 200:
