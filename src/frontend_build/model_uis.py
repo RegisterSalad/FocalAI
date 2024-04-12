@@ -2,7 +2,6 @@ from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFr
 from PySide6.QtCore import Qt, QThread, QEventLoop, QObject, Signal
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtGui import QPixmap, QImage
-import markdown
 import sys
 import os
 from PySide6.QtGui import QIcon
@@ -117,7 +116,6 @@ class LLMPlayer(QWidget):
 
 class FileDropWidget(QWidget):
     filesDropped = Signal(str)
-
     def __init__(self):
         super().__init__()
         self.setAcceptDrops(True)
@@ -166,11 +164,11 @@ class FileDropWidget(QWidget):
         print(message)
 
 class DragAndDropPlayer(QWidget):
+    inputReceived = Signal(str)
     def __init__(self, model_type: str):
         super().__init__()
-        self.initUI()
-        self.inputReceived = Signal(str)
         self.model_type = model_type
+        self.initUI()
 
     def initUI(self):
         self.setWindowTitle(f"{self.model_type} Player")

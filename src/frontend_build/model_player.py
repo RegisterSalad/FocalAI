@@ -22,7 +22,7 @@ class ModelPlayer(QWidget):
         self.setWindowTitle("Model Player")
         self.file_list_widget = FileListWidget(parent=self)
         self.file_drop_widget = FileDropWidget()
-        self.script_builder = ScriptBuilder(parent=self, runnin_env = parent.running_env)
+        self.script_builder = ScriptBuilder(parent=self, running_env = parent.running_env)
         self.input_path: str | None = None
         self.init_styles()
         self.init_ui()
@@ -107,6 +107,15 @@ class ModelPlayer(QWidget):
         terminal_widget.setMinimumSize(200, 150)
         left_section_layout.addWidget(terminal_widget)
 
+
+        # Progress Widget initialization
+        self.progress_widget = QTextEdit(self)
+        self.progress_widget.setReadOnly(True)  # Make the progress widget read-only
+        self.progress_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)  # Adjust size policy
+
+        # Add the progress widget to the layout
+        left_section_layout.addWidget(self.progress_widget)
+
         left_section_container = QWidget()
         left_section_container.setLayout(left_section_layout)
         main_layout.addWidget(left_section_container)
@@ -115,6 +124,9 @@ class ModelPlayer(QWidget):
     def get_user_input(self, input_path: str) -> None:
         self.input_path = input_path
 
+    def update_progress_widget(self, text: str):
+        # Append text to the progress_widget, ensuring thread safety
+        self.progress_widget.append(text)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

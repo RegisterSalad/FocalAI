@@ -141,7 +141,8 @@ class ModelPage(QFrame):
         super().__init__()
         self.install_page: InstallPage | None = None
         self.running_env: CondaEnvironment | None
-        db_path = os.path.abspath("../databases/conda_environments.db")
+        db_path = os.path.abspath("databases/conda_environments.db")
+        print(db_path)
         self.db = DatabaseManager(db_path)
         self.is_showing_progress = False
         self.styler = styler
@@ -296,27 +297,19 @@ class ModelPage(QFrame):
         print(type(self.running_env))
         # Create a new one if 
         if not isinstance(self.running_env, CondaEnvironment):
+            self.button1.hide()
             self.running_env = CondaEnvironment(python_version="3.10.0",
                                                 description=repo_entry.description,  
                                                 repository_url=repo_entry.url)
             self.button2.setText("Install Model")
-            if self.b2_delete: # remove connection to deletion function if it exists
-                self.button2.clicked.disconnect(lambda: self.delete_running_env())
-                self.b2_delete = False
             self.button2.clicked.connect(lambda: self.change_to_install_page())
-            self.b2_install = True
         else:
             self.button2.setText("Delete Model")
-            if self.b2_install: # remove connection to install page function if it exists
-                self.button2.clicked.disconnect(lambda: self.change_to_install_page())
-                self.b2_install = False
-
             self.button2.clicked.connect(lambda: self.delete_running_env())
-            self.b2_delete = True
+            self.button1.show()
         
         
         self.button2.show()
-        self.button1.show()
         self.button3.show()
         self.text_display.setHtml(self.convert_to_markdown('readme_content'))  # Set HTML content
 

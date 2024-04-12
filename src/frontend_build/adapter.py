@@ -1,17 +1,17 @@
+import os
+import sys
+module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if module_dir not in sys.path:
+    sys.path.append(module_dir)
+
 from typing import Callable
-from model_player import ModelPlayer
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QApplication,
                                QHBoxLayout, QLabel, QFrame, QSizePolicy, QTextEdit, QLineEdit)
 from PySide6.QtCore import QObject, Signal, QCoreApplication
 from PySide6.QtGui import QFont
 from menu_bar import MenuBar
-import os
-import sys
 
 from model_uis import LLMPlayer, DragAndDropPlayer, DefaultPlayer # Implemented elsewhere assume they only return values when the receive them from their user interaction widgets via a slot
-module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-if module_dir not in sys.path:
-    sys.path.append(module_dir)
 
 from database import DatabaseManager
 from conda_env import CondaEnvironment
@@ -21,7 +21,7 @@ class Adapter(QWidget):
 
     def __init__(self, name: str | None = None) -> None:
         super().__init__()  # Initialize the QWidget base class
-        db_path = os.path.abspath("../databases/conda_environments.db")
+        db_path = os.path.abspath("databases/conda_environments.db")
         
         self.db = DatabaseManager(db_path)
         if not isinstance(name, str):
@@ -47,7 +47,6 @@ class Adapter(QWidget):
         self.player.inputReceived.connect(self.handle_input)
         self.mainLayout.addWidget(self.player)
         self.setLayout(self.mainLayout)  # Set the layout to the widget
-        self.show()  # Show the widget
 
     def handle_input(self, input_data):
         """Slot to handle input data from the player."""
@@ -55,7 +54,7 @@ class Adapter(QWidget):
             self.inputReady.emit(input_data)  # Emit the signal with the input data
 
     def display_output(self, output) -> None:
-        self.player.display_output(output)
+        self.player.displayOutput(output)
 
 
 if __name__ == "__main__":

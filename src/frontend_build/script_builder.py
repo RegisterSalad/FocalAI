@@ -88,24 +88,27 @@ class PythonSyntaxHighlighter(QSyntaxHighlighter):
 
 
 class ScriptBuilder(QWidget):
-    def __init__(self, running_env: CondaEnvironment):
-        super().__init__()
+    def __init__(self, parent, running_env: CondaEnvironment):
+        super().__init__(parent)
         self.running_env = running_env
         self.repository = self.running_env.repository
         self.model_type = self.repository.model_type
+        path1 = os.getcwd() + "/src"
+        path2 = os.getcwd() + "/src/frontend_build"
         self.defaultText: str = f"""
 # import <model> # Import model specific packages
-
+import whisper
 # Adapter import
-from adapter_util import Adapter
+import sys
 
+sys.path.append("{path1}")
+sys.path.append("{path2}")
+from adapter import Adapter
+from PySide6.QtWidgets import QApplication
 # Model Initialization and configuration  
-
 
 # Initialize the adapter and set up pipes into and out of it
 
-adapter = Adapter({self.repository.repo_name}) # name automatically set from rest of app
-adapter.inputReady.connect(process_model_input)  # Connect the signal to processing function
 
 def process_model_input(model_input: str): # Only runs when the app receives valid input from user
     '''
@@ -113,8 +116,14 @@ def process_model_input(model_input: str): # Only runs when the app receives val
     '''
     # Compute result based on model_input
     # Ex: result = model(model_input)
-
     adapter.display_output(result) # Display model results
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)  # Create an application object for PyQt
+    adapter = Adapter('whisper') # name automatically set from rest of app
+    adapter.inputReady.connect(process_model_input)  # Connect the signal to processing function
+    adapter.show()
+    sys.exit(app.exec())  # Start the event loop and exit the application appropriately
 """
         self.initUI()
 
@@ -189,10 +198,10 @@ def process_model_input(model_input: str): # Only runs when the app receives val
             if not os.path.exists(logging_directory):
                 os.makedirs(logging_directory)
 
-            command = f"{sys.executable} {fileName}"
-            call_tuple = self.new_env(command)
+            command = f"python {fileName}"
+            call_tuple = self.running_env(command)
 
-            script_run_successful = run_environment_command(self, worker_name="call" ,command=call_tuple[0], error_message=call_tuple[1])
+            script_run_successful = run_environment_command(self.parent(), worker_name="call" ,command=call_tuple[0], error_message=call_tuple[1])
 
             if script_run_successful:
                 QMessageBox.information(self, "Success", "Script ran successfully, check log for details.")

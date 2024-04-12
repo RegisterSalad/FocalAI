@@ -20,7 +20,6 @@ class DatabaseManager(Database):
         """
         # Convert the relative path to an absolute path to ensure correctness
         self.db_path = os.path.abspath(db_path)
-        
         # Check if the database directory exists; if not, attempt to create it
         db_directory = os.path.dirname(self.db_path)
         if not os.path.exists(db_directory):

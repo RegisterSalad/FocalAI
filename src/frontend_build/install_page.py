@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame, QWidget, QSizePolicy, QListWidget, QTextEdit
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame, QWidget, QSizePolicy, QListWidget, QTextEdit, QMessageBox
 from PySide6.QtCore import Qt, QThread, QEventLoop
 from PySide6.QtWebEngineWidgets import QWebEngineView  # Import QWebEngineView
 import markdown
@@ -63,7 +63,7 @@ class InstallPage(QFrame):
             self.styler = styler
             self.new_env: CondaEnvironment = new_env
             self.install_commands_list = self.new_env.repository.install_commands
-            self.db = DatabaseManager("databases/conda_environments.db")
+            self.db = self.model_page.db
             print(f"Old DB size: {self.db.count}")
             self.command_count = len(self.install_commands_list)
             self.commands_to_run_set = set()  # It seems you wanted to use a set, but it's not used later in your code.
@@ -107,8 +107,6 @@ class InstallPage(QFrame):
 
         # Add the progress widget to the layout
         self.layout.addWidget(self.progress_widget)
-
-
         self.layout.addLayout(list_layout)
         self.layout.addWidget(self.run_button)
         self.layout.addLayout(button_layout)
@@ -160,6 +158,7 @@ class InstallPage(QFrame):
 
     def run_selected_commands(self):
         print(f"Running {self.commands_to_run_list}")
+        self.commands_to_run_list.append("pip install pyside6 pypandoc pdflatex pydantic")
         formatted_command = " && ".join(self.commands_to_run_list)
 
         # Environment creation (blocking)
@@ -171,15 +170,21 @@ class InstallPage(QFrame):
 
         # Execute other commands (asynchronously or with a blocking pattern if necessary)
         call_tuple = self.new_env(formatted_command)
+        print(call_tuple)
         if run_environment_command(self, worker_name="call" ,command=call_tuple[0], error_message=call_tuple[1]):
             self.new_env.is_installed = True
+            QMessageBox.information(self, "Success", f"Installation of {self.new_env.repository.repo_name} Successful!\nCheck log for details.")
+
+                
             if not self.db.insert_environment(self.new_env):
+                QMessageBox.warning(self, f"Failure", "Installation failed, aborting.")
                 self._premature_delete()
         else:
             self._premature_delete()
         print(f"New DB size: {self.db.count}")
 
     def _premature_delete(self) -> None:
+
         delete_tuple = self.new_env.delete()
         print(f"Environment Deleted: {run_environment_command(self, worker_name="delete", command=delete_tuple[0], error_message=delete_tuple[1])}")
 

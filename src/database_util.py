@@ -17,13 +17,14 @@ class Database:
             print(f"Database file not found. Creating new database at: {db_path}")
         else:
             print(f"Connecting to existing database at: {db_path}")
+            
         
         # Connect to the database (this will create the database file if it does not exist)
         self.connection = sqlite3.connect(db_path)
         self.cursor = self.connection.cursor()
         self.create_table()
         self.str_limit = 10  # Default value for items to list in __str__
-
+        print(f"Count: {self.count}")
     @property
     def count(self) -> int:
         """Return the number of environments currently stored in the database."""
