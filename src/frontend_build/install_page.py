@@ -7,6 +7,7 @@ import os
 from PySide6.QtGui import QIcon
 from typing import Callable
 import subprocess
+import json
 
 # Working dir imports
 from styler import Styler
@@ -174,7 +175,7 @@ class InstallPage(QFrame):
         if run_environment_command(self, worker_name="call" ,command=call_tuple[0], error_message=call_tuple[1]):
             self.new_env.is_installed = True
             QMessageBox.information(self, "Success", f"Installation of {self.new_env.repository.repo_name} Successful!\nCheck log for details.")
-
+            self.install_store()
                 
             if not self.db.insert_environment(self.new_env):
                 QMessageBox.warning(self, f"Failure", "Installation failed, aborting.")
@@ -217,4 +218,16 @@ class InstallPage(QFrame):
     def update_progress_widget(self, text: str):
             # Append text to the progress_widget, ensuring thread safety
         self.progress_widget.append(text)
+    
+    def install_store(self):
+        #stores the all model information like description, name, url, model type in a .JSON
+        repo: Repository = self.new_env.repository
+        file = f"{repo.repo_name}.josn"
+        modelInfo = {
+            "name":repo.repo_name,
+            "url":repo.repo_url,
+            "Model type": repo.get_model_type()
+        }
+        with open(file, "w") as outfile:
+            json.dump(modelInfo, outfile)
 # This is NOT the main application

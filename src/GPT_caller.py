@@ -33,12 +33,14 @@ class GPTCaller:
     filename = 'key.txt'
     api_key = None
     doc_url : str
+    log_report : str
 
     def __init__(self, doc_url) -> None:
         """
         Initialize the API caller with the chatGPT client.
         """
         self.doc_url = doc_url
+        self.log_report = None
         if os.path.isfile(self.filename):
             # File exists, so read from it
             with open(self.filename, 'r') as file:
@@ -164,6 +166,22 @@ class GPTCaller:
         obj.__init__()
         documentation : str = obj.get_readme_contents(self.doc_url)
         ret = self.get_chat_response(self.api_key, documentation, request)
+        return ret
+    
+    def output_log_test(self) -> str:
+        """
+        Writes a report about a specified model.
+
+        Parameters:
+        - api_key: str. API key.
+        """
+        request = "With this given output from the model, give me a basic report about the output"
+        file_path = os.path.join('..', 'logging', 'output_log_test.txt')
+        with open(file_path, 'r') as file:
+            content = file.read()
+
+        ret = self.get_chat_response(self.api_key, content, request)
+    
         return ret
 
     def delete_api_key(self) -> str:

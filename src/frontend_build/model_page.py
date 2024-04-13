@@ -76,7 +76,8 @@ class GPTPlayer(QWidget):
         layout.addWidget(self.chatDisplay)
 
         # Creating and adding buttons dynamically
-        buttonLabels = ['Make Sample Code', 'Find The Models Parameters', 'Find The Models Datasets', 'Find Additional Model Content', 'Write A Report On The Model', 'Delete Current API Key']
+        buttonLabels = ['Make Sample Code', 'Find The Models Parameters', 'Find The Models Datasets',
+                         'Find Additional Model Content', 'Write A Report On The Model','Elaborate On The Output Log\n(Requires Ran Model)', 'Delete Current API Key']
         self.buttonsLayout = QVBoxLayout()  # Layout for buttons
 
         for label in buttonLabels:
@@ -107,6 +108,9 @@ class GPTPlayer(QWidget):
 
         elif sender.text() == 'Write A Report On The Model':
             response = self.GPT.write_model_report()
+
+        elif sender.text() == 'Elaborate On The Output Log\n(Requires Ran Model)':
+            response = self.GPT.output_log_test()
 
         elif sender.text() == 'Delete Current API Key':
             response = self.GPT.delete_api_key()
