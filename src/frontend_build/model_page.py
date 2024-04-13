@@ -213,6 +213,7 @@ class ModelPage(QFrame):
         delete_tuple = self.running_env.delete()
         is_deleted = run_environment_command(self, worker_name="delete", command=delete_tuple[0], error_message=delete_tuple[1])
         print(f"Environment Deleted: {is_deleted}")
+        self.install_page.remove_json()
         self.db.delete_environment_by_name(self.running_env.repository.repo_name)
         self.update_content(repo_entry=None)
 
