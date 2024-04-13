@@ -1,87 +1,70 @@
+import os
+import sys
+module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if module_dir not in sys.path:
+    sys.path.append(module_dir)
+
 from typing import Callable
-from model_player import ModelPlayer
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QApplication,
                                QHBoxLayout, QLabel, QFrame, QSizePolicy, QTextEdit, QLineEdit)
 from PySide6.QtCore import QObject, Signal, QCoreApplication
 from PySide6.QtGui import QFont
 from menu_bar import MenuBar
-import os
-import sys
 
-module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-if module_dir not in sys.path:
-    sys.path.append(module_dir)
+from model_uis import LLMPlayer, DragAndDropPlayer, DefaultPlayer # Implemented elsewhere assume they only return values when the receive them from their user interaction widgets via a slot
 
 from database import DatabaseManager
 from conda_env import CondaEnvironment
-    
+
 class Adapter(QWidget):
-    """
-    This adapter will speak to the pages in order to pass the AI model input and get display the AI model output
-    """
-    def __init__(self, name: str = "") -> None:
-        self.db = DatabaseManager("databases/conda_environments.db")
-        self.running_env = self.db.get_environment_by_name
-    
-    def get_model_input(self, model_type: str | None = None) -> Callable:
-        """
-        Configures the model_page to the right model type and makes the input of the model come from the drag on drop
+    inputReady = Signal(str)  # Defines a signal to emit when input is ready
 
-        Args:
-            - model_type: str | None ; Model type string. Options are "ASR", "OBJ", and "LLM"
+    def __init__(self, name: str | None = None) -> None:
+        super().__init__()  # Initialize the QWidget base class
+        db_path = os.path.abspath("databases/conda_environments.db")
         
-        Returns:
-            - False if model_type is not supported
-            - True if pipe is successful
-        """
+        self.db = DatabaseManager(db_path)
+        if not isinstance(name, str):
+            raise TypeError(f"Adapter incorrectly initialized: Name cannot be of type [{type(name)}]")
 
-        if model_type == "ASR":
-            return self._asr_inteface() 
-        elif model_type == "OBJ":
-            return self._obj_interface()
-        elif model_type == "LLM":
-            return self._llm_interface()            
-        else:
-            return self._default_interface()
-        
-    def _asr_interface(self) -> str | None:
-        """
-        Fetches the file from the drag-and-drop, checks its type to make sure
-        it is a valid audio file, and returns the path if valid.
+        self.running_env = self.db.get_environment_by_name(name)
+        if not isinstance(self.running_env, CondaEnvironment):
+            raise TypeError(f"Environment fetching unsuccessful, perhaps the name is incorrect? Name used for fetching: [{name}]")
 
-        Returns:
-            str | None: Path of the input audio file (from drag-and-drop) if valid,
-                        None otherwise.
-        """
-        result_path: str = self.parent_page.input_path
-        valid_extensions = ('.mp3', '.wav', '.aac', '.flac')
+        self.model_type = self.running_env.repository.model_type
+        self.init_UI()
 
-        # Check if result_path has a valid audio file extension
-        if result_path.endswith(valid_extensions):
-            return result_path  # Return path if it's a valid audio file
-        
-        return None  # Return None if the file is not a valid audio file
-    
-    def _obj_interface(self) -> str | None: # Utilizes ModelPlayer
-        """
-        Fetches the file from the drag-and-drop, checks its type to make sure
-        it is a valid image file, and returns the path if valid.
+    def init_UI(self) -> None:
+        self.model_input_widget_dict = {
+            "ASR": DragAndDropPlayer(self.model_type),
+            "OBJ": DragAndDropPlayer(self.model_type),
+            "LLM": LLMPlayer(),
+        }
+        self.player = self.model_input_widget_dict.get(self.model_type, DefaultPlayer())
+        self.mainLayout = QHBoxLayout()  # Correctly create an instance of QHBoxLayout
+        if not isinstance(self.player, QWidget):
+            raise TypeError("Model Player incorrectly initialized")
+        self.player.inputReceived.connect(self.handle_input)
+        self.mainLayout.addWidget(self.player)
+        self.setLayout(self.mainLayout)  # Set the layout to the widget
 
-        Returns:
-            str | None: Path of the input image file (from drag-and-drop) if valid,
-                        None otherwise.
-        """
-        result_path: str = self.parent_page.input_path
-        valid_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp')
+    def handle_input(self, input_data):
+        """Slot to handle input data from the player."""
+        if isinstance(input_data, str):
+            self.inputReady.emit(input_data)  # Emit the signal with the input data
 
-        # Check if result_path has a valid image file extension
-        if result_path.endswith(valid_extensions):
-            return result_path  # Return path if it's a valid image file
-        
-        return None  # Return None if the file is not a valid image file
+    def display_output(self, output) -> None:
+        self.player.displayOutput(output)
 
-    def _llm_interface(self):
-        pass
 
-    def show(self) -> None:
-        pass
+if __name__ == "__main__":
+    app = QApplication(sys.argv)  # Create an application object for PyQt
+    adapter_name = "whisper"  # You would replace this with a valid environment name
+    adapter = Adapter(adapter_name)  # Create an instance of the Adapter with a specific name
+    adapter.inputReady.connect(lambda x: print(f"Input received: {x}"))  # Connect to the inputReady signal
+    x = None
+    def remake_x(data):
+        x = data
+        adapter.display_output(x)  # Optionally, display some output
+
+    sys.exit(app.exec())  # Start the event loop and exit the application appropriately

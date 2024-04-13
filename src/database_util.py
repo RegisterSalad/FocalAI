@@ -1,16 +1,50 @@
 import sqlite3
 from conda_env import CondaEnvironment
 import pickle
-from repo import Repository
+import os
+
 class Database:
     """Represents a database connection to manage Conda environments."""
 
     def __init__(self, db_path: str) -> None:
-        """Initializes the database with a connection to the specified path."""
+        """
+        Initializes the database with a connection to the specified path.
+        Creates the database file if it does not exist and prints the new path.
+        """
+        self.db_path = db_path
+        # Check if the database file exists, and print the appropriate message
+        if not os.path.exists(db_path):
+            print(f"Database file not found. Creating new database at: {db_path}")
+        else:
+            print(f"Connecting to existing database at: {db_path}")
+            
+        
+        # Connect to the database (this will create the database file if it does not exist)
         self.connection = sqlite3.connect(db_path)
         self.cursor = self.connection.cursor()
         self.create_table()
+        self.str_limit = 10  # Default value for items to list in __str__
+        print(f"Count: {self.count}")
+    @property
+    def count(self) -> int:
+        """Return the number of environments currently stored in the database."""
+        try:
+            self.cursor.execute("SELECT COUNT(*) FROM conda_environments")
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print(f"Error counting environments: {e}")
+            return 0
 
+    def __str__(self) -> str:
+        """Returns a string representation of the database, listing first 'n' items of 'conda_environments'."""
+        try:
+            self.cursor.execute("SELECT * FROM conda_environments LIMIT ?", (self.str_limit,))
+            environments = self.cursor.fetchall()
+            env_strings = [f"ID: {env[0]}, Name: {env[1]}, Python Version: {env[2]}" for env in environments]
+            return f"Conda Environments (first {self.str_limit}):\n" + "\n".join(env_strings)
+        except sqlite3.Error as e:
+            return f"Failed to retrieve environments: {e}"
+        
     def create_table(self) -> bool:
         """Creates a table for Conda environments if it doesn't exist."""
         try:
@@ -20,6 +54,7 @@ class Database:
                         id INTEGER PRIMARY KEY,
                         env_name TEXT UNIQUE,
                         python_version TEXT,
+                        model_type TEXT,
                         serialized_env BLOB
                     )
                 ''')
@@ -72,12 +107,14 @@ class Database:
         try:
             serialized_env = pickle.dumps(environment)
             self.cursor.execute('''
-                INSERT INTO conda_environments (env_name, python_version, model_type serialized_env)
+                INSERT INTO conda_environments (env_name, python_version, model_type, serialized_env)
                 VALUES (?, ?, ?, ?)
             ''', (environment.env_name, environment.python_version, environment.repository.model_type, serialized_env))
             self.connection.commit()
+            print("Insertion success")
             return True
         except sqlite3.Error:
+            print("Insertion Failure")
             return False
 
     def delete_environment_by_id(self, env_id: int) -> bool:
@@ -120,7 +157,9 @@ class Database:
             self.cursor.execute("SELECT serialized_env FROM conda_environments WHERE id = ?", (env_id,))
             row = self.cursor.fetchone()
             if row:
+                print("Found env")
                 return pickle.loads(row[0])
+            print("Not found")
             return None
         except sqlite3.Error:
             return None
@@ -131,7 +170,9 @@ class Database:
             self.cursor.execute("SELECT serialized_env FROM conda_environments WHERE env_name = ?", (env_name,))
             row = self.cursor.fetchone()
             if row:
+                print("Found env")
                 return pickle.loads(row[0])
+            print("Not found")
             return None
         except sqlite3.Error:
             return None
@@ -158,13 +199,12 @@ if __name__ == "__main__":
             print("Please enter a valid integer for the environment ID.")
 
     def main():
-        db_path = os.path.abspath('../databases/conda_environments.db')
+        db_path = os.path.abspath("/home/mldesk/Desktop/Repos/FocalAI/databases/conda_environments.db")
         db = Database(db_path)
         
         commands = {
-            1: ("Remove duplicates", db.remove_duplicates),
-            2: ("List first 10 environments", lambda: print(db)),
-            3: ("Delete environment by ID", lambda: delete_environment_cli(db)),
+            1: ("List first 10 environments", lambda: print(db)),
+            2: ("Delete environment by ID", lambda: delete_environment_cli(db)),
         }
 
         while True:

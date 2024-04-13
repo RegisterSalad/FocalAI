@@ -4,7 +4,7 @@ from repo import Repository
 
 general_logging_dir: str = os.path.expanduser("~/FocalAI/logs/")
 
-def run_subprocess_with_logging(command: str, error_message: str, log_file_name: str, logging_directory: str = general_logging_dir) -> str:
+def run_subprocess_with_logging(command: str, error_message: str, log_file_name: str, logging_directory: str = general_logging_dir):
     """
     Runs a subprocess with the given arguments and logs the output and any errors encountered.
 
@@ -66,6 +66,7 @@ class CondaEnvironment:
         self.repository = Repository(repository_url)
         self.env_name = self.repository.repo_name
         self.logging_directory = logging_directory
+        self.is_installed: bool = False
 
     def __call__(self, command: str) -> tuple[str, str]:
         """
