@@ -230,4 +230,7 @@ class InstallPage(QFrame):
         }
         with open(file, "w") as outfile:
             json.dump(modelInfo, outfile)
-# This is NOT the main application
+
+    def remove_json(self):
+        jsonfile = f"{self.new_env.repository.repo_name}.json"
+        os.remove(jsonfile)
