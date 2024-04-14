@@ -66,8 +66,8 @@ fi
 echo "Cleaning previous builds..." | tee -a $LOG_FILE
 rm -rf build/ dist/ >> $LOG_FILE 2>&1
 
-echo "Building the application with mainwindow.py and additional paths..." | tee -a $LOG_FILE
-pyinstaller src/frontend_build/mainwindow.py --noconfirm --clean --onefile --windowed \
+echo "Building the application with FocalAI.py and additional paths..." | tee -a $LOG_FILE
+pyinstaller src/frontend_build/FocalAI.py --noconfirm --clean --onefile --windowed \
   --paths=./src/frontend_build/ \
   --paths=./src/ \
   >> $LOG_FILE 2>&1

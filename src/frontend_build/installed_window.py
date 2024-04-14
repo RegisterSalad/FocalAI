@@ -9,7 +9,7 @@ import sys
 from model_page import ModelPage
 from styler import Styler
 from vertical_menu import VerticalMenu
-from mainwindow import RepoWidget
+from FocalAI import RepoWidget
 from database import DatabaseManager
 
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))

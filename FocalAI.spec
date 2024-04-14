@@ -2,12 +2,12 @@
 
 
 a = Analysis(
-    ['src/frontend_build/mainwindow.py'],
-    pathex=['./src/'],
+    ['src/frontend_build/FocalAI.py'],
+    pathex=['./src/frontend_build/', './src/'],
     binaries=[],
-    datas=[('src/frontend_build', 'frontend_build')],
+    datas=[],
     hiddenimports=[],
-    hookspath=['./hooks/'],
+    hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
     excludes=[],
