@@ -6,9 +6,9 @@ from PySide6.QtCore import Slot, QCoreApplication
 import sys
 
 #Local Imports
-from .model_page import ModelPage
-from .styler import Styler
-from .vertical_menu import VerticalMenu
+from model_page import ModelPage
+from styler import Styler
+from vertical_menu import VerticalMenu
 
 
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))

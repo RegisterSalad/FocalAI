@@ -112,186 +112,258 @@ Executing transaction: ...working... done
 
 Activating the Anaconda environment...
 Installing/updating pip and PyInstaller...
-Defaulting to user installation because normal site-packages is not writeable
-Requirement already satisfied: pip in /home/mldesk/.local/lib/python3.10/site-packages (24.0)
-Defaulting to user installation because normal site-packages is not writeable
-Requirement already satisfied: pyinstaller in /home/mldesk/.local/lib/python3.10/site-packages (6.6.0)
-Requirement already satisfied: setuptools>=42.0.0 in /usr/lib/python3/dist-packages (from pyinstaller) (59.6.0)
-Requirement already satisfied: altgraph in /home/mldesk/.local/lib/python3.10/site-packages (from pyinstaller) (0.17.4)
-Requirement already satisfied: pyinstaller-hooks-contrib>=2024.3 in /home/mldesk/.local/lib/python3.10/site-packages (from pyinstaller) (2024.4)
-Requirement already satisfied: packaging>=22.0 in /usr/local/lib/python3.10/dist-packages (from pyinstaller) (23.2)
+Requirement already satisfied: pip in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (23.3.1)
+Collecting pip
+  Using cached pip-24.0-py3-none-any.whl.metadata (3.6 kB)
+Using cached pip-24.0-py3-none-any.whl (2.1 MB)
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 23.3.1
+    Uninstalling pip-23.3.1:
+      Successfully uninstalled pip-23.3.1
+Successfully installed pip-24.0
+Collecting pyinstaller
+  Using cached pyinstaller-6.6.0-py3-none-manylinux2014_x86_64.whl.metadata (8.3 kB)
+Requirement already satisfied: setuptools>=42.0.0 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from pyinstaller) (68.2.2)
+Collecting altgraph (from pyinstaller)
+  Using cached altgraph-0.17.4-py2.py3-none-any.whl.metadata (7.3 kB)
+Collecting pyinstaller-hooks-contrib>=2024.3 (from pyinstaller)
+  Using cached pyinstaller_hooks_contrib-2024.4-py2.py3-none-any.whl.metadata (16 kB)
+Requirement already satisfied: packaging>=22.0 in /home/mldesk/.local/lib/python3.12/site-packages (from pyinstaller) (23.2)
+Using cached pyinstaller-6.6.0-py3-none-manylinux2014_x86_64.whl (681 kB)
+Using cached pyinstaller_hooks_contrib-2024.4-py2.py3-none-any.whl (332 kB)
+Using cached altgraph-0.17.4-py2.py3-none-any.whl (21 kB)
+Installing collected packages: altgraph, pyinstaller-hooks-contrib, pyinstaller
+Successfully installed altgraph-0.17.4 pyinstaller-6.6.0 pyinstaller-hooks-contrib-2024.4
 Installing dependencies from requirements.txt...
-Defaulting to user installation because normal site-packages is not writeable
-Requirement already satisfied: absl-py in /usr/local/lib/python3.10/dist-packages (from -r pip_reqs/requirements.txt (line 1)) (2.0.0)
-Requirement already satisfied: aiohttp in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 2)) (3.9.4)
-Requirement already satisfied: aiosignal in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 3)) (1.3.1)
-Requirement already satisfied: annotated-types in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 4)) (0.6.0)
-Requirement already satisfied: anyio in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 5)) (4.1.0)
-Requirement already satisfied: astroid in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 6)) (2.12.14)
-Requirement already satisfied: attrs in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 7)) (18.2.0)
-Requirement already satisfied: autopep8 in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 8)) (2.0.4)
-Requirement already satisfied: certifi in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 9)) (2023.7.22)
-Requirement already satisfied: chardet in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 10)) (3.0.4)
-Requirement already satisfied: charset-normalizer in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 11)) (3.3.2)
-Requirement already satisfied: click in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 12)) (7.1.2)
-Requirement already satisfied: colorama in /usr/lib/python3/dist-packages (from -r pip_reqs/requirements.txt (line 13)) (0.4.4)
-Requirement already satisfied: commonmark in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 14)) (0.9.1)
-Requirement already satisfied: dill in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 15)) (0.3.8)
-Requirement already satisfied: distro in /usr/lib/python3/dist-packages (from -r pip_reqs/requirements.txt (line 16)) (1.7.0)
-Requirement already satisfied: docstring-to-markdown in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 17)) (0.13)
-Requirement already satisfied: flake8 in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 18)) (7.0.0)
-Requirement already satisfied: frozenlist in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 19)) (1.4.1)
-Requirement already satisfied: h11 in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 20)) (0.9.0)
-Requirement already satisfied: h2 in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 21)) (3.2.0)
-Requirement already satisfied: hpack in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 22)) (3.0.0)
-Requirement already satisfied: httpcore in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 23)) (0.10.2)
-Requirement already satisfied: httpx in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 24)) (0.14.3)
-Requirement already satisfied: hyperframe in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 25)) (5.2.0)
-Requirement already satisfied: idna in /usr/lib/python3/dist-packages (from -r pip_reqs/requirements.txt (line 26)) (3.3)
-Requirement already satisfied: importlib-metadata in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 27)) (7.0.1)
-Requirement already satisfied: isort in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 28)) (5.13.2)
-Requirement already satisfied: jedi in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 29)) (0.19.1)
-Requirement already satisfied: Markdown in /usr/local/lib/python3.10/dist-packages (from -r pip_reqs/requirements.txt (line 30)) (3.5)
-Requirement already satisfied: mccabe in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 31)) (0.7.0)
-Requirement already satisfied: multidict in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 32)) (6.0.5)
-Requirement already satisfied: openai in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 33)) (0.28.1)
-Requirement already satisfied: packaging in /usr/local/lib/python3.10/dist-packages (from -r pip_reqs/requirements.txt (line 34)) (23.2)
-Requirement already satisfied: pandoc in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 35)) (2.3)
-Requirement already satisfied: paperswithcode-client in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 36)) (0.3.1)
-Requirement already satisfied: parso in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 37)) (0.8.3)
-Requirement already satisfied: pdflatex in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 38)) (0.1.3)
-Requirement already satisfied: platformdirs in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 39)) (4.2.0)
-Requirement already satisfied: pluggy in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 40)) (1.4.0)
-Requirement already satisfied: plumbum in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 41)) (1.8.2)
-Requirement already satisfied: ply in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 42)) (3.11)
-Requirement already satisfied: psutil in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 43)) (5.8.0)
-Requirement already satisfied: pycodestyle in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 44)) (2.11.1)
-Requirement already satisfied: pydantic in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 45)) (1.6.2)
-Requirement already satisfied: pydantic_core in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 46)) (0.42.0)
-Requirement already satisfied: pydocstyle in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 47)) (6.3.0)
-Requirement already satisfied: pyflakes in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 48)) (3.2.0)
-Requirement already satisfied: Pygments in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 49)) (2.17.2)
-Requirement already satisfied: pylint in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 50)) (2.15.10)
-Requirement already satisfied: pypandoc in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 51)) (1.13)
-Requirement already satisfied: PySide6 in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 52)) (6.7.0)
-Requirement already satisfied: PySide6_Addons in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 53)) (6.7.0)
-Requirement already satisfied: PySide6_Essentials in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 54)) (6.7.0)
-Requirement already satisfied: python-lsp-jsonrpc in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 55)) (1.1.2)
-Requirement already satisfied: python-lsp-server in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 56)) (1.10.0)
-Requirement already satisfied: pytoolconfig in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 57)) (1.3.1)
-Requirement already satisfied: pytz in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 58)) (2021.3)
-Requirement already satisfied: regex in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 59)) (2023.12.25)
-Requirement already satisfied: requests in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 60)) (2.31.0)
-Requirement already satisfied: rfc3986 in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 61)) (1.5.0)
-Requirement already satisfied: rich in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 62)) (9.11.1)
-Requirement already satisfied: rope in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 63)) (1.12.0)
-Requirement already satisfied: setuptools in /usr/lib/python3/dist-packages (from -r pip_reqs/requirements.txt (line 64)) (59.6.0)
-Requirement already satisfied: shiboken6 in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 65)) (6.7.0)
-Requirement already satisfied: sniffio in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 66)) (1.3.0)
-Requirement already satisfied: snowballstemmer in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 67)) (2.2.0)
-Requirement already satisfied: tea in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 68)) (0.1.4)
-Requirement already satisfied: tea-client in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 69)) (0.0.7)
-Requirement already satisfied: tea-console in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 70)) (0.0.6)
-Requirement already satisfied: tiktoken in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 71)) (0.6.0)
-Requirement already satisfied: tomli in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 72)) (2.0.1)
-Requirement already satisfied: tomlkit in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 73)) (0.12.3)
-Requirement already satisfied: tqdm in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 74)) (4.66.1)
-Requirement already satisfied: typer in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 75)) (0.3.2)
-Requirement already satisfied: typing-extensions in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 76)) (3.10.0.2)
-Requirement already satisfied: tzlocal in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 77)) (2.1)
-Requirement already satisfied: ujson in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 78)) (5.9.0)
-Requirement already satisfied: urllib3 in /usr/lib/python3/dist-packages (from -r pip_reqs/requirements.txt (line 79)) (1.26.5)
-Requirement already satisfied: whatthepatch in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 80)) (1.0.5)
-Requirement already satisfied: wheel in /usr/lib/python3/dist-packages (from -r pip_reqs/requirements.txt (line 81)) (0.37.1)
-Requirement already satisfied: yapf in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 82)) (0.40.2)
-Requirement already satisfied: yarl in /home/mldesk/.local/lib/python3.10/site-packages (from -r pip_reqs/requirements.txt (line 83)) (1.9.4)
-Requirement already satisfied: zipp in /usr/lib/python3/dist-packages (from -r pip_reqs/requirements.txt (line 84)) (1.0.0)
-Requirement already satisfied: async-timeout<5.0,>=4.0 in /home/mldesk/.local/lib/python3.10/site-packages (from aiohttp->-r pip_reqs/requirements.txt (line 2)) (4.0.3)
-Requirement already satisfied: exceptiongroup>=1.0.2 in /home/mldesk/.local/lib/python3.10/site-packages (from anyio->-r pip_reqs/requirements.txt (line 5)) (1.2.0)
-Requirement already satisfied: lazy-object-proxy>=1.4.0 in /home/mldesk/.local/lib/python3.10/site-packages (from astroid->-r pip_reqs/requirements.txt (line 6)) (1.10.0)
-Requirement already satisfied: wrapt<2,>=1.11 in /usr/local/lib/python3.10/dist-packages (from astroid->-r pip_reqs/requirements.txt (line 6)) (1.14.1)
+Requirement already satisfied: astroid==3.0.3 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 1)) (3.0.3)
+Collecting attrs==18.2.0 (from -r pip_reqs/requirements.txt (line 2))
+  Using cached attrs-18.2.0-py2.py3-none-any.whl.metadata (11 kB)
+Requirement already satisfied: autopep8==2.0.4 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 3)) (2.0.4)
+Collecting certifi==2024.2.2 (from -r pip_reqs/requirements.txt (line 4))
+  Using cached certifi-2024.2.2-py3-none-any.whl.metadata (2.2 kB)
+Collecting chardet==3.0.4 (from -r pip_reqs/requirements.txt (line 5))
+  Using cached chardet-3.0.4-py2.py3-none-any.whl.metadata (3.2 kB)
+Collecting charset-normalizer==3.3.2 (from -r pip_reqs/requirements.txt (line 6))
+  Using cached charset_normalizer-3.3.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (33 kB)
+Collecting click==7.1.2 (from -r pip_reqs/requirements.txt (line 7))
+  Using cached click-7.1.2-py2.py3-none-any.whl.metadata (2.9 kB)
+Collecting colorama==0.4.6 (from -r pip_reqs/requirements.txt (line 8))
+  Using cached colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+Collecting commonmark==0.9.1 (from -r pip_reqs/requirements.txt (line 9))
+  Using cached commonmark-0.9.1-py2.py3-none-any.whl.metadata (5.7 kB)
+Requirement already satisfied: dill==0.3.8 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 10)) (0.3.8)
+Requirement already satisfied: docstring-to-markdown==0.15 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 11)) (0.15)
+Requirement already satisfied: flake8==7.0.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 12)) (7.0.0)
+Collecting h11==0.9.0 (from -r pip_reqs/requirements.txt (line 13))
+  Using cached h11-0.9.0-py2.py3-none-any.whl.metadata (8.1 kB)
+Collecting h2==3.2.0 (from -r pip_reqs/requirements.txt (line 14))
+  Using cached h2-3.2.0-py2.py3-none-any.whl.metadata (32 kB)
+Collecting hpack==3.0.0 (from -r pip_reqs/requirements.txt (line 15))
+  Using cached hpack-3.0.0-py2.py3-none-any.whl.metadata (7.0 kB)
+Collecting httpcore==0.10.2 (from -r pip_reqs/requirements.txt (line 16))
+  Using cached httpcore-0.10.2-py3-none-any.whl.metadata (6.3 kB)
+Collecting httpx==0.14.3 (from -r pip_reqs/requirements.txt (line 17))
+  Using cached httpx-0.14.3-py3-none-any.whl.metadata (33 kB)
+Collecting hyperframe==5.2.0 (from -r pip_reqs/requirements.txt (line 18))
+  Using cached hyperframe-5.2.0-py2.py3-none-any.whl.metadata (7.2 kB)
+Collecting idna==3.7 (from -r pip_reqs/requirements.txt (line 19))
+  Using cached idna-3.7-py3-none-any.whl.metadata (9.9 kB)
+Requirement already satisfied: importlib-metadata==7.0.1 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 20)) (7.0.1)
+Requirement already satisfied: isort==5.13.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 21)) (5.13.2)
+Requirement already satisfied: jedi==0.19.1 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 22)) (0.19.1)
+Requirement already satisfied: Markdown==3.6 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 23)) (3.6)
+Requirement already satisfied: mccabe==0.7.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 24)) (0.7.0)
+Requirement already satisfied: packaging==23.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 25)) (23.2)
+Collecting paperswithcode-client==0.3.1 (from -r pip_reqs/requirements.txt (line 26))
+  Using cached paperswithcode_client-0.3.1-py3-none-any.whl.metadata (7.2 kB)
+Requirement already satisfied: parso==0.8.3 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 27)) (0.8.3)
+Collecting pdflatex==0.1.3 (from -r pip_reqs/requirements.txt (line 28))
+  Using cached pdflatex-0.1.3-py3-none-any.whl.metadata (3.4 kB)
+Requirement already satisfied: platformdirs==4.2.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 29)) (4.2.0)
+Requirement already satisfied: pluggy==1.4.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 30)) (1.4.0)
+Collecting psutil==5.8.0 (from -r pip_reqs/requirements.txt (line 31))
+  Using cached psutil-5.8.0-cp312-cp312-linux_x86_64.whl
+Requirement already satisfied: pycodestyle==2.11.1 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 32)) (2.11.1)
+Collecting pydantic==1.6.2 (from -r pip_reqs/requirements.txt (line 33))
+  Using cached pydantic-1.6.2-py36.py37.py38-none-any.whl.metadata (73 kB)
+Requirement already satisfied: pydocstyle==6.3.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 34)) (6.3.0)
+Requirement already satisfied: pyflakes==3.2.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 35)) (3.2.0)
+Collecting Pygments==2.17.2 (from -r pip_reqs/requirements.txt (line 36))
+  Using cached pygments-2.17.2-py3-none-any.whl.metadata (2.6 kB)
+Requirement already satisfied: pylint==3.0.4 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 37)) (3.0.4)
+Collecting pypandoc==1.13 (from -r pip_reqs/requirements.txt (line 38))
+  Using cached pypandoc-1.13-py3-none-any.whl.metadata (16 kB)
+Requirement already satisfied: PySide6==6.6.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 39)) (6.6.2)
+Requirement already satisfied: PySide6_Addons==6.6.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 40)) (6.6.2)
+Requirement already satisfied: PySide6_Essentials==6.6.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 41)) (6.6.2)
+Requirement already satisfied: python-lsp-jsonrpc==1.1.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 42)) (1.1.2)
+Requirement already satisfied: python-lsp-server==1.10.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 43)) (1.10.0)
+Requirement already satisfied: pytoolconfig==1.3.1 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 44)) (1.3.1)
+Collecting pytz==2021.3 (from -r pip_reqs/requirements.txt (line 45))
+  Using cached pytz-2021.3-py2.py3-none-any.whl.metadata (21 kB)
+Collecting requests==2.31.0 (from -r pip_reqs/requirements.txt (line 46))
+  Using cached requests-2.31.0-py3-none-any.whl.metadata (4.6 kB)
+Collecting rfc3986==1.5.0 (from -r pip_reqs/requirements.txt (line 47))
+  Using cached rfc3986-1.5.0-py2.py3-none-any.whl.metadata (6.5 kB)
+Collecting rich==9.11.1 (from -r pip_reqs/requirements.txt (line 48))
+  Using cached rich-9.11.1-py3-none-any.whl.metadata (16 kB)
+Requirement already satisfied: rope==1.12.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 49)) (1.12.0)
+Requirement already satisfied: setuptools==68.2.2 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 50)) (68.2.2)
+Requirement already satisfied: shiboken6==6.6.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 51)) (6.6.2)
+Collecting sniffio==1.3.1 (from -r pip_reqs/requirements.txt (line 52))
+  Using cached sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+Requirement already satisfied: snowballstemmer==2.2.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 53)) (2.2.0)
+Collecting tea==0.1.4 (from -r pip_reqs/requirements.txt (line 54))
+  Using cached tea-0.1.4-py3-none-any.whl.metadata (1.6 kB)
+Collecting tea-client==0.0.7 (from -r pip_reqs/requirements.txt (line 55))
+  Using cached tea_client-0.0.7-py3-none-any.whl.metadata (750 bytes)
+Collecting tea-console==0.0.6 (from -r pip_reqs/requirements.txt (line 56))
+  Using cached tea_console-0.0.6-py3-none-any.whl.metadata (816 bytes)
+Requirement already satisfied: tomli==2.0.1 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 57)) (2.0.1)
+Requirement already satisfied: tomlkit==0.12.3 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 58)) (0.12.3)
+Collecting typer==0.3.2 (from -r pip_reqs/requirements.txt (line 59))
+  Using cached typer-0.3.2-py3-none-any.whl.metadata (12 kB)
+Collecting typing-extensions==3.10.0.2 (from -r pip_reqs/requirements.txt (line 60))
+  Using cached typing_extensions-3.10.0.2-py3-none-any.whl.metadata (2.1 kB)
+Collecting tzlocal==2.1 (from -r pip_reqs/requirements.txt (line 61))
+  Using cached tzlocal-2.1-py2.py3-none-any.whl.metadata (8.2 kB)
+Requirement already satisfied: ujson==5.9.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 62)) (5.9.0)
+Collecting urllib3==2.2.1 (from -r pip_reqs/requirements.txt (line 63))
+  Using cached urllib3-2.2.1-py3-none-any.whl.metadata (6.4 kB)
+Requirement already satisfied: whatthepatch==1.0.5 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 64)) (1.0.5)
+Requirement already satisfied: wheel==0.41.2 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 65)) (0.41.2)
+Requirement already satisfied: yapf==0.40.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 66)) (0.40.2)
+Requirement already satisfied: zipp==3.17.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r pip_reqs/requirements.txt (line 67)) (3.17.0)
+Using cached attrs-18.2.0-py2.py3-none-any.whl (34 kB)
+Using cached certifi-2024.2.2-py3-none-any.whl (163 kB)
+Using cached chardet-3.0.4-py2.py3-none-any.whl (133 kB)
+Using cached charset_normalizer-3.3.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (141 kB)
+Using cached click-7.1.2-py2.py3-none-any.whl (82 kB)
+Using cached colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Using cached commonmark-0.9.1-py2.py3-none-any.whl (51 kB)
+Using cached h11-0.9.0-py2.py3-none-any.whl (53 kB)
+Using cached h2-3.2.0-py2.py3-none-any.whl (65 kB)
+Using cached hpack-3.0.0-py2.py3-none-any.whl (38 kB)
+Using cached httpcore-0.10.2-py3-none-any.whl (48 kB)
+Using cached httpx-0.14.3-py3-none-any.whl (62 kB)
+Using cached hyperframe-5.2.0-py2.py3-none-any.whl (12 kB)
+Using cached idna-3.7-py3-none-any.whl (66 kB)
+Using cached paperswithcode_client-0.3.1-py3-none-any.whl (24 kB)
+Using cached pdflatex-0.1.3-py3-none-any.whl (8.3 kB)
+Using cached pydantic-1.6.2-py36.py37.py38-none-any.whl (99 kB)
+Using cached pygments-2.17.2-py3-none-any.whl (1.2 MB)
+Using cached pypandoc-1.13-py3-none-any.whl (21 kB)
+Using cached pytz-2021.3-py2.py3-none-any.whl (503 kB)
+Using cached requests-2.31.0-py3-none-any.whl (62 kB)
+Using cached rfc3986-1.5.0-py2.py3-none-any.whl (31 kB)
+Using cached rich-9.11.1-py3-none-any.whl (195 kB)
+Using cached sniffio-1.3.1-py3-none-any.whl (10 kB)
+Using cached tea-0.1.4-py3-none-any.whl (41 kB)
+Using cached tea_client-0.0.7-py3-none-any.whl (11 kB)
+Using cached tea_console-0.0.6-py3-none-any.whl (12 kB)
+Using cached typer-0.3.2-py3-none-any.whl (21 kB)
+Using cached typing_extensions-3.10.0.2-py3-none-any.whl (26 kB)
+Using cached tzlocal-2.1-py2.py3-none-any.whl (16 kB)
+Using cached urllib3-2.2.1-py3-none-any.whl (121 kB)
+Installing collected packages: typing-extensions, rfc3986, pytz, hyperframe, hpack, h11, commonmark, chardet, attrs, urllib3, tzlocal, sniffio, pypandoc, Pygments, pydantic, psutil, pdflatex, idna, h2, colorama, click, charset-normalizer, certifi, typer, tea, rich, requests, httpcore, tea-console, httpx, tea-client, paperswithcode-client
+Successfully installed Pygments-2.17.2 attrs-18.2.0 certifi-2024.2.2 chardet-3.0.4 charset-normalizer-3.3.2 click-7.1.2 colorama-0.4.6 commonmark-0.9.1 h11-0.9.0 h2-3.2.0 hpack-3.0.0 httpcore-0.10.2 httpx-0.14.3 hyperframe-5.2.0 idna-3.7 paperswithcode-client-0.3.1 pdflatex-0.1.3 psutil-5.8.0 pydantic-1.6.2 pypandoc-1.13 pytz-2021.3 requests-2.31.0 rfc3986-1.5.0 rich-9.11.1 sniffio-1.3.1 tea-0.1.4 tea-client-0.0.7 tea-console-0.0.6 typer-0.3.2 typing-extensions-3.10.0.2 tzlocal-2.1 urllib3-2.2.1
 Cleaning previous builds...
 Building the application...
-123 INFO: PyInstaller: 6.6.0, contrib hooks: 2024.4
-123 INFO: Python: 3.10.12
-125 INFO: Platform: Linux-6.5.0-27-generic-x86_64-with-glibc2.35
-125 INFO: wrote /home/mldesk/Desktop/Repos/FocalAI/FocalAI.spec
-128 INFO: Extending PYTHONPATH with paths
+152 INFO: PyInstaller: 6.6.0, contrib hooks: 2024.4
+153 INFO: Python: 3.12.1 (conda)
+155 INFO: Platform: Linux-6.5.0-27-generic-x86_64-with-glibc2.35
+158 INFO: Extending PYTHONPATH with paths
 ['/home/mldesk/Desktop/Repos', '/home/mldesk/Desktop/Repos/FocalAI/src']
-247 INFO: Appending 'datas' from .spec
-247 INFO: checking Analysis
-247 INFO: Building Analysis because Analysis-00.toc is non existent
-247 INFO: Running Analysis Analysis-00.toc
-247 INFO: Target bytecode optimization level: 0
-248 INFO: Initializing module dependency graph...
-248 INFO: Caching module graph hooks...
-254 INFO: Analyzing base_library.zip ...
-658 INFO: Loading module hook 'hook-heapq.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-701 INFO: Loading module hook 'hook-encodings.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-1559 INFO: Loading module hook 'hook-pickle.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-2120 INFO: Caching module dependency graph...
-2186 INFO: Looking for Python shared library...
-2204 INFO: Using Python shared library: /lib/x86_64-linux-gnu/libpython3.10.so.1.0
-2204 INFO: Analyzing /home/mldesk/Desktop/Repos/FocalAI/src/frontend_build/mainwindow.py
-2209 INFO: Loading module hook 'hook-PySide6.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-2280 INFO: Loading module hook 'hook-shiboken6.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-2292 INFO: Loading module hook 'hook-PySide6.QtNetwork.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-2488 INFO: Loading module hook 'hook-PySide6.QtWidgets.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-2561 INFO: Loading module hook 'hook-PySide6.QtCore.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-2658 INFO: Processing pre-safe import module hook six.moves from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks/pre_safe_import_module/hook-six.moves.py'.
-3192 INFO: Loading module hook 'hook-charset_normalizer.py' from '/home/mldesk/.local/lib/python3.10/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
-3348 INFO: Loading module hook 'hook-cryptography.py' from '/home/mldesk/.local/lib/python3.10/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
-3905 INFO: Loading module hook 'hook-bcrypt.py' from '/home/mldesk/.local/lib/python3.10/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
-4034 INFO: Loading module hook 'hook-certifi.py' from '/home/mldesk/.local/lib/python3.10/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
-4206 INFO: Loading module hook 'hook-multiprocessing.util.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-4244 INFO: Loading module hook 'hook-xml.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-4940 INFO: Loading module hook 'hook-pytz.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-5047 INFO: Loading module hook 'hook-pkg_resources.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-5511 INFO: Loading module hook 'hook-platform.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-5541 INFO: Loading module hook 'hook-sysconfig.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-5589 INFO: Loading module hook 'hook-difflib.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-5813 INFO: Loading module hook 'hook-pydantic.py' from '/home/mldesk/.local/lib/python3.10/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
-6172 INFO: Loading module hook 'hook-pygments.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-6741 INFO: Loading module hook 'hook-importlib_metadata.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-7096 INFO: Processing module hooks...
-7121 INFO: Loading module hook 'hook-PIL.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-7157 INFO: Loading module hook 'hook-PIL.Image.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-7455 INFO: Loading module hook 'hook-numpy.py' from '/usr/local/lib/python3.10/dist-packages/numpy/_pyinstaller'...
-7747 INFO: Loading module hook 'hook-psutil.py' from '/home/mldesk/.local/lib/python3.10/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
-8368 INFO: Loading module hook 'hook-PIL.ImageFilter.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-9471 INFO: Loading module hook 'hook-PIL.SpiderImagePlugin.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-9501 INFO: Processing pre-safe import module hook win32com from '/home/mldesk/.local/lib/python3.10/site-packages/_pyinstaller_hooks_contrib/hooks/pre_safe_import_module/hook-win32com.py'.
-9631 INFO: Loading module hook 'hook-packaging.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-9679 INFO: Loading module hook 'hook-PySide6.QtDBus.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-9773 INFO: Loading module hook 'hook-PySide6.QtGui.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-10385 INFO: Performing binary vs. data reclassification (774 entries)
-10532 INFO: Looking for ctypes DLLs
-10545 INFO: Analyzing run-time hooks ...
-10550 INFO: Including run-time hook '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks/rthooks/pyi_rth_inspect.py'
-10551 INFO: Including run-time hook '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pkgutil.py'
-10553 INFO: Processing pre-find module path hook _pyi_rth_utils from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks/pre_find_module_path/hook-_pyi_rth_utils.py'.
-10554 INFO: Loading module hook 'hook-_pyi_rth_utils.py' from '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks'...
-10554 INFO: Including run-time hook '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks/rthooks/pyi_rth_multiprocessing.py'
-10555 INFO: Including run-time hook '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pkgres.py'
-10558 INFO: Including run-time hook '/home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pyside6.py'
-10586 INFO: Looking for dynamic libraries
-12671 INFO: Warnings written to /home/mldesk/Desktop/Repos/FocalAI/build/FocalAI/warn-FocalAI.txt
-12717 INFO: Graph cross-reference written to /home/mldesk/Desktop/Repos/FocalAI/build/FocalAI/xref-FocalAI.html
-12750 INFO: checking PYZ
-12750 INFO: Building PYZ because PYZ-00.toc is non existent
-12750 INFO: Building PYZ (ZlibArchive) /home/mldesk/Desktop/Repos/FocalAI/build/FocalAI/PYZ-00.pyz
-13479 INFO: Building PYZ (ZlibArchive) /home/mldesk/Desktop/Repos/FocalAI/build/FocalAI/PYZ-00.pyz completed successfully.
-13514 INFO: checking PKG
-13514 INFO: Building PKG because PKG-00.toc is non existent
-13514 INFO: Building PKG (CArchive) FocalAI.pkg
-36938 INFO: Building PKG (CArchive) FocalAI.pkg completed successfully.
-36952 INFO: Bootloader /home/mldesk/.local/lib/python3.10/site-packages/PyInstaller/bootloader/Linux-64bit-intel/run
-36952 INFO: checking EXE
-36952 INFO: Building EXE because EXE-00.toc is non existent
-36952 INFO: Building EXE from EXE-00.toc
-36952 INFO: Copying bootloader EXE to /home/mldesk/Desktop/Repos/FocalAI/dist/FocalAI
-36952 INFO: Appending PKG archive to custom ELF section in EXE
-37397 INFO: Building EXE from EXE-00.toc completed successfully.
-Build completed. Check the 'dist/' directory for the executable.
-Executable path: /home/mldesk/Desktop/Repos/FocalAI/dist/
-Install Log File: ./build_log.txt
+268 INFO: checking Analysis
+269 INFO: Building Analysis because Analysis-00.toc is non existent
+269 INFO: Running Analysis Analysis-00.toc
+269 INFO: Target bytecode optimization level: 0
+269 INFO: Initializing module dependency graph...
+269 INFO: Caching module graph hooks...
+274 INFO: Analyzing base_library.zip ...
+986 INFO: Loading module hook 'hook-encodings.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+2819 INFO: Loading module hook 'hook-pickle.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+3456 INFO: Loading module hook 'hook-heapq.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+3735 INFO: Caching module dependency graph...
+3798 INFO: Looking for Python shared library...
+3806 INFO: Using Python shared library: /home/mldesk/.conda/envs/FocalAI/lib/libpython3.12.so.1.0
+3806 INFO: Analyzing /home/mldesk/Desktop/Repos/FocalAI/src/frontend_build/mainwindow.py
+3813 INFO: Loading module hook 'hook-PySide6.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+3944 INFO: Loading module hook 'hook-shiboken6.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+3944 INFO: Loading module hook 'hook-PySide6.QtNetwork.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+4263 INFO: Loading module hook 'hook-PySide6.QtWidgets.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+4368 INFO: Loading module hook 'hook-PySide6.QtCore.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+5403 INFO: Loading module hook 'hook-charset_normalizer.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
+5672 INFO: Loading module hook 'hook-certifi.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
+5921 INFO: Loading module hook 'hook-multiprocessing.util.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+5975 INFO: Loading module hook 'hook-xml.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+7081 INFO: Loading module hook 'hook-pytz.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+7257 INFO: Loading module hook 'hook-pkg_resources.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+7842 INFO: Loading module hook 'hook-platform.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+7879 INFO: Loading module hook 'hook-sysconfig.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+7947 INFO: Loading module hook 'hook-difflib.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+8274 INFO: Loading module hook 'hook-pydantic.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
+8878 INFO: Loading module hook 'hook-pygments.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+9767 INFO: Loading module hook 'hook-importlib_metadata.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+10317 INFO: Processing module hooks...
+12291 INFO: Loading module hook 'hook-platformdirs.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
+12315 INFO: Loading module hook 'hook-packaging.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+12398 INFO: Loading module hook 'hook-PySide6.QtDBus.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+12562 INFO: Loading module hook 'hook-PySide6.QtGui.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+13254 INFO: Performing binary vs. data reclassification (752 entries)
+13502 INFO: Looking for ctypes DLLs
+13515 INFO: Analyzing run-time hooks ...
+13521 INFO: Including run-time hook '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks/rthooks/pyi_rth_inspect.py'
+13522 INFO: Including run-time hook '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pkgutil.py'
+13524 INFO: Processing pre-find module path hook _pyi_rth_utils from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks/pre_find_module_path/hook-_pyi_rth_utils.py'.
+13525 INFO: Loading module hook 'hook-_pyi_rth_utils.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+13525 INFO: Including run-time hook '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks/rthooks/pyi_rth_multiprocessing.py'
+13527 INFO: Including run-time hook '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pkgres.py'
+13530 INFO: Including run-time hook '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pyside6.py'
+13552 INFO: Looking for dynamic libraries
+15301 INFO: Warnings written to /home/mldesk/Desktop/Repos/FocalAI/build/FocalAI/warn-FocalAI.txt
+15331 INFO: Graph cross-reference written to /home/mldesk/Desktop/Repos/FocalAI/build/FocalAI/xref-FocalAI.html
+15358 INFO: checking PYZ
+15358 INFO: Building PYZ because PYZ-00.toc is non existent
+15358 INFO: Building PYZ (ZlibArchive) /home/mldesk/Desktop/Repos/FocalAI/build/FocalAI/PYZ-00.pyz
+16032 INFO: Building PYZ (ZlibArchive) /home/mldesk/Desktop/Repos/FocalAI/build/FocalAI/PYZ-00.pyz completed successfully.
+16063 INFO: checking PKG
+16063 INFO: Building PKG because PKG-00.toc is non existent
+16063 INFO: Building PKG (CArchive) FocalAI.pkg
+39721 INFO: Building PKG (CArchive) FocalAI.pkg completed successfully.
+39732 INFO: Bootloader /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/bootloader/Linux-64bit-intel/run
+39732 INFO: checking EXE
+39732 INFO: Building EXE because EXE-00.toc is non existent
+39732 INFO: Building EXE from EXE-00.toc
+39732 INFO: Copying bootloader EXE to /home/mldesk/Desktop/Repos/FocalAI/dist/FocalAI
+39732 INFO: Appending PKG archive to custom ELF section in EXE
+40204 INFO: Building EXE from EXE-00.toc completed successfully.
+40219 INFO: checking COLLECT
+40219 INFO: Building COLLECT because COLLECT-00.toc is non existent
+40234 INFO: Building COLLECT COLLECT-00.toc
+Traceback (most recent call last):
+  File "/home/mldesk/.conda/envs/FocalAI/bin/pyinstaller", line 8, in <module>
+    sys.exit(_console_script_run())
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/__main__.py", line 228, in _console_script_run
+    run()
+  File "/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/__main__.py", line 212, in run
+    run_build(pyi_config, spec_file, **vars(args))
+  File "/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/__main__.py", line 69, in run_build
+    PyInstaller.building.build_main.main(pyi_config, spec_file, **kwargs)
+  File "/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/building/build_main.py", line 1186, in main
+    build(specfile, distpath, workpath, clean_build)
+  File "/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/building/build_main.py", line 1126, in build
+    exec(code, spec_namespace)
+  File "./src/FocalAI.spec", line 29, in <module>
+    coll = COLLECT(exe,
+           ^^^^^^^^^^^^
+  File "/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/building/api.py", line 1107, in __init__
+    self.__postinit__()
+  File "/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/building/datastruct.py", line 184, in __postinit__
+    self.assemble()
+  File "/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/building/api.py", line 1169, in assemble
+    raise ValueError(f"Resource {src_name!r} is not a valid file!")
+ValueError: Resource '/home/mldesk/Desktop/Repos/FocalAI/dist/FocalAI' is not a valid file!
+PyInstaller failed to build the application, exiting with status 1
