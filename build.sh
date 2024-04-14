@@ -66,14 +66,15 @@ fi
 echo "Cleaning previous builds..." | tee -a $LOG_FILE
 rm -rf build/ dist/ >> $LOG_FILE 2>&1
 
-# Build the PyQt application using the spec file
-echo "Building the application..." | tee -a $LOG_FILE
-pyinstaller "./src/FocalAI.spec" >> $LOG_FILE 2>&1
+echo "Building the application with mainwindow.py and additional paths..." | tee -a $LOG_FILE
+pyinstaller src/frontend_build/mainwindow.py --noconfirm --clean --onefile --windowed \
+  --paths=./src/frontend_build/ \
+  --paths=./src/ \
+  >> $LOG_FILE 2>&1
 if [ $? -ne 0 ]; then
     echo "PyInstaller failed to build the application, exiting with status 1" | tee -a $LOG_FILE
     exit 1
 fi
-
 echo "Build completed. Check the 'dist/' directory for the executable." | tee -a $LOG_FILE
 echo "Executable path: $(pwd)/dist/" | tee -a $LOG_FILE
 echo "Install Log File: $LOG_FILE" | tee -a $LOG_FILE

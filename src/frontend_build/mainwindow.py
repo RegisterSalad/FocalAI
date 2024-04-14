@@ -1,9 +1,10 @@
 import os
+import sys
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                                QHBoxLayout, QLineEdit, QListWidget, QStackedWidget, QListWidgetItem, QLabel)
 
 from PySide6.QtCore import Slot, QCoreApplication
-import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 #Local Imports
 from model_page import ModelPage

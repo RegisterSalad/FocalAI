@@ -33,3 +33,4 @@ src/frontend_build/databases/conda_environments.db
 venv
 build
 dist
+build_log.txt
