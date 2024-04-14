@@ -31,3 +31,5 @@ src/frontend_build/databases/conda_environments.db
 ~/FocalAI/Logs/env_list_log.log
 ~/FocalAI/logs/env_list_log.log
 venv
+build
+dist
