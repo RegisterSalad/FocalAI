@@ -1,2 +1,0 @@
-Requirement already satisfied: absl-py==2.1.0 in /home/mldesk/.local/lib/python3.11/site-packages (from -r /home/mldesk/Desktop/Repos/FocalAI/pip_reqs/requirements.txt (line 1)) (2.1.0)
-

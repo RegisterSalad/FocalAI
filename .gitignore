@@ -1,18 +1,15 @@
-<<<<<<< HEAD
+
 src/__pycache__/api_caller.cpython-312.pyc
 src/frontend_build/__pycache__/model_page.cpython-311.pyc
 src/frontend_build/__pycache__/menu_bar.cpython-311.pyc
 src/frontend_build/__pycache__/model_player.cpython-311.pyc
 src/frontend_build/__pycache__/file_list_widget.cpython-311.pyc
 src/frontend_build/__pycache__/file_drop_widget.cpython-311.pyc
-=======
->>>>>>> SeppBranch
 src/__pycache__/secret.cpython-312.pyc
 src/__pycache__/repo.cpython-312.pyc
 src/__pycache__/database.cpython-312.pyc
 src/__pycache__/database_util.cpython-312.pyc
 src/__pycache__/conda_env.cpython-312.pyc
-<<<<<<< HEAD
 src/__pycache__/
 src/frontend_build/__pycache__/
 src/frontend_build/databases/conda_environments.db
@@ -22,7 +19,6 @@ databases/conda_environments.db
 ~/FocalAI/Logs/env_list_log.log
 ~/FocalAI/logs/env_list_log.log
 databases/conda_environments.db
-=======
 src/__pycache__/api_caller.cpython-312.pyc
 src/frontend_build/__pycache__/menu_bar.cpython-311.pyc
 src/frontend_build/__pycache__/model_page.cpython-311.pyc
@@ -34,4 +30,4 @@ src/frontend_build/databases/conda_environments.db
 ~/FocalAI/logs/create_log.log
 ~/FocalAI/Logs/env_list_log.log
 ~/FocalAI/logs/env_list_log.log
->>>>>>> SeppBranch
+venv
