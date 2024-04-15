@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QPushButton, QFileDialog, QMessageBox
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QPushButton, QFileDialog, QMessageBox, QLabel
 from PySide6.QtCore import QFile, QIODevice, QTextStream, QRegularExpression
 from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor, QFont
 import os
@@ -134,9 +134,15 @@ if __name__ == "__main__":
         
         # Connect the save button to the save method
         self.saveButton.clicked.connect(self.saveAndRunFile)
-        
+        self.label = QLabel("Script Builder")
+        font = QFont('Arial', 18) 
+        font.setBold(True)  # Make the font bold
+
+        # Apply the font to the label
+        self.label.setFont(font)
         # Layout
         layout = QVBoxLayout()
+        layout.addWidget(self.label)
         layout.addWidget(self.textEdit)
         layout.addWidget(self.saveButton)
         self.setLayout(layout)

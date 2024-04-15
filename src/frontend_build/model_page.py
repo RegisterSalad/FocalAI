@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame, QSizePolicy, QWidget, QListWidget, QListWidgetItem, QToolTip, QTextEdit, QLineEdit, QInputDialog
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont
 from PySide6.QtWebEngineWidgets import QWebEngineView  # Import QWebEngineView
 import markdown
 import sys
@@ -168,9 +169,14 @@ class ModelPage(QFrame):
         self.text_display.setZoomFactor(0.9)
         self.thumbnail = QLabel()
         self.thumbnail.setFixedSize(100, 100)
-        
+        mainLabel = QLabel("Model Page")
+        font = QFont('Arial', 18)
+        font.setBold(True)  # Make the font bold
+
+        # Apply the font to the label
+        mainLabel.setFont(font)
         mainLayout = QVBoxLayout()
-        
+        mainLayout.addWidget(mainLabel)
         self.button1.clicked.connect(lambda: self.create_model_player())
         self.b2_delete = True
         self.b2_install = False

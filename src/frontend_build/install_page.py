@@ -4,7 +4,7 @@ from PySide6.QtWebEngineWidgets import QWebEngineView  # Import QWebEngineView
 import markdown
 import sys
 import os
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QFont
 from typing import Callable
 import subprocess
 import json
@@ -95,6 +95,13 @@ class InstallPage(QFrame):
         self.install_commands_label = QLabel("Install Commands")
         self.commands_to_run_label = QLabel("Commands to Run")
 
+        font = QFont('Arial', 18)
+        font.setBold(True)  # Make the font bold
+
+        # Apply the font to the label
+        self.button_label.setFont(font)
+        self.install_commands_label.setFont(font)
+        self.commands_to_run_label.setFont(font)
 
         # Create holder layouts for install commands and run commands to hold widget and label
         self.install_commands_main_layout = QVBoxLayout()
