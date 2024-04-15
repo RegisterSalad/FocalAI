@@ -222,7 +222,7 @@ class InstallPage(QFrame):
     def install_store(self):
         #stores the all model information like description, name, url, model type in a .JSON
         repo: Repository = self.new_env.repository
-        file = f"{repo.repo_name}.josn"
+        file = f"{repo.repo_name}.json"
         modelInfo = {
             "name":repo.repo_name,
             "url":repo.repo_url,
