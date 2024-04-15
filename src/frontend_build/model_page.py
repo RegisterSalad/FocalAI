@@ -223,7 +223,7 @@ class ModelPage(QFrame):
 
     def create_GPT_interface(self):
         print("GPT window")
-        self.GPT_Window = GPTPlayer(self.repository.repo_url)
+        self.GPT_Window = GPTPlayer(self.running_env.repository.repo_url)
         self.GPT_Window.show()
 
     def create_model_player(self):
