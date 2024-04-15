@@ -2,56 +2,91 @@ import requests
 import os
 import api_caller
 
-from PySide6.QtWidgets import (QWidget, QInputDialog)
+from PySide6.QtWidgets import (QWidget, QInputDialog, QMessageBox)
 
 class APIGrabber(QWidget):
     '''
     Gives a popup prompt to give API_key if a file of it isnt found
     '''
+    filename = 'key.txt'
+    abort_flag: bool = False
+
     def __init__(self):
         super().__init__()
             
     def initUI(self) -> str:
         # This method displays the input dialog
-        API_key, ok = QInputDialog.getText(self, 'Key Request', 'Please enter your API key:')
-        
-        if ok:
-            # If the user clicks OK and inputs text, print it to the console
-            print(f'The API key that will be used is {API_key}')
-            return API_key
-        else:
-            # If the user cancels the dialog, print a message
-            print('User cancelled the dialog')
+
+        if os.path.isfile(self.filename):
+            # File exists, so read from it
+            with open(self.filename, 'r') as file:
+                return file.read().strip()  # Ensure api_key is read correctly and stripped of any whitespace
+
+
+        while not self.abort_flag:
+
+            api_key, ok = QInputDialog.getText(self, 'Key Request', 'Please enter your API key:', text="Will create dummy request for validation")
+            
+            if self.is_openai_api_key_valid(api_key):
+                # If the user clicks OK and inputs text, print it to the console
+                print(f'The API key that will be used is {api_key}')
+                with open(self.filename, 'w') as file:
+                    file.write(api_key)
+                    print(f"File '{self.filename}' was created and the API key was written to it.")
+                QMessageBox.information(self, "Success!", f"File '{self.filename}' was created and the API key was written to it.")
+                return api_key
+            elif not ok:
+                # If the user cancels the dialog, print a message
+                print('User cancelled the dialog')
+                self.abort_flag = True
+            else: 
+                QMessageBox.information(self, "Failure!", f"API KEY: {api_key} is invalid, please try again")
+
+    def is_openai_api_key_valid(self, api_key: str) -> bool:
+        """
+        Check if an OpenAI API key is valid by making a request to the OpenAI API.
+
+        Args:
+        api_key (str): The OpenAI API key to be validated.
+
+        Returns:
+        bool: True if the API key is valid, False otherwise.
+        """
+        url = "https://api.openai.com/v1/engines"
+        headers = {"Authorization": f"Bearer {api_key}"}
+
+        try:
+            response = requests.get(url, headers=headers)
+            return response.status_code == 200
+        except requests.RequestException:
+            return False
 
 class GPTCaller: 
     """
     Interacts with the PapersWithCode API.
 
     Attributes:
-       
+        filename: str = 'key.txt'
+        api_key: str = None
+        doc_url : str
+        log_report : str
+        check: bool = False
     """
-    filename = 'key.txt'
     api_key = None
     doc_url : str
     log_report : str
-
+    check: bool = False
+    cancel: bool = False
     def __init__(self, doc_url) -> None:
         """
         Initialize the API caller with the chatGPT client.
         """
         self.doc_url = doc_url
         self.log_report = None
-        if os.path.isfile(self.filename):
-            # File exists, so read from it
-            with open(self.filename, 'r') as file:
-                self.api_key = file.read().strip()  # Ensure api_key is read correctly and stripped of any whitespace
-        else:
-            # File does not exist, prompt for API key and write it
-            popup = APIGrabber()
-            self.api_key = popup.initUI()
-            with open(self.filename, 'w') as file:
-                file.write(self.api_key)
-                print(f"File '{self.filename}' was created and the API key was written to it.")
+        popup = APIGrabber()
+        self.api_key = popup.initUI()
+        if isinstance(self.api_key, str):
+            self.check = True 
         print(doc_url)
                 
         

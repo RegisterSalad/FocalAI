@@ -26,8 +26,9 @@ class GPTPlayer(QWidget):
     def __init__(self, documentation):
         super().__init__()
         self.GPT = GPTCaller(documentation)
+        self.check = self.GPT.check
         self.initUI()
-
+    
     def initUI(self):
         self.setWindowTitle("ChatGPT Assisstant")
         
@@ -140,11 +141,15 @@ class GPTPlayer(QWidget):
         self.chatDisplay.insertPlainText("\n\n")  # Ensure there's a double new line after the div
         self.chatDisplay.ensureCursorVisible()  # Auto-scroll to the latest message
 
+   
+
+
 class ModelPage(QFrame):
     def __init__(self, styler: Styler):
         super().__init__()
         self.install_page: InstallPage | None = None
         self.running_env: CondaEnvironment | None
+        self.GPT_Window = None
         db_path = os.path.abspath("databases/conda_environments.db")
         print(db_path)
         self.db = DatabaseManager(db_path)
@@ -169,7 +174,6 @@ class ModelPage(QFrame):
         self.button1.clicked.connect(lambda: self.create_model_player())
         self.b2_delete = True
         self.b2_install = False
-        self.button2.clicked.connect(lambda: self.delete_running_env())
         self.button3.clicked.connect(lambda: self.create_GPT_interface())
 
         buttonsLayout = QVBoxLayout()
@@ -204,7 +208,6 @@ class ModelPage(QFrame):
         return Repository(repo_url).repo_name
     
     def delete_running_env(self) -> None:
-
         self.is_showing_progress = True
         self.progress_widget = QTextEdit(self)
         self.progress_widget.setReadOnly(True)  
@@ -223,8 +226,19 @@ class ModelPage(QFrame):
 
     def create_GPT_interface(self):
         print("GPT window")
-        self.GPT_Window = GPTPlayer(self.repository.repo_url)
-        self.GPT_Window.show()
+        if isinstance(self.GPT_Window, QWidget): # Already created
+            return
+        
+        self.GPT_Window = GPTPlayer(self.running_env.repository.repo_url)
+
+        if self.GPT_Window.check:
+            self.GPT_Window.show()
+            return
+
+        self.GPT_Window = None
+            
+
+        
 
     def create_model_player(self):
         self.model_player = ModelPlayer(self) # Model Player is inited here because it needs a repo before initialization
@@ -251,7 +265,8 @@ class ModelPage(QFrame):
                     widget.hide()  # Hide the widget
 
     def show_all(self) -> None:
-        self.button1.show()
+        if self.install_page.new_env.is_installed:
+            self.button1.show()
         self.button2.show()
         self.button3.show()   
         layout = self.layout()  # Get the layout of the frame
@@ -264,10 +279,13 @@ class ModelPage(QFrame):
                     widget.show()  # Show the widget
 
 
-    def change_to_install_page(self):
+    def change_to_install_page(self): 
         self.hide_all()
-        self.install_page = InstallPage(self.styler, self, self.running_env)
-        self.layout().addWidget(self.install_page)
+        if not self.install_page:
+            self.install_page = InstallPage(parent=self,styler=self.styler, new_env=self.running_env)
+            self.layout().addWidget(self.install_page)
+        else: 
+            self.install_page.set_new_environment(self.running_env)
         self.install_page.show_all()
 
     def convert_to_markdown(self, name: str) -> str:
