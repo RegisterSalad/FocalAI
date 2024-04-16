@@ -1,12 +1,13 @@
 import re
+import io
+import os
 import requests  # Import requests for synchronous HTTP calls
 from typing import List
 from paperswithcode import PapersWithCodeClient
 from paperswithcode.models.repository import Repositories, Repository
 from paperswithcode.models.paper import Paper
-from secret import PWC_KEY
-import io
 
+from directories import PWC_KEY_TXT
 class APICaller:
     """
     Interacts with the PapersWithCode API.
@@ -19,7 +20,17 @@ class APICaller:
         """
         Initialize the API caller with a PapersWithCode client.
         """
-        self.client = PapersWithCodeClient(token=PWC_KEY)
+        print(PWC_KEY_TXT)
+        print(os.path.isfile(PWC_KEY_TXT))
+        if os.path.isfile(PWC_KEY_TXT):
+            # File exists, so read from it
+            with open(PWC_KEY_TXT, 'r') as file:
+                PWC_KEY = file.read().strip()  # Ensure api_key is read correctly and stripped of any whitespace
+                print(PWC_KEY)
+                self.client = PapersWithCodeClient(token=PWC_KEY)
+        else:
+            raise ValueError("PWC KEY not found")
+
 
     def get_readme_contents(self, repo_url: str) -> str | None:
         parts = repo_url.rstrip('/').split('/')

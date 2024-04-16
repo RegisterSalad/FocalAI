@@ -16,6 +16,7 @@ module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
+from directories import DB_PATH
 from conda_env import CondaEnvironment
 from repo import Repository
 
@@ -26,7 +27,7 @@ class InstalledWindow(QWidget):
     def __init__(self, styler: Styler) -> None:
         super().__init__()
         self.init_ui(styler=styler)
-        self.db = DatabaseManager("databases/conda_environments.db")
+        self.db = DatabaseManager(DB_PATH)
 
     def init_ui(self, styler: Styler) -> None:
         self.styler = styler

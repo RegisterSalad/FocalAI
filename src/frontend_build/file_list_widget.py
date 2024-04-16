@@ -1,11 +1,19 @@
 import os
+import sys
 import shutil
 from PySide6.QtWidgets import QListWidget, QMessageBox
+
+# Remove for final build
+module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if module_dir not in sys.path:
+    sys.path.append(module_dir)
+
+from directories import DRAG_N_DROP_DIR
 
 class FileListWidget(QListWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.folder_path = os.path.join(os.path.dirname(__file__), 'stored_files')
+        self.folder_path = DRAG_N_DROP_DIR
         self.ensure_folder_exists(self.folder_path)
         self.populate_initial_list()
 

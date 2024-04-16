@@ -15,6 +15,8 @@ module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
+from directories import DRAG_N_DROP_DIR, REPORTS_DIR
+
 class Logger:
     def convert_md_to_pdf(self,input_file, output_file):
 
@@ -86,7 +88,7 @@ class MenuBar(QMenuBar):
         clear_action.triggered.connect(self.clear_stored_files_folder)
 
     def clear_stored_files_folder(self):
-        stored_files_folder = os.path.join(os.getcwd(), 'stored_files')  # Adjust path as necessary
+        stored_files_folder = DRAG_N_DROP_DIR
 
         # Confirm action
         reply = QMessageBox.question(self, 'Clear Folder', 'Are you sure you want to clear all files in the stored_files folder?',
@@ -113,6 +115,6 @@ class MenuBar(QMenuBar):
         output_pdf = "command_log.pdf"
 
         logger = Logger()
-        logger.convert_md_to_pdf(input_txt , output_pdf )
+        logger.convert_md_to_pdf(input_txt , output_pdf)
 
 

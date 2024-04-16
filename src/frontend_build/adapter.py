@@ -1,15 +1,15 @@
 import os
 import sys
+
+# Remove for final build
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
-from typing import Callable
-from PySide6.QtWidgets import (QWidget, QVBoxLayout, QApplication,
-                               QHBoxLayout, QLabel, QFrame, QSizePolicy, QTextEdit, QLineEdit)
-from PySide6.QtCore import QObject, Signal, QCoreApplication
-from PySide6.QtGui import QFont
-from menu_bar import MenuBar
+from directories import DB_PATH
+from PySide6.QtWidgets import (QWidget, QApplication,
+                               QHBoxLayout, QLabel, QVBoxLayout)
+from PySide6.QtCore import Signal
 
 from model_uis import LLMPlayer, DragAndDropPlayer, DefaultPlayer # Implemented elsewhere assume they only return values when the receive them from their user interaction widgets via a slot
 
@@ -21,9 +21,8 @@ class Adapter(QWidget):
 
     def __init__(self, name: str | None = None) -> None:
         super().__init__()  # Initialize the QWidget base class
-        db_path = os.path.abspath("databases/conda_environments.db")
         
-        self.db = DatabaseManager(db_path)
+        self.db = DatabaseManager(DB_PATH)
         if not isinstance(name, str):
             raise TypeError(f"Adapter incorrectly initialized: Name cannot be of type [{type(name)}]")
 

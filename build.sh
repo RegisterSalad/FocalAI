@@ -4,7 +4,7 @@
 ANACONDA_PATH="$HOME/anaconda3"
 ENV_NAME="FocalAI"
 PYTHON_VERSION="3.12.1"
-LOG_FILE="./build_log.txt"
+LOG_FILE="./logs/build/build_log.log"
 
 # Start new log file
 echo "Starting build process..." > $LOG_FILE

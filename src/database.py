@@ -1,7 +1,7 @@
 from database_util import Database
 from conda_env import CondaEnvironment, check_if_exists
 import os
-from typing import Any, Dict, Callable, Tuple
+from typing import Callable, Tuple, Any
 
 class DatabaseManager(Database):
     def __init__(self, db_path: str) -> None:
@@ -18,19 +18,16 @@ class DatabaseManager(Database):
         Raises:
         - Exception: If the directory does not exist and cannot be created.
         """
-        # Convert the relative path to an absolute path to ensure correctness
-        self.db_path = os.path.abspath(db_path)
         # Check if the database directory exists; if not, attempt to create it
-        db_directory = os.path.dirname(self.db_path)
-        if not os.path.exists(db_directory):
-            try:
-                os.makedirs(db_directory)
-            except Exception as e:
-                raise Exception(f"Failed to create the database directory: {e}")
+        # if not os.path.exists(db_path):
+        #     try:
+        #         os.makedirs(db_path)
+        #     except Exception as e:
+        #         raise Exception(f"Failed to create the database directory: {e}")
         self.running_env: CondaEnvironment | None = None
         self.is_running = False
         # Proceed with the original initialization from the parent class
-        super().__init__(self.db_path)
+        super().__init__(db_path)
 
     def __call__(self) -> None:
         """
@@ -43,7 +40,7 @@ class DatabaseManager(Database):
         while self.is_running:
             self.option_interactor(self.main_menu_options)
 
-    def option_interactor(self, options: Dict[int, Tuple[str, Callable[..., Any]]]) -> None:
+    def option_interactor(self, options: dict[int, Tuple[str, Callable[..., Any]]]) -> None:
         """
         Interact with the user to select and execute an option.
 
@@ -185,7 +182,7 @@ class DatabaseManager(Database):
         return super().delete_environment_by_id(self.running_env.env_id) # Delete environment from database
 
     @property
-    def main_menu_options(self) -> Dict[int, Tuple[str, Callable[..., Any]]]:
+    def main_menu_options(self) -> dict[int, Tuple[str, Callable[..., Any]]]:
         """
         Property of DatabaseManager, returns main menu options for printing and execution
 
@@ -202,7 +199,7 @@ class DatabaseManager(Database):
         return options
 
     @property
-    def selected_env_options(self) -> Dict[int, Tuple[str, Callable[..., Any]]]:
+    def selected_env_options(self) -> dict[int, Tuple[str, Callable[..., Any]]]:
         """
         Returns the 'Selected Environment' sub-menu options as a dict
 

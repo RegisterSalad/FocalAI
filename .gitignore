@@ -34,3 +34,6 @@ venv
 build
 dist
 build_log.txt
+src/data/conda_environments.db
+src/user_gen/keys/pwc_key.txt
+user_gen/keys/pwc_key.txt

@@ -18,9 +18,9 @@ if module_dir not in sys.path:
     sys.path.append(module_dir)
 
 # Project imports
+from directories import REPO_JSONS_DIR
 from conda_env import CondaEnvironment
 from repo import Repository
-from database import DatabaseManager
 
 def run_environment_command(widget, worker_name, command: str, error_message: str) -> bool:
         # Create the worker and thread
@@ -303,7 +303,7 @@ class InstallPage(QFrame):
     def install_store(self):
         #stores the all model information like description, name, url, model type in a .JSON
         repo: Repository = self.new_env.repository
-        file = f"{repo.repo_name}.josn"
+        file = os.path.join(REPO_JSONS_DIR, f"{repo.repo_name}.josn")
         modelInfo = {
             "name":repo.repo_name,
             "url":repo.repo_url,
@@ -313,5 +313,6 @@ class InstallPage(QFrame):
             json.dump(modelInfo, outfile)
 
     def remove_json(self):
-        jsonfile = f"{self.new_env.repository.repo_name}.json"
-        os.remove(jsonfile)
+        repo: Repository = self.new_env.repository
+        file = os.path.join(REPO_JSONS_DIR, f"{repo.repo_name}.josn")
+        os.remove(file)

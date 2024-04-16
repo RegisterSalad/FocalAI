@@ -1,7 +1,15 @@
 import os
+import sys
 import shutil
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
 from PySide6.QtCore import Qt, Signal
+
+# Remove for final build
+module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if module_dir not in sys.path:
+    sys.path.append(module_dir)
+
+from directories import DRAG_N_DROP_DIR
 
 class FileDropWidget(QWidget):
     filesDropped = Signal(str)  # Signal to emit when files have been dropped
@@ -10,8 +18,6 @@ class FileDropWidget(QWidget):
         super().__init__()
         self.setAcceptDrops(True)
         self.init_ui()
-        self.stored_files_folder = os.path.join(os.getcwd(), 'stored_files')  # Path to the folder
-        os.makedirs(self.stored_files_folder, exist_ok=True)  # Ensure the folder exists
 
     def init_ui(self):
         self.setMinimumSize(400, 200)
@@ -45,11 +51,11 @@ class FileDropWidget(QWidget):
                 src_path = first_file_url.toLocalFile()
                 if os.path.isfile(src_path):  # Check if it's a file not a directory
                     file_name = os.path.basename(src_path)
-                    dest_path = os.path.join(self.stored_files_folder, file_name)
+                    dest_path = os.path.join(DRAG_N_DROP_DIR, file_name)
 
                     # Clear existing files in the directory
-                    for existing_file in os.listdir(self.stored_files_folder):
-                        os.remove(os.path.join(self.stored_files_folder, existing_file))
+                    for existing_file in os.listdir(DRAG_N_DROP_DIR):
+                        os.remove(os.path.join(DRAG_N_DROP_DIR, existing_file))
 
                     # Copy the new file
                     try:

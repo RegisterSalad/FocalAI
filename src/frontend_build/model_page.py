@@ -22,7 +22,7 @@ if module_dir not in sys.path:
 from repo import Repository
 from database import DatabaseManager
 from conda_env import CondaEnvironment
-
+from directories import DB_PATH
 class GPTPlayer(QWidget):
     def __init__(self, documentation):
         super().__init__()
@@ -151,9 +151,7 @@ class ModelPage(QFrame):
         self.install_page: InstallPage | None = None
         self.running_env: CondaEnvironment | None
         self.GPT_Window = None
-        db_path = os.path.abspath("databases/conda_environments.db")
-        print(db_path)
-        self.db = DatabaseManager(db_path)
+        self.db = DatabaseManager(DB_PATH)
         self.is_showing_progress = False
         self.styler = styler
         self.init_ui()

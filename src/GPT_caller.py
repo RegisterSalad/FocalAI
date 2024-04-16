@@ -1,14 +1,19 @@
 import requests
 import os
 import api_caller
-
+import sys
 from PySide6.QtWidgets import (QWidget, QInputDialog, QMessageBox)
+
+module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if module_dir not in sys.path:
+    sys.path.append(module_dir)
+
+from directories import OPENAI_KEY_TXT
 
 class APIGrabber(QWidget):
     '''
     Gives a popup prompt to give API_key if a file of it isnt found
     '''
-    filename = 'key.txt'
     abort_flag: bool = False
 
     def __init__(self):
@@ -17,9 +22,9 @@ class APIGrabber(QWidget):
     def initUI(self) -> str:
         # This method displays the input dialog
 
-        if os.path.isfile(self.filename):
+        if os.path.isfile(OPENAI_KEY_TXT):
             # File exists, so read from it
-            with open(self.filename, 'r') as file:
+            with open(OPENAI_KEY_TXT, 'r') as file:
                 return file.read().strip()  # Ensure api_key is read correctly and stripped of any whitespace
 
 
@@ -30,10 +35,10 @@ class APIGrabber(QWidget):
             if self.is_openai_api_key_valid(api_key):
                 # If the user clicks OK and inputs text, print it to the console
                 print(f'The API key that will be used is {api_key}')
-                with open(self.filename, 'w') as file:
+                with open(OPENAI_KEY_TXT, 'w') as file:
                     file.write(api_key)
-                    print(f"File '{self.filename}' was created and the API key was written to it.")
-                QMessageBox.information(self, "Success!", f"File '{self.filename}' was created and the API key was written to it.")
+                    print(f"File '{OPENAI_KEY_TXT}' was created and the API key was written to it.")
+                QMessageBox.information(self, "Success!", f"File '{OPENAI_KEY_TXT}' was created and the API key was written to it.")
                 return api_key
             elif not ok:
                 # If the user cancels the dialog, print a message

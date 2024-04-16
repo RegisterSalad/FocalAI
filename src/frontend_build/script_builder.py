@@ -4,12 +4,14 @@ from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor, QFont
 import os
 import sys
 import subprocess
+
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
-from conda_env import CondaEnvironment, run_subprocess_with_logging
+from conda_env import CondaEnvironment
 from install_page import run_environment_command
+from directories import RUN_LOG_DIR
 
 class PythonSyntaxHighlighter(QSyntaxHighlighter):
     def __init__(self, document):
@@ -93,16 +95,17 @@ class ScriptBuilder(QWidget):
         self.running_env = running_env
         self.repository = self.running_env.repository
         self.model_type = self.repository.model_type
-        path1 = os.getcwd() + "/src"
-        path2 = os.getcwd() + "/src/frontend_build"
+        current_working_dir = os.getcwd()
+        primary_path = current_working_dir + "/src"
+        secondary_path = current_working_dir + "/src/frontend_build"
         self.defaultText: str = f"""
 # import <model> # Import model specific packages
 import whisper
 # Adapter import
 import sys
 
-sys.path.append("{path1}")
-sys.path.append("{path2}")
+sys.path.append("{primary_path}")
+sys.path.append("{secondary_path}")
 from adapter import Adapter
 from PySide6.QtWidgets import QApplication
 # Model Initialization and configuration  
@@ -186,6 +189,8 @@ if __name__ == "__main__":
         """)
 
     def saveAndRunFile(self):
+        import datetime
+        now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         fileName, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Python Files (*.py);;All Files (*)")
         if fileName:
             file = QFile(fileName)
@@ -197,16 +202,11 @@ if __name__ == "__main__":
             file.close()
 
             # Prepare to run the saved script as a subprocess
-            logging_directory = "path/to/logging/directory"  # You can modify this path
-            log_file_name = "script_run_log.txt"  # You can also make this more dynamic or user-defined
-
-            # Check if the logging directory exists, if not create it
-            if not os.path.exists(logging_directory):
-                os.makedirs(logging_directory)
+            logging_directory = RUN_LOG_DIR
+            log_file_name = os.join(RUN_LOG_DIR, f"log_{now}.log")  # You can also make this more dynamic or user-defined
 
             command = f"python {fileName}"
             call_tuple = self.running_env(command)
-
             script_run_successful = run_environment_command(self.parent(), worker_name="call" ,command=call_tuple[0], error_message=call_tuple[1])
 
             if script_run_successful:

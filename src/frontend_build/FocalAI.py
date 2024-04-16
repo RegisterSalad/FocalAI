@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                                QHBoxLayout, QLineEdit, QListWidget, QStackedWidget, QListWidgetItem, QLabel)
 
@@ -102,12 +103,43 @@ class MainWindow(QMainWindow):
         if searchText:  # Only search if there's text
             self.search_items(searchText)
 
+    def process_json_files(self):
+        """
+        Processes all JSON files within a specified directory.
+
+        Args:
+        directory (str): The path to the directory containing the JSON files.
+
+        Returns:
+        None
+        """
+        print(self.directory)
+        installed_list = []
+        # Iterate over each file in the directory
+        for filename in os.listdir(self.directory):
+            # Check if the file is a JSON file
+            if filename.endswith('.json'):
+                # Construct the full file path
+                filepath = os.path.join(self.directory, filename)
+                # Open and read the JSON file
+                with open(filepath, 'r') as file:
+                    data = json.load(file)
+                    # Process the data (for demonstration, we'll just print it)
+                    installed_list.append(data)
+
+        return installed_list
+
     def search_items(self, text: str):
         self.list_widget.clear()  # Clear current items
         self.repos.clear()  # Clear the repository list
         found_repos = self.caller.get_repo_list(text.lower().replace(" ", "-"))
+        if self.view_downloads: 
+            installed_repos: list = None
 
-        for repo in found_repos.results:
+
+        resulting_repos: list = found_repos.results
+        
+        for repo in resulting_repos:
             self.repos.append(repo)  # Add the repo object to the list
             repo_widget = RepoWidget(repo)
             item = QListWidgetItem()
