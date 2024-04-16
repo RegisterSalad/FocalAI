@@ -209,7 +209,7 @@ class ModelPage(QFrame):
         self.pop_up_window.show()
     
     def get_repo_name(self, repo_url: str) -> str:
-        return Repository(repo_url).repo_name
+        return Repository.parse_name(repo_url)
     
     def delete_running_env(self) -> None:
         self.is_showing_progress = True

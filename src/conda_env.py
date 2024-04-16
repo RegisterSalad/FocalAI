@@ -57,8 +57,7 @@ class CondaEnvironment:
     def __init__(self, python_version: str, repository_url: str = "", description: str = "", env_id: int | None = None) -> None:
         self.env_id = env_id
         self.python_version = python_version
-        self.description = description
-        self.repository = Repository(repository_url)
+        self.repository = Repository(repository_url, description)
         self.env_name = self.repository.repo_name
         self.is_installed: bool = False
 

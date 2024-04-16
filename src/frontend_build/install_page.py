@@ -307,7 +307,8 @@ class InstallPage(QFrame):
         modelInfo = {
             "name":repo.repo_name,
             "url":repo.repo_url,
-            "Model type": repo.get_model_type()
+            "model_type": repo.model_type,
+            "description": repo.description
         }
         with open(file, "w") as outfile:
             json.dump(modelInfo, outfile)

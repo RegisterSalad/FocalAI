@@ -1,17 +1,20 @@
 import os
 import sys
 import json
+from dataclasses import dataclass
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
-                               QHBoxLayout, QLineEdit, QListWidget, QStackedWidget, QListWidgetItem, QLabel)
+                               QHBoxLayout, QLineEdit, QListWidget, QStackedWidget, QListWidgetItem, QLabel, QPushButton)
 
 from PySide6.QtCore import Slot, QCoreApplication
+from PySide6.QtGui import QFont
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 #Local Imports
 from model_page import ModelPage
 from styler import Styler
 from vertical_menu import VerticalMenu
-
+from repo import Repository
+from directories import REPO_JSONS_DIR
 
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
@@ -40,6 +43,20 @@ class RepoWidget(QWidget):
         layout.addWidget(self.url_label)
         self.setLayout(layout)
 
+class RepoTempObj:
+    name: str
+    owner: str
+    description: str
+    url: str
+
+    def __init__(self, entry_dict) -> None:
+        self.url = entry_dict["url"]
+        self.name = Repository.parse_name(self.url)
+        self.owner = entry_dict["owner"]
+        self.description = entry_dict["description"]
+
+
+
 class MainWindow(QMainWindow):
     def __init__(self, styler: Styler) -> None:
         super().__init__()
@@ -66,9 +83,14 @@ class MainWindow(QMainWindow):
 
         # Detail view
         self.detail_view = QStackedWidget()
-
         self.setup_detail_views()
-
+        
+        
+        self.view_downloads_button = QPushButton("Toggle Downloaded Models View")
+        self.viewFont = QFont("Arial", 18)
+        self.viewFont.bold()
+        self.view_downloads_button.setFont(self.viewFont)
+        self.view_downloads_button.connect(self.show_downloaded)
         # Layout for list and search bar
         list_layout = QVBoxLayout()
         list_layout.addWidget(self.search_bar)
@@ -88,6 +110,19 @@ class MainWindow(QMainWindow):
         # Initialize menu
         self.menu = VerticalMenu(self, self.styler)
 
+    def fill_downloaded_list(self):
+        installed_models_list = self.process_json_files(REPO_JSONS_DIR)
+        self.installed_repos_list: list[RepoTempObj] = []
+        for repo_dict in installed_models_list:
+            repo_entry = RepoTempObj(repo_dict)
+            self.installed_repos_list.append(repo_entry)
+            repo_widget = RepoWidget(repo_entry)
+            item = QListWidgetItem()
+            item.setSizeHint(repo_widget.sizeHint())
+            self.list_widget.addItem(item)
+            self.list_widget.setItemWidget(item, repo_widget)
+    
+    def 
 
     def create_menus(self):
         self.menu.create_menus()
@@ -103,7 +138,7 @@ class MainWindow(QMainWindow):
         if searchText:  # Only search if there's text
             self.search_items(searchText)
 
-    def process_json_files(self):
+    def process_json_files(self, directory: str) -> list[dict]:
         """
         Processes all JSON files within a specified directory.
 
@@ -113,8 +148,7 @@ class MainWindow(QMainWindow):
         Returns:
         None
         """
-        print(self.directory)
-        installed_list = []
+        installed_list: list[dict] = []
         # Iterate over each file in the directory
         for filename in os.listdir(self.directory):
             # Check if the file is a JSON file
@@ -123,7 +157,7 @@ class MainWindow(QMainWindow):
                 filepath = os.path.join(self.directory, filename)
                 # Open and read the JSON file
                 with open(filepath, 'r') as file:
-                    data = json.load(file)
+                    data: dict = json.load(file)
                     # Process the data (for demonstration, we'll just print it)
                     installed_list.append(data)
 
@@ -133,6 +167,7 @@ class MainWindow(QMainWindow):
         self.list_widget.clear()  # Clear current items
         self.repos.clear()  # Clear the repository list
         found_repos = self.caller.get_repo_list(text.lower().replace(" ", "-"))
+        
         if self.view_downloads: 
             installed_repos: list = None
 
