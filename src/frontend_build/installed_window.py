@@ -21,7 +21,7 @@ from conda_env import CondaEnvironment
 from repo import Repository
 
 
-from api_caller import APICaller
+from api_caller import APIManager
 
 class InstalledWindow(QWidget):
     def __init__(self, styler: Styler) -> None:
@@ -33,7 +33,7 @@ class InstalledWindow(QWidget):
         self.styler = styler
         self.styler.register_component(self)
         self.styler.style_me()
-        self.caller = APICaller()
+        self.caller = APIManager()
         self.setWindowTitle("Installed Models Window with Menu and Details")
 
         # Central widget and layout

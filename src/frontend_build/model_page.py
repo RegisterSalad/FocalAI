@@ -304,6 +304,7 @@ class ModelPage(QFrame):
             return self.html_text
 
     def update_content(self, repo_entry) -> None:
+        print(repo_entry)
         if self.is_showing_progress:
             self.is_showing_progress = False
             self.progress_widget.hide()

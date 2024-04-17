@@ -1,6 +1,6 @@
 import requests
 import os
-import api_caller
+from api_caller import APIManager
 import sys
 from PySide6.QtWidgets import (QWidget, QInputDialog, QMessageBox)
 
@@ -8,63 +8,6 @@ module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
-from directories import OPENAI_KEY_TXT
-
-class APIGrabber(QWidget):
-    '''
-    Gives a popup prompt to give API_key if a file of it isnt found
-    '''
-    abort_flag: bool = False
-
-    def __init__(self):
-        super().__init__()
-            
-    def initUI(self) -> str:
-        # This method displays the input dialog
-
-        if os.path.isfile(OPENAI_KEY_TXT):
-            # File exists, so read from it
-            with open(OPENAI_KEY_TXT, 'r') as file:
-                return file.read().strip()  # Ensure api_key is read correctly and stripped of any whitespace
-
-
-        while not self.abort_flag:
-
-            api_key, ok = QInputDialog.getText(self, 'Key Request', 'Please enter your API key:', text="Will create dummy request for validation")
-            
-            if self.is_openai_api_key_valid(api_key):
-                # If the user clicks OK and inputs text, print it to the console
-                print(f'The API key that will be used is {api_key}')
-                with open(OPENAI_KEY_TXT, 'w') as file:
-                    file.write(api_key)
-                    print(f"File '{OPENAI_KEY_TXT}' was created and the API key was written to it.")
-                QMessageBox.information(self, "Success!", f"File '{OPENAI_KEY_TXT}' was created and the API key was written to it.")
-                return api_key
-            elif not ok:
-                # If the user cancels the dialog, print a message
-                print('User cancelled the dialog')
-                self.abort_flag = True
-            else: 
-                QMessageBox.information(self, "Failure!", f"API KEY: {api_key} is invalid, please try again")
-
-    def is_openai_api_key_valid(self, api_key: str) -> bool:
-        """
-        Check if an OpenAI API key is valid by making a request to the OpenAI API.
-
-        Args:
-        api_key (str): The OpenAI API key to be validated.
-
-        Returns:
-        bool: True if the API key is valid, False otherwise.
-        """
-        url = "https://api.openai.com/v1/engines"
-        headers = {"Authorization": f"Bearer {api_key}"}
-
-        try:
-            response = requests.get(url, headers=headers)
-            return response.status_code == 200
-        except requests.RequestException:
-            return False
 
 class GPTCaller: 
     """
@@ -88,8 +31,8 @@ class GPTCaller:
         """
         self.doc_url = doc_url
         self.log_report = None
-        popup = APIGrabber()
-        self.api_key = popup.initUI()
+        popup = APIManager.get_and_save_key("openai")
+        self.api_key = popup.get_and_save_key()
         if isinstance(self.api_key, str):
             self.check = True 
         print(doc_url)
@@ -146,7 +89,7 @@ class GPTCaller:
         str. A string containing the sample code.
         """
         request = "With this given documentation, give me just the sample code needed to run this"
-        obj = api_caller.APICaller()
+        obj = APIManager()
         obj.__init__()
         documentation : str = obj.get_readme_contents(self.doc_url)
         sample_code = self.get_chat_response(self.api_key, documentation, request)
@@ -160,7 +103,7 @@ class GPTCaller:
         - api_key: str. API key.
         """
         request = "With this given documentation, what are the parameters needed to run this?"
-        obj = api_caller.APICaller()
+        obj = APIManager()
         obj.__init__()
         documentation : str = obj.get_readme_contents(self.doc_url)
         ret = self.get_chat_response(self.api_key, documentation, request)
@@ -174,7 +117,7 @@ class GPTCaller:
         - api_key: str. API key.
         """
         request = "With this given documentation, what are the datasets this model uses?"
-        obj = api_caller.APICaller()
+        obj = APIManager()
         obj.__init__()
         documentation : str = obj.get_readme_contents(self.doc_url)
         ret = self.get_chat_response(self.api_key, documentation, request)
@@ -188,7 +131,7 @@ class GPTCaller:
         - api_key: str. API key.
         """
         request = "With this given documentation, where can i find more information on this model?"
-        obj = api_caller.APICaller()
+        obj = APIManager()
         obj.__init__()
         documentation : str = obj.get_readme_contents(self.doc_url)
         ret = self.get_chat_response(self.api_key, documentation, request)
@@ -202,7 +145,7 @@ class GPTCaller:
         - api_key: str. API key.
         """
         request = "With this given documentation, give me a basic report about the model"
-        obj = api_caller.APICaller()
+        obj = APIManager()
         obj.__init__()
         documentation : str = obj.get_readme_contents(self.doc_url)
         ret = self.get_chat_response(self.api_key, documentation, request)

@@ -1,5 +1,5 @@
 import re
-from api_caller import APICaller
+from api_caller import APIManager
 import json
 
 class Repository:
@@ -34,7 +34,6 @@ class Repository:
             repo_url (str): URL of the GitHub repository to analyze.
         """
         
-        self.caller = APICaller()
         self.repo_url: str = repo_url.rstrip('/')
         parts = repo_url.rstrip('/').split('/')
         repo_owner, repo_name = parts[-2], parts[-1]
@@ -53,7 +52,7 @@ class Repository:
 
     def fetch_features(self) -> None:
         """Fetch repository features from its README and update object attributes."""
-        self.readme_content = self.caller.get_readme_contents(self.repo_url)
+        self.readme_content = APIManager.get_readme_contents(repo_url=self.repo_url)
         if self.readme_content:
             self.install_commands = self.parse_readme_contents()
             self.tables = self.get_tables()

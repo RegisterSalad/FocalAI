@@ -20,7 +20,7 @@ module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
-from api_caller import APICaller
+from api_caller import APIManager
 
 class RepoWidget(QWidget):
     def __init__(self, repo_info, parent=None):
@@ -28,19 +28,36 @@ class RepoWidget(QWidget):
         layout = QVBoxLayout()
 
         # Create labels for each piece of repo info
-        # self.id_label = QLabel(f"ID: [{repo_info['id']}]")
-        self.name_label = QLabel(f"Name: {repo_info.name}")
-        self.owner_label = QLabel(f"Owner: {repo_info.owner}")
-        self.description_label = QLabel(f"Description: {repo_info.description}")
-        self.url_label = QLabel(f"URL: {repo_info.url}")
-        self.url_label.setOpenExternalLinks(True)  # Make the URL clickable
-
+        name_label = QLabel(f"Name: {repo_info.name}")
+        owner_label = QLabel(f"Owner: {repo_info.owner}")
+        description_label = QLabel(f"Description: {repo_info.description}")
+        url_label = QLabel(f"URL: {repo_info.url}")
+        url_label.setOpenExternalLinks(True)  # Make the URL clickable
+        
         # Add labels to the layout
-        # layout.addWidget(self.id_label)
-        layout.addWidget(self.name_label)
-        layout.addWidget(self.owner_label)
-        layout.addWidget(self.description_label)
-        layout.addWidget(self.url_label)
+        layout.addWidget(name_label)
+        layout.addWidget(owner_label)
+        layout.addWidget(description_label)
+        layout.addWidget(url_label)
+        
+        # Check if 'online' attribute exists and create a label accordingly
+        if hasattr(repo_info, 'is_installed') and repo_info.is_installed:
+            is_downloaded = QLabel("Locally Available")
+            font = QFont("Arial", 12)
+            font.setItalic(True)
+            is_downloaded.setFont(font)
+            is_downloaded.setStyleSheet("color: green;")
+        else:
+            is_downloaded = QLabel("Not Locally Available")
+            font = QFont("Arial", 12)
+            font.setItalic(False)
+            is_downloaded.setFont(font)
+            is_downloaded.setStyleSheet("color: red;")  # Use red for better visibility on negative status
+
+        # Add 'is_downloaded' label to the layout
+        layout.addWidget(is_downloaded)
+        
+        # Apply layout to the widget
         self.setLayout(layout)
 
 class RepoTempObj:
@@ -48,12 +65,14 @@ class RepoTempObj:
     owner: str
     description: str
     url: str
+    is_installed: bool
 
     def __init__(self, entry_dict) -> None:
         self.url = entry_dict["url"]
         self.name = Repository.parse_name(self.url)
         self.owner = entry_dict["owner"]
         self.description = entry_dict["description"]
+        self.is_installed = True
 
     def __str__(self) -> str:
         res = [
@@ -68,13 +87,14 @@ class RepoTempObj:
 class MainWindow(QMainWindow):
     def __init__(self, styler: Styler) -> None:
         super().__init__()
+
         self.init_ui(styler=styler)
 
     def init_ui(self, styler: Styler) -> None:
         self.styler = styler
         self.styler.register_component(self)
         self.styler.style_me()
-        self.caller = APICaller()
+        self.caller = APIManager()
         self.setWindowTitle("Main Window with Menu and Details")
 
         # Central widget and layout
@@ -101,6 +121,7 @@ class MainWindow(QMainWindow):
         self.view_downloads_button.clicked.connect(self.display_downloads)
         # Layout for list and search bar
         list_layout = QVBoxLayout()
+        list_layout.addWidget(self.view_downloads_button)
         list_layout.addWidget(self.search_bar)
         list_layout.addWidget(self.list_widget)
         layout.addLayout(list_layout)
@@ -130,7 +151,7 @@ class MainWindow(QMainWindow):
         
         # Retrieve the list of installed repositories using the provided method
         installed_models_list = self.process_json_files(REPO_JSONS_DIR)
-        self.installed_repos_list = []
+        self.repos = []
         
         # Iterate over each repository info dictionary and create a repository widget for it
         for repo_dict in installed_models_list:
@@ -138,7 +159,7 @@ class MainWindow(QMainWindow):
             repo_entry = RepoTempObj(repo_dict)
             print(repo_entry)
             # Append to the list of repository objects
-            self.installed_repos_list.append(repo_entry)
+            self.repos.append(repo_entry)
             
             # Create the custom widget to display the repository information
             repo_widget = RepoWidget(repo_entry)
@@ -179,7 +200,7 @@ class MainWindow(QMainWindow):
         installed_list: list[dict] = []
         # Iterate over each file in the directory
         for filename in os.listdir(directory):
-            
+
             # Check if the file is a JSON file
             if filename.endswith('.json'):
                 # Construct the full file path
@@ -218,7 +239,9 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def display_item(self):
+        print("displaying item")
         current_row = self.list_widget.currentRow()  # Get the currently selected item's row
+        print(current_row)
         if 0 <= current_row < len(self.repos):
             repo = self.repos[current_row]
             if self.model_page.install_page:
