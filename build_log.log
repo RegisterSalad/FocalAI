@@ -1,0 +1,169 @@
+Starting build process...
+Activating the Anaconda environment...
+Upgrading pip...
+Requirement already satisfied: pip in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (24.0)
+Installing dependencies from requirements.txt...
+Requirement already satisfied: astroid==3.0.3 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 1)) (3.0.3)
+Requirement already satisfied: attrs==18.2.0 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 2)) (18.2.0)
+Requirement already satisfied: autopep8==2.0.4 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 3)) (2.0.4)
+Requirement already satisfied: certifi==2024.2.2 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 4)) (2024.2.2)
+Requirement already satisfied: chardet==3.0.4 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 5)) (3.0.4)
+Requirement already satisfied: charset-normalizer==3.3.2 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 6)) (3.3.2)
+Requirement already satisfied: click==7.1.2 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 7)) (7.1.2)
+Requirement already satisfied: colorama==0.4.6 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 8)) (0.4.6)
+Requirement already satisfied: commonmark==0.9.1 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 9)) (0.9.1)
+Requirement already satisfied: dill==0.3.8 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 10)) (0.3.8)
+Requirement already satisfied: docstring-to-markdown==0.15 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 11)) (0.15)
+Requirement already satisfied: flake8==7.0.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 12)) (7.0.0)
+Requirement already satisfied: h11==0.9.0 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 13)) (0.9.0)
+Requirement already satisfied: h2==3.2.0 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 14)) (3.2.0)
+Requirement already satisfied: hpack==3.0.0 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 15)) (3.0.0)
+Requirement already satisfied: httpcore==0.10.2 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 16)) (0.10.2)
+Requirement already satisfied: httpx==0.14.3 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 17)) (0.14.3)
+Requirement already satisfied: hyperframe==5.2.0 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 18)) (5.2.0)
+Requirement already satisfied: idna==3.7 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 19)) (3.7)
+Requirement already satisfied: importlib-metadata==7.0.1 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 20)) (7.0.1)
+Requirement already satisfied: isort==5.13.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 21)) (5.13.2)
+Requirement already satisfied: jedi==0.19.1 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 22)) (0.19.1)
+Requirement already satisfied: Markdown==3.6 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 23)) (3.6)
+Requirement already satisfied: mccabe==0.7.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 24)) (0.7.0)
+Requirement already satisfied: packaging==23.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 25)) (23.2)
+Requirement already satisfied: paperswithcode-client==0.3.1 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 26)) (0.3.1)
+Requirement already satisfied: parso==0.8.3 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 27)) (0.8.3)
+Requirement already satisfied: pdflatex==0.1.3 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 28)) (0.1.3)
+Requirement already satisfied: platformdirs==4.2.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 29)) (4.2.0)
+Requirement already satisfied: pluggy==1.4.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 30)) (1.4.0)
+Requirement already satisfied: psutil==5.8.0 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 31)) (5.8.0)
+Requirement already satisfied: pycodestyle==2.11.1 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 32)) (2.11.1)
+Requirement already satisfied: pydantic==1.6.2 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 33)) (1.6.2)
+Requirement already satisfied: pydocstyle==6.3.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 34)) (6.3.0)
+Requirement already satisfied: pyflakes==3.2.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 35)) (3.2.0)
+Requirement already satisfied: Pygments==2.17.2 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 36)) (2.17.2)
+Requirement already satisfied: pylint==3.0.4 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 37)) (3.0.4)
+Requirement already satisfied: pypandoc==1.13 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 38)) (1.13)
+Requirement already satisfied: PySide6==6.6.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 39)) (6.6.2)
+Requirement already satisfied: PySide6_Addons==6.6.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 40)) (6.6.2)
+Requirement already satisfied: PySide6_Essentials==6.6.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 41)) (6.6.2)
+Requirement already satisfied: python-lsp-jsonrpc==1.1.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 42)) (1.1.2)
+Requirement already satisfied: python-lsp-server==1.10.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 43)) (1.10.0)
+Requirement already satisfied: pytoolconfig==1.3.1 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 44)) (1.3.1)
+Requirement already satisfied: pytz==2021.3 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 45)) (2021.3)
+Requirement already satisfied: requests==2.31.0 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 46)) (2.31.0)
+Requirement already satisfied: rfc3986==1.5.0 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 47)) (1.5.0)
+Requirement already satisfied: rich==9.11.1 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 48)) (9.11.1)
+Requirement already satisfied: rope==1.12.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 49)) (1.12.0)
+Requirement already satisfied: setuptools==68.2.2 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 50)) (68.2.2)
+Requirement already satisfied: shiboken6==6.6.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 51)) (6.6.2)
+Requirement already satisfied: sniffio==1.3.1 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 52)) (1.3.1)
+Requirement already satisfied: snowballstemmer==2.2.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 53)) (2.2.0)
+Requirement already satisfied: tea==0.1.4 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 54)) (0.1.4)
+Requirement already satisfied: tea-client==0.0.7 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 55)) (0.0.7)
+Requirement already satisfied: tea-console==0.0.6 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 56)) (0.0.6)
+Requirement already satisfied: tomli==2.0.1 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 57)) (2.0.1)
+Requirement already satisfied: tomlkit==0.12.3 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 58)) (0.12.3)
+Requirement already satisfied: typer==0.3.2 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 59)) (0.3.2)
+Requirement already satisfied: typing-extensions==3.10.0.2 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 60)) (3.10.0.2)
+Requirement already satisfied: tzlocal==2.1 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 61)) (2.1)
+Requirement already satisfied: ujson==5.9.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 62)) (5.9.0)
+Requirement already satisfied: urllib3==2.2.1 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 63)) (2.2.1)
+Requirement already satisfied: whatthepatch==1.0.5 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 64)) (1.0.5)
+Requirement already satisfied: wheel==0.41.2 in /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages (from -r requirements.txt (line 65)) (0.41.2)
+Requirement already satisfied: yapf==0.40.2 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 66)) (0.40.2)
+Requirement already satisfied: zipp==3.17.0 in /home/mldesk/.local/lib/python3.12/site-packages (from -r requirements.txt (line 67)) (3.17.0)
+Building the application with FocalAI.py and additional paths...
+124 INFO: PyInstaller: 6.6.0, contrib hooks: 2024.4
+124 INFO: Python: 3.12.1 (conda)
+126 INFO: Platform: Linux-6.5.0-27-generic-x86_64-with-glibc2.35
+126 INFO: wrote /home/mldesk/Desktop/Repos/FocalAI/FocalAI.spec
+128 INFO: Removing temporary files and cleaning cache in /home/mldesk/.cache/pyinstaller
+171 INFO: Extending PYTHONPATH with paths
+['/home/mldesk/Desktop/Repos/FocalAI',
+ '/home/mldesk/Desktop/Repos/FocalAI/src/frontend_build',
+ '/home/mldesk/Desktop/Repos/FocalAI/src']
+245 INFO: checking Analysis
+245 INFO: Building Analysis because Analysis-00.toc is non existent
+245 INFO: Running Analysis Analysis-00.toc
+245 INFO: Target bytecode optimization level: 0
+245 INFO: Initializing module dependency graph...
+245 INFO: Caching module graph hooks...
+252 INFO: Analyzing base_library.zip ...
+927 INFO: Loading module hook 'hook-heapq.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+982 INFO: Loading module hook 'hook-encodings.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+2202 INFO: Loading module hook 'hook-pickle.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+3060 INFO: Caching module dependency graph...
+3113 INFO: Looking for Python shared library...
+3125 INFO: Using Python shared library: /home/mldesk/.conda/envs/FocalAI/lib/libpython3.12.so.1.0
+3125 INFO: Analyzing /home/mldesk/Desktop/Repos/FocalAI/src/frontend_build/FocalAI.py
+3159 INFO: Loading module hook 'hook-PySide6.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+3257 INFO: Loading module hook 'hook-shiboken6.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+3258 INFO: Loading module hook 'hook-PySide6.QtNetwork.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+3537 INFO: Loading module hook 'hook-PySide6.QtWidgets.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+3618 INFO: Loading module hook 'hook-PySide6.QtCore.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+3696 INFO: Loading module hook 'hook-PySide6.QtGui.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+4294 INFO: Loading module hook 'hook-PySide6.QtWebEngineWidgets.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+4379 INFO: Loading module hook 'hook-markdown.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
+4646 INFO: Loading module hook 'hook-xml.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+4658 INFO: Loading module hook 'hook-xml.etree.cElementTree.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+4675 INFO: Loading module hook 'hook-importlib_metadata.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+4752 INFO: Loading module hook 'hook-platform.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/pypandoc/pandoc_download.py:61: SyntaxWarning: invalid escape sequence '\.'
+  regex = re.compile(r"/jgm/pandoc/releases/download/.*(?:"+processor_architecture+"|x86|mac).*\.(?:msi|deb|pkg)")
+/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/pdflatex/pdflatex.py:13: SyntaxWarning: invalid escape sequence '\B'
+  JINJA2_ENV = {'block_start_string': '\BLOCK{',
+/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/pdflatex/pdflatex.py:15: SyntaxWarning: invalid escape sequence '\V'
+  'variable_start_string': '\VAR{',
+/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/pdflatex/pdflatex.py:17: SyntaxWarning: invalid escape sequence '\#'
+  'comment_start_string': '\#{',
+5773 INFO: Loading module hook 'hook-charset_normalizer.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
+6012 INFO: Loading module hook 'hook-certifi.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
+6306 INFO: Loading module hook 'hook-multiprocessing.util.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+7258 INFO: Loading module hook 'hook-pytz.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+7381 INFO: Loading module hook 'hook-pkg_resources.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+7879 INFO: Loading module hook 'hook-sysconfig.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+7961 INFO: Loading module hook 'hook-difflib.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+8232 INFO: Loading module hook 'hook-pydantic.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
+8624 INFO: Loading module hook 'hook-pygments.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+9664 INFO: Loading module hook 'hook-sqlite3.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+9851 INFO: Processing module hooks...
+11096 INFO: Loading module hook 'hook-PySide6.QtOpenGL.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+11179 INFO: Loading module hook 'hook-PySide6.QtWebChannel.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+11456 INFO: Loading module hook 'hook-platformdirs.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/hooks/stdhooks'...
+11478 INFO: Loading module hook 'hook-packaging.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+11541 INFO: Loading module hook 'hook-PySide6.QtPrintSupport.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+11638 INFO: Loading module hook 'hook-PySide6.QtPositioning.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+11745 INFO: Loading module hook 'hook-PySide6.QtDBus.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+11821 INFO: Loading module hook 'hook-PySide6.QtWebEngineCore.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+12004 INFO: Loading module hook 'hook-PySide6.QtQuickWidgets.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+12085 INFO: Loading module hook 'hook-PySide6.QtQuick.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+12164 INFO: Loading module hook 'hook-PySide6.QtQml.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+13565 INFO: Performing binary vs. data reclassification (2320 entries)
+14114 INFO: Looking for ctypes DLLs
+14127 INFO: Analyzing run-time hooks ...
+14130 INFO: Including run-time hook '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks/rthooks/pyi_rth_inspect.py'
+14131 INFO: Including run-time hook '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pkgutil.py'
+14133 INFO: Processing pre-find module path hook _pyi_rth_utils from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks/pre_find_module_path/hook-_pyi_rth_utils.py'.
+14134 INFO: Loading module hook 'hook-_pyi_rth_utils.py' from '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks'...
+14134 INFO: Including run-time hook '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks/rthooks/pyi_rth_multiprocessing.py'
+14136 INFO: Including run-time hook '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pkgres.py'
+14139 INFO: Including run-time hook '/home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pyside6.py'
+14182 INFO: Looking for dynamic libraries
+18669 INFO: Warnings written to /home/mldesk/Desktop/Repos/FocalAI/build/FocalAI/warn-FocalAI.txt
+18697 INFO: Graph cross-reference written to /home/mldesk/Desktop/Repos/FocalAI/build/FocalAI/xref-FocalAI.html
+18742 INFO: checking PYZ
+18743 INFO: Building PYZ because PYZ-00.toc is non existent
+18743 INFO: Building PYZ (ZlibArchive) /home/mldesk/Desktop/Repos/FocalAI/build/FocalAI/PYZ-00.pyz
+19383 INFO: Building PYZ (ZlibArchive) /home/mldesk/Desktop/Repos/FocalAI/build/FocalAI/PYZ-00.pyz completed successfully.
+19431 INFO: checking PKG
+19431 INFO: Building PKG because PKG-00.toc is non existent
+19431 INFO: Building PKG (CArchive) FocalAI.pkg
+72494 INFO: Building PKG (CArchive) FocalAI.pkg completed successfully.
+72524 INFO: Bootloader /home/mldesk/.conda/envs/FocalAI/lib/python3.12/site-packages/PyInstaller/bootloader/Linux-64bit-intel/run
+72524 INFO: checking EXE
+72524 INFO: Building EXE because EXE-00.toc is non existent
+72524 INFO: Building EXE from EXE-00.toc
+72560 INFO: Copying bootloader EXE to /home/mldesk/Desktop/Repos/FocalAI/app/FocalAI
+72560 INFO: Appending PKG archive to custom ELF section in EXE
+73721 INFO: Building EXE from EXE-00.toc completed successfully.
+Build completed. Check the './app' directory for the executable.
+Executable path: /home/mldesk/Desktop/Repos/FocalAI./app/FocalAI
+Install Log File: build_log.log

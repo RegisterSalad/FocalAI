@@ -54,7 +54,7 @@ def check_if_exists(env_name: str) -> bool:
         return False
         
 class CondaEnvironment:
-    def __init__(self, python_version: str, repository_url: str = "", description: str = "", env_id: int | None = None) -> None:
+    def __init__(self, python_version: str, repository_url: str = "", description: str = "",env_id: int | None = None) -> None:
         self.env_id = env_id
         self.python_version = python_version
         self.repository = Repository(repository_url, description)

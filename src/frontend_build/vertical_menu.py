@@ -31,7 +31,7 @@ class VerticalMenu:
         menu = self.parent.menuBar().addMenu(f"My Models")
         action = QAction(f"View my Models", self.parent)
         menu.addAction(action)
-        action.toggled.connect(self.open_model_list())
+        # action.toggled.connect(self.open_model_list)
 
 
     def update_style(self) -> None:
@@ -44,7 +44,7 @@ class VerticalMenu:
         print("showing downloaded models")
         self.model_list = viewModel_widget()
         print("init successful")
-        self.model_list.show()
+        # self.model_list.show()
 
 
 

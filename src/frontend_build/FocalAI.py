@@ -55,7 +55,15 @@ class RepoTempObj:
         self.owner = entry_dict["owner"]
         self.description = entry_dict["description"]
 
-
+    def __str__(self) -> str:
+        res = [
+        f"name: {self.name}",
+        f"owner: {self.owner}",
+        f"url: {self.url}",
+        f"description: {self.description}"
+        ]
+        
+        return "\n".join(res)
 
 class MainWindow(QMainWindow):
     def __init__(self, styler: Styler) -> None:
@@ -90,7 +98,7 @@ class MainWindow(QMainWindow):
         self.viewFont = QFont("Arial", 18)
         self.viewFont.bold()
         self.view_downloads_button.setFont(self.viewFont)
-        self.view_downloads_button.connect(self.show_downloaded)
+        self.view_downloads_button.clicked.connect(self.display_downloads)
         # Layout for list and search bar
         list_layout = QVBoxLayout()
         list_layout.addWidget(self.search_bar)
@@ -109,20 +117,40 @@ class MainWindow(QMainWindow):
 
         # Initialize menu
         self.menu = VerticalMenu(self, self.styler)
-
-    def fill_downloaded_list(self):
+        self.display_downloads() # Function to display all downloaded models as widgets. This must run as it is the inital state of the application
+    
+    def display_downloads(self):
+        """
+        Populates the list widget with downloaded repository information.
+        This method is called on application initialization and potentially
+        after refreshing the list of downloads.
+        """
+        # Clear the current items in the list widget to refresh the display
+        self.list_widget.clear()
+        
+        # Retrieve the list of installed repositories using the provided method
         installed_models_list = self.process_json_files(REPO_JSONS_DIR)
-        self.installed_repos_list: list[RepoTempObj] = []
+        self.installed_repos_list = []
+        
+        # Iterate over each repository info dictionary and create a repository widget for it
         for repo_dict in installed_models_list:
+            # Create a temporary repository object from dictionary
             repo_entry = RepoTempObj(repo_dict)
+            print(repo_entry)
+            # Append to the list of repository objects
             self.installed_repos_list.append(repo_entry)
+            
+            # Create the custom widget to display the repository information
             repo_widget = RepoWidget(repo_entry)
+            
+            # Create a QListWidgetItem and set its size hint to the size of the repo widget
             item = QListWidgetItem()
             item.setSizeHint(repo_widget.sizeHint())
+            
+            # Add the item to the list widget and set the custom widget to be displayed in the list item
             self.list_widget.addItem(item)
             self.list_widget.setItemWidget(item, repo_widget)
-    
-    def 
+        
 
     def create_menus(self):
         self.menu.create_menus()
@@ -150,11 +178,12 @@ class MainWindow(QMainWindow):
         """
         installed_list: list[dict] = []
         # Iterate over each file in the directory
-        for filename in os.listdir(self.directory):
+        for filename in os.listdir(directory):
+            
             # Check if the file is a JSON file
             if filename.endswith('.json'):
                 # Construct the full file path
-                filepath = os.path.join(self.directory, filename)
+                filepath = os.path.join(directory, filename)
                 # Open and read the JSON file
                 with open(filepath, 'r') as file:
                     data: dict = json.load(file)
@@ -168,8 +197,7 @@ class MainWindow(QMainWindow):
         self.repos.clear()  # Clear the repository list
         found_repos = self.caller.get_repo_list(text.lower().replace(" ", "-"))
         
-        if self.view_downloads: 
-            installed_repos: list = None
+        # Add functionality for searching through the installed repos
 
 
         resulting_repos: list = found_repos.results

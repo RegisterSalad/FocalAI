@@ -303,17 +303,18 @@ class InstallPage(QFrame):
     def install_store(self):
         #stores the all model information like description, name, url, model type in a .JSON
         repo: Repository = self.new_env.repository
-        file = os.path.join(REPO_JSONS_DIR, f"{repo.repo_name}.josn")
+        file = os.path.join(REPO_JSONS_DIR, f"{repo.repo_name}.json")
         modelInfo = {
             "name":repo.repo_name,
             "url":repo.repo_url,
             "model_type": repo.model_type,
-            "description": repo.description
+            "description": repo.description,
+            "owner": repo.owner
         }
         with open(file, "w") as outfile:
             json.dump(modelInfo, outfile)
 
     def remove_json(self):
         repo: Repository = self.new_env.repository
-        file = os.path.join(REPO_JSONS_DIR, f"{repo.repo_name}.josn")
+        file = os.path.join(REPO_JSONS_DIR, f"{repo.repo_name}.json")
         os.remove(file)
