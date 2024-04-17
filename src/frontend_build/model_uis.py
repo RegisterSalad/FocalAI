@@ -13,8 +13,9 @@ module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
-from database import DatabaseManager
+from directories import DRAG_N_DROP_DIR
 from conda_env import CondaEnvironment
+from file_drop_widget import FileDropWidget
 
 global_style = """
             QWidget {
@@ -120,7 +121,7 @@ class FileDropWidget(QWidget):
         super().__init__()
         self.setAcceptDrops(True)
         self.init_ui()
-        self.stored_files_folder = os.path.join(os.getcwd(), 'stored_files')
+        self.stored_files_folder = DRAG_N_DROP_DIR
         os.makedirs(self.stored_files_folder, exist_ok=True)
 
     def init_ui(self):
@@ -240,7 +241,8 @@ class DragAndDropPlayer(QWidget):
         return imgOutput
 
 class DefaultPlayer(QWidget):
-    pass
+    def __init__(self) -> None:
+        raise NotImplementedError
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

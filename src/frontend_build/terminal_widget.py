@@ -1,9 +1,9 @@
 import re
 import sys
 import os
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextEdit, QLineEdit
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextEdit, QLineEdit, QLabel
 from PySide6.QtCore import QProcess
-from PySide6.QtGui import QTextCursor
+from PySide6.QtGui import QTextCursor, QFont
 
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
@@ -24,8 +24,15 @@ class TerminalWidget(QWidget):
                 background-color: #f0f0f0;
             }
             """)
+        label = QLabel("Working Directory Terminal")
+        font = QFont('Arial', 18)
+        font.setBold(True)  # Make the font bold
 
+        # Apply the font to the label
+        label.setFont(font)
         layout = QVBoxLayout()
+        layout.addWidget(label)
+        
         layout.setContentsMargins(5, 5, 5, 5)  # Add some padding to see the rounded corners
 
         self.output_textedit = QTextEdit()

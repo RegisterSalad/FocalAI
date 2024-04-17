@@ -1,5 +1,6 @@
 import re
-from api_caller import APICaller
+from api_caller import APIManager
+import json
 
 class Repository:
     """
@@ -25,7 +26,7 @@ class Repository:
         - get_tables(): Finds and stores markdown tables from README.
         - __str__(): String representation summarizing repository attributes.
     """
-    def __init__(self, repo_url: str) -> None:
+    def __init__(self, repo_url: str, description) -> None:
         """
         Initializes the Repository object with a GitHub repo URL and fetches its features.
 
@@ -33,7 +34,6 @@ class Repository:
             repo_url (str): URL of the GitHub repository to analyze.
         """
         
-        self.caller = APICaller()
         self.repo_url: str = repo_url.rstrip('/')
         parts = repo_url.rstrip('/').split('/')
         repo_owner, repo_name = parts[-2], parts[-1]
@@ -42,11 +42,17 @@ class Repository:
         self.repo_name: str = repo_name
         self.owner: str = repo_owner
         self.model_type: str | None = None
+        self.description: str = description
         self.fetch_features()
+    
+    @staticmethod
+    def parse_name(repo_url: str) -> str:
+        repo_url: str = repo_url.rstrip('/')
+        return repo_url.rstrip('/').split('/')[-1]
 
     def fetch_features(self) -> None:
         """Fetch repository features from its README and update object attributes."""
-        self.readme_content = self.caller.get_readme_contents(self.repo_url)
+        self.readme_content = APIManager.get_readme_contents(repo_url=self.repo_url)
         if self.readme_content:
             self.install_commands = self.parse_readme_contents()
             self.tables = self.get_tables()
@@ -118,27 +124,6 @@ class Repository:
             bool: True if an installation command is found, False otherwise.
         """
         return bool(re.search(r'\binstall\b', code_block, re.IGNORECASE))
-
-    # def parse_readme_contents(self) -> list[str]:
-    #     """
-    #     Parses README for installation commands and tables.
-
-    #     Returns:
-    #         list[str]: A list of installation commands.
-    #     """
-    #     code_blocks = self.extract_code_blocks()
-    #     tab_code = self.extract_tab_code()
-    #     self.get_tables()
-    #     self.model_type = self.get_model_type()
-
-    #     install = [command for block in code_blocks if self._check_for_install(block) for command in self.extract_commands([block])]
-    #     install_commands: list[str] = [] 
-    #     for command in install:
-    #         install_commands.append(command)
-    #     for command in tab_code:
-    #         install_commands.append(command)
-
-    #     return install_commands
     
     def parse_readme_contents(self) -> list[str]:
         """
@@ -207,3 +192,30 @@ class Repository:
             f"README Content: {(self.readme_content[:75] + '...') if len(self.readme_content) > 75 else self.readme_content or 'N/A'}"
         ]
         return "\n".join(details)
+    
+    def to_dict(self) -> dict:
+        """Converts the repository object into a dictionary suitable for JSON serialization."""
+        return {
+            "repo_url": self.repo_url,
+            "repo_name": self.repo_name,
+            "owner": self.owner,
+            "install_commands": self.install_commands,
+            "tables": self.tables,
+            "model_type": self.model_type,
+            "readme_content": self.readme_content
+        }
+
+class RepositoryEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Repository):
+            return obj.to_dict()
+        return super().default(obj)
+
+if __name__ == "__main__":
+    repo = Repository("https://github.com/openai/whisper")
+    with open("to_delete.json", "w") as file:
+        json.dump(repo, file, cls=RepositoryEncoder)
+
+    with open("to_delete.json", "r") as file:
+        data = json.load(file)
+        print(data)

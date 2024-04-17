@@ -7,6 +7,7 @@ module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
+from directories import LOG_DIR
 from conda_env import run_subprocess_with_logging
 
 class Worker(QObject):
@@ -22,8 +23,9 @@ class Worker(QObject):
 
     @Slot()
     def run_command(self):
+        log_path = os.path.join(LOG_DIR, f"{self.name}.log") 
         try:
-            for line in run_subprocess_with_logging(self.command, self.error_message, log_file_name=f"{self.name}.log"):
+            for line in run_subprocess_with_logging(self.command, self.error_message, log_file_dir=log_path):
                 self.output.emit(line)  # Emit each line of the subprocess output
             self.success = True  # If execution reaches here, no exceptions were raised
         except Exception as e:

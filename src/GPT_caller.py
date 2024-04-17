@@ -1,57 +1,40 @@
 import requests
 import os
-import api_caller
+from api_caller import APIManager
+import sys
+from PySide6.QtWidgets import (QWidget, QInputDialog, QMessageBox)
 
-from PySide6.QtWidgets import (QWidget, QInputDialog)
+module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if module_dir not in sys.path:
+    sys.path.append(module_dir)
 
-class APIGrabber(QWidget):
-    '''
-    Gives a popup prompt to give API_key if a file of it isnt found
-    '''
-    def __init__(self):
-        super().__init__()
-            
-    def initUI(self) -> str:
-        # This method displays the input dialog
-        API_key, ok = QInputDialog.getText(self, 'Key Request', 'Please enter your API key:')
-        
-        if ok:
-            # If the user clicks OK and inputs text, print it to the console
-            print(f'The API key that will be used is {API_key}')
-            return API_key
-        else:
-            # If the user cancels the dialog, print a message
-            print('User cancelled the dialog')
 
 class GPTCaller: 
     """
     Interacts with the PapersWithCode API.
 
     Attributes:
-       
+        filename: str = 'key.txt'
+        api_key: str = None
+        doc_url : str
+        log_report : str
+        check: bool = False
     """
-    filename = 'key.txt'
     api_key = None
     doc_url : str
     log_report : str
-
+    check: bool = False
+    cancel: bool = False
     def __init__(self, doc_url) -> None:
         """
         Initialize the API caller with the chatGPT client.
         """
         self.doc_url = doc_url
         self.log_report = None
-        if os.path.isfile(self.filename):
-            # File exists, so read from it
-            with open(self.filename, 'r') as file:
-                self.api_key = file.read().strip()  # Ensure api_key is read correctly and stripped of any whitespace
-        else:
-            # File does not exist, prompt for API key and write it
-            popup = APIGrabber()
-            self.api_key = popup.initUI()
-            with open(self.filename, 'w') as file:
-                file.write(self.api_key)
-                print(f"File '{self.filename}' was created and the API key was written to it.")
+        popup = APIManager.get_and_save_key("openai")
+        self.api_key = popup.get_and_save_key()
+        if isinstance(self.api_key, str):
+            self.check = True 
         print(doc_url)
                 
         
@@ -106,7 +89,7 @@ class GPTCaller:
         str. A string containing the sample code.
         """
         request = "With this given documentation, give me just the sample code needed to run this"
-        obj = api_caller.APICaller()
+        obj = APIManager()
         obj.__init__()
         documentation : str = obj.get_readme_contents(self.doc_url)
         sample_code = self.get_chat_response(self.api_key, documentation, request)
@@ -120,7 +103,7 @@ class GPTCaller:
         - api_key: str. API key.
         """
         request = "With this given documentation, what are the parameters needed to run this?"
-        obj = api_caller.APICaller()
+        obj = APIManager()
         obj.__init__()
         documentation : str = obj.get_readme_contents(self.doc_url)
         ret = self.get_chat_response(self.api_key, documentation, request)
@@ -134,7 +117,7 @@ class GPTCaller:
         - api_key: str. API key.
         """
         request = "With this given documentation, what are the datasets this model uses?"
-        obj = api_caller.APICaller()
+        obj = APIManager()
         obj.__init__()
         documentation : str = obj.get_readme_contents(self.doc_url)
         ret = self.get_chat_response(self.api_key, documentation, request)
@@ -148,7 +131,7 @@ class GPTCaller:
         - api_key: str. API key.
         """
         request = "With this given documentation, where can i find more information on this model?"
-        obj = api_caller.APICaller()
+        obj = APIManager()
         obj.__init__()
         documentation : str = obj.get_readme_contents(self.doc_url)
         ret = self.get_chat_response(self.api_key, documentation, request)
@@ -162,7 +145,7 @@ class GPTCaller:
         - api_key: str. API key.
         """
         request = "With this given documentation, give me a basic report about the model"
-        obj = api_caller.APICaller()
+        obj = APIManager()
         obj.__init__()
         documentation : str = obj.get_readme_contents(self.doc_url)
         ret = self.get_chat_response(self.api_key, documentation, request)

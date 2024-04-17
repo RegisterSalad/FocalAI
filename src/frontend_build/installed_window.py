@@ -9,30 +9,31 @@ import sys
 from model_page import ModelPage
 from styler import Styler
 from vertical_menu import VerticalMenu
-from mainwindow import RepoWidget
+from FocalAI import RepoWidget
 from database import DatabaseManager
 
 module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 if module_dir not in sys.path:
     sys.path.append(module_dir)
 
+from directories import DB_PATH
 from conda_env import CondaEnvironment
 from repo import Repository
 
 
-from api_caller import APICaller
+from api_caller import APIManager
 
 class InstalledWindow(QWidget):
     def __init__(self, styler: Styler) -> None:
         super().__init__()
         self.init_ui(styler=styler)
-        self.db = DatabaseManager("databases/conda_environments.db")
+        self.db = DatabaseManager(DB_PATH)
 
     def init_ui(self, styler: Styler) -> None:
         self.styler = styler
         self.styler.register_component(self)
         self.styler.style_me()
-        self.caller = APICaller()
+        self.caller = APIManager()
         self.setWindowTitle("Installed Models Window with Menu and Details")
 
         # Central widget and layout

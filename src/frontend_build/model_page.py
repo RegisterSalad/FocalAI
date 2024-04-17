@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame, QSizePolicy, QWidget, QListWidget, QListWidgetItem, QToolTip, QTextEdit, QLineEdit, QInputDialog
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont
 from PySide6.QtWebEngineWidgets import QWebEngineView  # Import QWebEngineView
 import markdown
 import sys
@@ -21,13 +22,14 @@ if module_dir not in sys.path:
 from repo import Repository
 from database import DatabaseManager
 from conda_env import CondaEnvironment
-
+from directories import DB_PATH
 class GPTPlayer(QWidget):
     def __init__(self, documentation):
         super().__init__()
         self.GPT = GPTCaller(documentation)
+        self.check = self.GPT.check
         self.initUI()
-
+    
     def initUI(self):
         self.setWindowTitle("ChatGPT Assisstant")
         
@@ -140,14 +142,16 @@ class GPTPlayer(QWidget):
         self.chatDisplay.insertPlainText("\n\n")  # Ensure there's a double new line after the div
         self.chatDisplay.ensureCursorVisible()  # Auto-scroll to the latest message
 
+   
+
+
 class ModelPage(QFrame):
     def __init__(self, styler: Styler):
         super().__init__()
         self.install_page: InstallPage | None = None
         self.running_env: CondaEnvironment | None
-        db_path = os.path.abspath("databases/conda_environments.db")
-        print(db_path)
-        self.db = DatabaseManager(db_path)
+        self.GPT_Window = None
+        self.db = DatabaseManager(DB_PATH)
         self.is_showing_progress = False
         self.styler = styler
         self.init_ui()
@@ -163,13 +167,17 @@ class ModelPage(QFrame):
         self.text_display.setZoomFactor(0.9)
         self.thumbnail = QLabel()
         self.thumbnail.setFixedSize(100, 100)
-        
+        mainLabel = QLabel("Model Page")
+        font = QFont('Arial', 18)
+        font.setBold(True)  # Make the font bold
+
+        # Apply the font to the label
+        mainLabel.setFont(font)
         mainLayout = QVBoxLayout()
-        
+        mainLayout.addWidget(mainLabel)
         self.button1.clicked.connect(lambda: self.create_model_player())
         self.b2_delete = True
         self.b2_install = False
-        self.button2.clicked.connect(lambda: self.delete_running_env())
         self.button3.clicked.connect(lambda: self.create_GPT_interface())
 
         buttonsLayout = QVBoxLayout()
@@ -201,10 +209,9 @@ class ModelPage(QFrame):
         self.pop_up_window.show()
     
     def get_repo_name(self, repo_url: str) -> str:
-        return Repository(repo_url).repo_name
+        return Repository.parse_name(repo_url)
     
     def delete_running_env(self) -> None:
-
         self.is_showing_progress = True
         self.progress_widget = QTextEdit(self)
         self.progress_widget.setReadOnly(True)  
@@ -213,6 +220,7 @@ class ModelPage(QFrame):
         delete_tuple = self.running_env.delete()
         is_deleted = run_environment_command(self, worker_name="delete", command=delete_tuple[0], error_message=delete_tuple[1])
         print(f"Environment Deleted: {is_deleted}")
+        self.install_page.remove_json()
         self.install_page.remove_json()
         self.db.delete_environment_by_name(self.running_env.repository.repo_name)
         self.update_content(repo_entry=None)
@@ -223,8 +231,19 @@ class ModelPage(QFrame):
 
     def create_GPT_interface(self):
         print("GPT window")
+        if isinstance(self.GPT_Window, QWidget): # Already created
+            return
+        
         self.GPT_Window = GPTPlayer(self.running_env.repository.repo_url)
-        self.GPT_Window.show()
+
+        if self.GPT_Window.check:
+            self.GPT_Window.show()
+            return
+
+        self.GPT_Window = None
+            
+
+        
 
     def create_model_player(self):
         self.model_player = ModelPlayer(self) # Model Player is inited here because it needs a repo before initialization
@@ -251,7 +270,8 @@ class ModelPage(QFrame):
                     widget.hide()  # Hide the widget
 
     def show_all(self) -> None:
-        self.button1.show()
+        if self.install_page.new_env.is_installed:
+            self.button1.show()
         self.button2.show()
         self.button3.show()   
         layout = self.layout()  # Get the layout of the frame
@@ -264,10 +284,13 @@ class ModelPage(QFrame):
                     widget.show()  # Show the widget
 
 
-    def change_to_install_page(self):
+    def change_to_install_page(self): 
         self.hide_all()
-        self.install_page = InstallPage(self.styler, self, self.running_env)
-        self.layout().addWidget(self.install_page)
+        if not self.install_page:
+            self.install_page = InstallPage(parent=self,styler=self.styler, new_env=self.running_env)
+            self.layout().addWidget(self.install_page)
+        else: 
+            self.install_page.set_new_environment(self.running_env)
         self.install_page.show_all()
 
     def convert_to_markdown(self, name: str) -> str:
@@ -282,6 +305,7 @@ class ModelPage(QFrame):
             return self.html_text
             
     def update_content(self, repo_entry) -> None:
+        print(repo_entry)
         if self.is_showing_progress:
             self.is_showing_progress = False
             self.progress_widget.hide()

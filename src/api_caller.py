@@ -1,27 +1,65 @@
 import re
+import os
+import sys
 import requests  # Import requests for synchronous HTTP calls
-from typing import List
 from paperswithcode import PapersWithCodeClient
-from paperswithcode.models.repository import Repositories, Repository
-from paperswithcode.models.paper import Paper
-from secret import PWC_KEY
-import io
+from paperswithcode.models.repository import Repositories
+from PySide6.QtWidgets import (QWidget, QInputDialog, QMessageBox) # This module has frontend components but is not part of the frontend_build
 
-class APICaller:
+module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if module_dir not in sys.path:
+    sys.path.append(module_dir)
+
+from directories import PWC_KEY_TXT
+from directories import OPENAI_KEY_TXT
+
+class APIManager(QWidget):
     """
-    Interacts with the PapersWithCode API.
+    Manages API interactions and key validations, including interfacing with specific APIs.
 
     Attributes:
-        client (PapersWithCodeClient): API client.
+        api_type (str): Type of API, 'openai' or 'pwc' to handle different APIs.
+        client (PapersWithCodeClient | None): API client for PapersWithCode, or other clients for different APIs.
     """
+    abort_flag: bool = False
 
-    def __init__(self) -> None:
-        """
-        Initialize the API caller with a PapersWithCode client.
-        """
-        self.client = PapersWithCodeClient(token=PWC_KEY)
+    def __init__(self):
+        super().__init__()
+        self.client = None
+        self.init_pwc_client()
 
-    def get_readme_contents(self, repo_url: str) -> str | None:
+    def init_pwc_client(self):
+        api_key = self.get_and_save_key("pwc")
+        if api_key:
+            self.client = PapersWithCodeClient(token=api_key)
+        else:
+            raise ValueError("PWC KEY not found")
+
+    def get_and_save_key(self, key_type: str) -> str | None:
+        key_file = OPENAI_KEY_TXT if key_type == 'openai' else PWC_KEY_TXT
+        validate_api_key = self.is_openai_api_key_valid if key_type == 'openai' else self.is_pwc_api_key_valid
+
+        if os.path.isfile(key_file):
+            with open(key_file, 'r') as file:
+                return file.read().strip()
+
+        while not self.abort_flag:
+            api_key, ok = QInputDialog.getText(self, 'Key Request', 'Please enter your API key:')
+            if ok and validate_api_key(api_key):
+                with open(key_file, 'w') as file:
+                    file.write(api_key)
+                return api_key
+            elif not ok:
+                self.abort_flag = True
+                return None
+            else:
+                QMessageBox.warning(self, "Invalid Key", "The provided API key is invalid, please try again.")
+                
+    @staticmethod
+    def get_readme_contents(repo_url: str) -> str | None:
+        """
+        Fetches the README content from a GitHub repository.
+        """
         parts = repo_url.rstrip('/').split('/')
         repo_owner, repo_name = parts[-2], parts[-1]
         api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/readme"
@@ -35,40 +73,29 @@ class APICaller:
                     return readme_response.text
         return None
 
-
     def get_repo_list(self, query: str = None) -> Repositories | None:
         """
-        Get a list of repositories from PapersWithCode.
-
-        Args:
-            query (str, optional): Query string to filter repositories. Defaults to None.
-
-        Returns:
-            Repositories | None: A list of repositories.
+        Retrieves a list of repositories based on a query.
         """
         if query is not None:
             return self.client.repository_list(name=query)
 
+    def is_openai_api_key_valid(self, api_key: str) -> bool:
+        url = "https://api.openai.com/v1/engines"
+        headers = {"Authorization": f"Bearer {api_key}"}
+        try:
+            response = requests.get(url, headers=headers)
+            return response.status_code == 200
+        except requests.RequestException:
+            return False
 
-def main():
-    api_caller = APICaller()
-    repo_link = "https://github.com/openai/whisper"  # Test repo link
-    readme = api_caller.get_readme_contents(repo_url=repo_link)
-    if readme:
-        code_blocks = api_caller.extract_code_blocks(readme)
+    def is_pwc_api_key_valid(self, api_key: str) -> bool:
+        temp = PapersWithCodeClient(token=api_key)
+        try:
+            test = temp.repository_list(name="whisper")
+            return True
+        except Exception as e:
+            print(e)
+            return False
 
-        install_commands = [command for block in code_blocks if api_caller.check_for_install(block)
-                            for command in api_caller.extract_commands([block])]
-        """ for command in install_commands:
-            print(command)"""
 
-        """repo_list = api_caller.get_repo_list(query="whisper")
-        if isinstance(repo_list, Repositories):
-            api_caller.print_repo_list(repo_list)
-            selected_idx = int(input("Enter Selected Repo: "))
-            paper = api_caller.find_paper_from_selected_repo(selected_index=selected_idx, repo_list=repo_list)
-            if paper:
-                print(f"Paper Found:\nTitle: {paper.title}\nAuthors: {paper.authors}\n{'-' * 10}\n\n")
-"""
-if __name__ == "__main__":
-    main()

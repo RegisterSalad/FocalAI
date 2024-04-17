@@ -1,10 +1,10 @@
 import subprocess
 import os
 from repo import Repository
-
+from directories import LOG_DIR, ENV_LIST_LOG
 general_logging_dir: str = os.path.expanduser("~/FocalAI/logs/")
 
-def run_subprocess_with_logging(command: str, error_message: str, log_file_name: str, logging_directory: str = general_logging_dir):
+def run_subprocess_with_logging(command: str, error_message: str, log_file_dir: str):
     """
     Runs a subprocess with the given arguments and logs the output and any errors encountered.
 
@@ -14,11 +14,9 @@ def run_subprocess_with_logging(command: str, error_message: str, log_file_name:
         logging_directory (str): The directory to store logging information.
         log_file_name (str): The name of the log file.
     """
-    os.makedirs(logging_directory, exist_ok=True)
-    log_file_path = os.path.join(logging_directory, log_file_name)
 
     try:
-        with open(log_file_path, 'w') as log_file:
+        with open(log_file_dir, 'w') as log_file:
             process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
 
             # Read output live and yield lines
@@ -41,12 +39,11 @@ def run_subprocess_with_logging(command: str, error_message: str, log_file_name:
 def check_if_exists(env_name: str) -> bool:
     command = "conda env list"
     error_message = "Error finding installed environments"
-    log_file_name = "env_list_log.log"
-    run_subprocess_with_logging(command, error_message, general_logging_dir, log_file_name)
 
-    log_file_path = os.path.join(general_logging_dir, log_file_name)
+    run_subprocess_with_logging(command, error_message, ENV_LIST_LOG)
+
     try:
-        with open(log_file_path, 'r') as log_file:
+        with open(ENV_LIST_LOG, 'r') as log_file:
             environments = log_file.readlines()
         for env in environments:
             if env_name in env:
@@ -57,15 +54,11 @@ def check_if_exists(env_name: str) -> bool:
         return False
         
 class CondaEnvironment:
-    def __init__(self, python_version: str, repository_url: str = "", description: str = "", pip_list_directory: str = "../pip_reqs", logging_directory: str = general_logging_dir, env_id: int | None = None) -> None:
+    def __init__(self, python_version: str, repository_url: str = "", description: str = "",env_id: int | None = None) -> None:
         self.env_id = env_id
         self.python_version = python_version
-        self.description = description
-        self.pip_list_directory = pip_list_directory
-        self.installed_models = None
-        self.repository = Repository(repository_url)
+        self.repository = Repository(repository_url, description)
         self.env_name = self.repository.repo_name
-        self.logging_directory = logging_directory
         self.is_installed: bool = False
 
     def __call__(self, command: str) -> tuple[str, str]:
@@ -91,8 +84,6 @@ class CondaEnvironment:
         str_attributes: list = [
             f"Environment Name: {self.env_name}",
             f"Python Version: {self.python_version}",
-            f"PIP List Directory: {self.pip_list_directory}",
-            f"Models: {self.installed_models}", 
             f"Repository: {self.repository}"
         ]
 
@@ -132,24 +123,3 @@ class CondaEnvironment:
     @property
     def is_created(self) -> bool:
         check_if_exists(self.env_name) # Separate function, no need for live capture
-
-
-if __name__ == "__main__":
-    # Get the absolute path of the logging directory
-    logging_directory = os.path.abspath("../logging") # Values for testing
-    requirements_directory = os.path.abspath("../pip_reqs")
-    log_file_name = "logfile.log"
-
-    # Create a CondaEnvironment instance
-    env = CondaEnvironment(
-        python_version="3.11.5",
-        pip_list_directory=os.path.join(requirements_directory, "requirements.txt"),
-        logging_directory=logging_directory,
-    )
-
-    # Test your methods
-    env.install_all_requirements()
-    env.test_environment()
-    print(env)
-    # env.delete()
-    # print(env)
