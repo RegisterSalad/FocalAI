@@ -221,6 +221,7 @@ class ModelPage(QFrame):
         is_deleted = run_environment_command(self, worker_name="delete", command=delete_tuple[0], error_message=delete_tuple[1])
         print(f"Environment Deleted: {is_deleted}")
         self.install_page.remove_json()
+        self.install_page.remove_json()
         self.db.delete_environment_by_name(self.running_env.repository.repo_name)
         self.update_content(repo_entry=None)
 
@@ -302,7 +303,7 @@ class ModelPage(QFrame):
             self.html_text = f"<style>{self.css}</style>{self.html_text}"
             
             return self.html_text
-
+            
     def update_content(self, repo_entry) -> None:
         print(repo_entry)
         if self.is_showing_progress:
