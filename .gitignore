@@ -39,3 +39,5 @@ src/user_gen/keys/pwc_key.txt
 user_gen/keys/pwc_key.txt
 app
 build_log.log
+FocalAI.spec
+.vscode
