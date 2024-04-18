@@ -34,9 +34,10 @@ class APIManager(QWidget):
             self.client = PapersWithCodeClient(token=api_key)
         else:
             raise ValueError("PWC KEY not found")
-
+    
     def get_and_save_key(self, key_type: str) -> str | None:
         key_file = OPENAI_KEY_TXT if key_type == 'openai' else PWC_KEY_TXT
+        key_name = "Open AI" if key_type == 'openai' else "Papers With Code"
         validate_api_key = self.is_openai_api_key_valid if key_type == 'openai' else self.is_pwc_api_key_valid
 
         if os.path.isfile(key_file):
@@ -44,7 +45,7 @@ class APIManager(QWidget):
                 return file.read().strip()
 
         while not self.abort_flag:
-            api_key, ok = QInputDialog.getText(self, 'Key Request', 'Please enter your API key:')
+            api_key, ok = QInputDialog.getText(self, 'Key Request', f'Please enter your {key_name} API key:')
             if ok and validate_api_key(api_key):
                 with open(key_file, 'w') as file:
                     file.write(api_key)

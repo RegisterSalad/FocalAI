@@ -177,7 +177,7 @@ class MainWindow(QMainWindow):
         self.menu.create_menus()
 
     def setup_detail_views(self):
-        self.model_page = ModelPage(self.styler)
+        self.model_page = ModelPage(self.styler, self)
         self.detail_view.addWidget(self.model_page)
 
     @Slot()

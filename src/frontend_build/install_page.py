@@ -241,7 +241,8 @@ class InstallPage(QFrame):
 
     def _premature_delete(self) -> None:
         delete_tuple = self.new_env.delete()
-        print(f"Environment Deleted: {run_environment_command(self, worker_name="delete", command=delete_tuple[0], error_message=delete_tuple[1])}")
+        delete_succes = run_environment_command(self, worker_name="delete", command=delete_tuple[0], error_message=delete_tuple[1])
+        print(f"Environment Deleted: {delete_succes}")
 
     def clear_commands_to_run(self):
         self.commands_to_run_list.clear()

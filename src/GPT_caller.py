@@ -25,14 +25,14 @@ class GPTCaller:
     log_report : str
     check: bool = False
     cancel: bool = False
-    def __init__(self, doc_url) -> None:
+    def __init__(self, doc_url, caller) -> None:
         """
         Initialize the API caller with the chatGPT client.
         """
         self.doc_url = doc_url
         self.log_report = None
-        popup = APIManager.get_and_save_key("openai")
-        self.api_key = popup.get_and_save_key()
+        self.caller = caller
+        self.api_key = caller.get_and_save_key("openai")
         if isinstance(self.api_key, str):
             self.check = True 
         print(doc_url)

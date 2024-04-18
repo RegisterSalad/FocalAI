@@ -24,9 +24,10 @@ from database import DatabaseManager
 from conda_env import CondaEnvironment
 from directories import DB_PATH
 class GPTPlayer(QWidget):
-    def __init__(self, documentation):
+    def __init__(self, documentation, parent):
         super().__init__()
-        self.GPT = GPTCaller(documentation)
+        self.caller = parent.caller
+        self.GPT = GPTCaller(documentation, self.caller)
         self.check = self.GPT.check
         self.initUI()
     
@@ -146,8 +147,9 @@ class GPTPlayer(QWidget):
 
 
 class ModelPage(QFrame):
-    def __init__(self, styler: Styler):
-        super().__init__()
+    def __init__(self, styler: Styler, parent):
+        super().__init__(parent)
+        self.caller = parent.caller
         self.install_page: InstallPage | None = None
         self.running_env: CondaEnvironment | None
         self.GPT_Window = None
@@ -234,7 +236,7 @@ class ModelPage(QFrame):
         if isinstance(self.GPT_Window, QWidget): # Already created
             return
         
-        self.GPT_Window = GPTPlayer(self.running_env.repository.repo_url)
+        self.GPT_Window = GPTPlayer(self.running_env.repository.repo_url, self)
 
         if self.GPT_Window.check:
             self.GPT_Window.show()
