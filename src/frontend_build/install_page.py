@@ -318,4 +318,7 @@ class InstallPage(QFrame):
     def remove_json(self):
         repo: Repository = self.new_env.repository
         file = os.path.join(REPO_JSONS_DIR, f"{repo.repo_name}.json")
-        os.remove(file)
+        try:
+            os.remove(file)
+        except:
+            print("Couldn't remove " + file)
