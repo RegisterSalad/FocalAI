@@ -64,7 +64,7 @@ class GPTCaller:
             ]
         }
 
-        # Make the Request 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
+        # Make the Request
         response = requests.post(endpoint, json=data, headers=headers)
 
         # Handle the Response
