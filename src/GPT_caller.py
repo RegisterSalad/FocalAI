@@ -99,8 +99,8 @@ class GPTCaller:
         """
         Finds the number of parameters for a specified model.
 
-        Parameters:
-        - api_key: str. API key.
+        Returns:
+        str. A string containing the parameters
         """
         request = "With this given documentation, what are the parameters needed to run this?"
         obj = APIManager()
@@ -112,9 +112,9 @@ class GPTCaller:
     def find_model_datasets(self) -> str:
         """
         Identifies the datasets used by a specified model.
-
-        Parameters:
-        - api_key: str. API key.
+        
+        Returns:
+        str. A string containing the datasets.
         """
         request = "With this given documentation, what are the datasets this model uses?"
         obj = APIManager()
@@ -127,8 +127,8 @@ class GPTCaller:
         """
         Provides information on where to find content about using a specified model.
 
-        Parameters:
-        - api_key: str. API key.
+        Returns:
+        str. A string containing the location for more info.
         """
         request = "With this given documentation, where can i find more information on this model?"
         obj = APIManager()
@@ -141,8 +141,8 @@ class GPTCaller:
         """
         Writes a report about a specified model.
 
-        Parameters:
-        - api_key: str. API key.
+        Returns:
+        str. A string containing the report.
         """
         request = "With this given documentation, give me a basic report about the model"
         obj = APIManager()
@@ -155,8 +155,8 @@ class GPTCaller:
         """
         Writes a report about a specified model.
 
-        Parameters:
-        - api_key: str. API key.
+        Returns:
+        str. A string containing the log report.
         """
         request = "With this given output from the model, give me a basic report about the output"
         file_path = os.path.join('..', 'logging', 'output_log_test.txt')
