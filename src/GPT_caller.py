@@ -57,7 +57,7 @@ class GPTCaller:
             "Content-Type": "application/json"
         }
         data = {
-            "model": "gpt-3.5-turbo",  # Assuming this is the correct model identifier
+            "model": "gpt-4-turbo",  # Assuming this is the correct model identifier
             "messages": [
                 {"role": "system", "content": "You are a helpful assistant that helps look at AI model documentation."},
                 {"role": "user", "content": documentation + "\n" + request}  # User's question or message
