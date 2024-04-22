@@ -18,11 +18,21 @@ if module_dir not in sys.path:
 from directories import DRAG_N_DROP_DIR, REPORTS_DIR
 
 class Logger:
+    """
+    A utility class for converting documents from one format to another using the Pandoc library.
+    """
     def convert_md_to_pdf(self,input_file, output_file):
+        """
+        Converts a Markdown file to a PDF file using Pandoc.
 
+        Args:
+            input_file (str): The path to the Markdown file to be converted.
+            output_file (str): The path where the resulting PDF file should be saved.
+
+        Raises:
+            RuntimeError: If the conversion fails due to an issue within Pandoc or the environment setup.
         """
-        Attempts to convert a plain text file to PDF by treating it as Markdown.
-        """
+       
         try:
             # Specify 'markdown' as the input format
             output = pypandoc.convert_file(input_file, 'pdf', format='markdown', outputfile=output_file)
@@ -33,12 +43,27 @@ class Logger:
             print(f"Error during conversion: {e}")
 
 class MenuBar(QMenuBar):
+    """
+    Custom menu bar for an application that provides various menu items for terminal selection and file management.
+
+    Attributes:
+        file_list_widget (FileListWidget): A reference to a file list widget which can be used for updating or interacting with files.
+    """
     def __init__(self, parent=None):
+        """
+        Initializes the menu bar with a parent widget.
+
+        Args:
+            parent (QWidget, optional): The parent widget to which this menu bar will belong.
+        """
         super().__init__(parent)
         self.file_list_widget = parent.file_list_widget  # Assuming the parent passes a reference to the FileListWidget
         self.init_ui()
 
     def init_ui(self):
+        """
+        Initializes the user interface components of the menu bar, adding specific menus and configuring styles.
+        """
         self.setStyleSheet("""
                 QMenuBar {
                     background-color: #f0f0f0;
@@ -88,6 +113,10 @@ class MenuBar(QMenuBar):
         clear_action.triggered.connect(self.clear_stored_files_folder)
 
     def clear_stored_files_folder(self):
+        """
+        Clears all files in the 'stored_files' folder, which is specified by the DRAG_N_DROP_DIR directory constant.
+        This method includes a confirmation dialog and error handling for file deletions.
+        """
         stored_files_folder = DRAG_N_DROP_DIR
 
         # Confirm action
@@ -111,6 +140,10 @@ class MenuBar(QMenuBar):
                 self.file_list_widget.refresh_list()  # Refresh the list in the UI to reflect the cleared folder
 
     def clip_my_output_placeholder(self):
+        """
+         convert an output log file from text to PDF
+        
+        """
         input_txt = "run_command_log_test.txt"
         output_pdf = "command_log.pdf"
 
