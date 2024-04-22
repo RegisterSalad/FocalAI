@@ -24,12 +24,31 @@ from repo import Repository
 from api_caller import APIManager
 
 class InstalledWindow(QWidget):
+    """
+    A window in the GUI that displays installed models, offering functionality for searching and viewing details.
+
+    Attributes:
+        styler (Styler): An instance of Styler used for applying styles to components.
+        db (DatabaseManager): Manages interactions with the database storing environment and repository data.
+    """
     def __init__(self, styler: Styler) -> None:
+        """
+        Initializes the InstalledWindow with a specific styler.
+
+        Args:
+          styler (Styler): The styler object to apply UI styles.
+        """
         super().__init__()
         self.init_ui(styler=styler)
         self.db = DatabaseManager(DB_PATH)
 
     def init_ui(self, styler: Styler) -> None:
+        """
+        Sets up the user interface components of the window.
+
+        Args:
+        styler (Styler): The styler object to apply UI styles to the window's components.
+        """
         self.styler = styler
         self.styler.register_component(self)
         self.styler.style_me()
@@ -74,20 +93,36 @@ class InstalledWindow(QWidget):
 
 
     def create_menus(self):
+        """
+        Creates the menus for the window using a vertical menu layout. This function may define and add specific menu items.
+        """
         self.menu.create_menus()
 
     def setup_detail_views(self):
+        """
+        Sets up the detail views that display information about the selected models or repositories. This is where individual model pages are initialized and added to the stack.
+        """
         self.model_page = ModelPage(self.styler)
         self.detail_view.addWidget(self.model_page)
 
     @Slot()
     def trigger_search(self):
+        """
+        Triggers a search operation based on the text entered into the search bar. 
+        This function connects directly to the returnPressed signal of the search bar.
+        """
         # Get text from searchBar and initiate search
         searchText = self.search_bar.text()
         if searchText:  # Only search if there's text
             self.search_items(searchText)
 
     def search_items(self, text: str):
+        """
+        Searches for repository items based on the given text and updates the list widget with the results.
+
+        Args:
+          text (str): The text to search for within the repository names.
+        """
         self.list_widget.clear()  # Clear current items
         self.repos.clear()  # Clear the repository list
         found_repos: CondaEnvironment = self.db.get_environment_by_name(text)
@@ -109,6 +144,9 @@ class InstalledWindow(QWidget):
 
     @Slot()
     def display_item(self):
+        """
+        Displays the detailed information of the selected repository item in the detail view when a list item is clicked.
+        """
         current_row = self.list_widget.currentRow()  # Get the currently selected item's row
         if 0 <= current_row < len(self.repos):
             repo = self.repos[current_row]
