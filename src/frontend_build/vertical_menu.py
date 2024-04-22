@@ -75,10 +75,10 @@ class VerticalMenu:
 class viewModel_widget(QWidget):
      """
     A widget designed to display a list of models that a user has access to, pulling information from a JSON source. 
-    This class initializes the user interface elements necessary to list models in an easily navigable format.
+    This class initializes user interface elements necessary to list models in an easily navigable format.
 
-    Attributes:
-        QWidget
+    Inherits:
+        QWidget (PySide6.QtWidgets): Inherits from QWidget, enabling standard widget features and properties.
     """
     def __init__(self):
         """
@@ -91,8 +91,13 @@ class viewModel_widget(QWidget):
 
     def initUI(self):
         """
-        Configures the initial user interface for the viewModel_widget, setting up the layout and style of the widget.
-        This includes creating a list widget for displaying model information and applying basic styling to the widget.
+        Configures the initial user interface for the viewModel_widget by setting up the layout and style of the widget.
+        This method creates and configures a list widget for displaying model information, providing a simple and clean user interface.
+
+        Actions:
+        - Sets the window title to "View My Models".
+        - Applies CSS styling to the widget for consistent theming with the rest of the application.
+        - Initializes and adds a QListWidget to the layout for displaying the list of models.
         """
         print("init UI")
         self.setWindowTitle("View My Models")
