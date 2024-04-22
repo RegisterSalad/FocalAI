@@ -4,12 +4,22 @@ import pickle
 import os
 
 class Database:
-    """Represents a database connection to manage Conda environments."""
+    """
+    Represents a database connection to manage Conda environments. It provides functionality to interact with the
+    database such as creating tables, inserting, deleting, and querying Conda environment records.
+
+    Attributes:
+        db_path (str): Path to the SQLite database file.
+        connection (sqlite3.Connection): Database connection object.
+        cursor (sqlite3.Cursor): Cursor object used to execute SQL commands.
+    """
 
     def __init__(self, db_path: str) -> None:
         """
-        Initializes the database with a connection to the specified path.
-        Creates the database file if it does not exist and prints the new path.
+        Initializes the database connection and sets up the table for storing Conda environments.
+
+        Args:
+            db_path (str): Path to the SQLite database file.
         """
         self.db_path = db_path
         # Check if the database file exists, and print the appropriate message
@@ -27,7 +37,12 @@ class Database:
         print(f"Count: {self.count}")
     @property
     def count(self) -> int:
-        """Return the number of environments currently stored in the database."""
+        """
+        Retrieves the count of Conda environments currently stored in the database.
+
+        Returns:
+            int: Number of environments in the database.
+        """
         try:
             self.cursor.execute("SELECT COUNT(*) FROM conda_environments")
             return self.cursor.fetchone()[0]
@@ -36,7 +51,12 @@ class Database:
             return 0
 
     def __str__(self) -> str:
-        """Returns a string representation of the database, listing first 'n' items of 'conda_environments'."""
+        """
+        Provides a string representation of the database showing a limited number of Conda environment entries.
+
+        Returns:
+            str: A string listing the environments in the database.
+        """
         try:
             self.cursor.execute("SELECT * FROM conda_environments LIMIT ?", (self.str_limit,))
             environments = self.cursor.fetchall()
@@ -46,7 +66,10 @@ class Database:
             return f"Failed to retrieve environments: {e}"
         
     def create_table(self) -> bool:
-        """Creates a table for Conda environments if it doesn't exist."""
+        """
+        Creates a table for storing Conda environments if it does not already exist.
+        """
+        
         try:
             if not self.check_for_table("conda_environments"):
                 self.cursor.execute('''
@@ -103,7 +126,15 @@ class Database:
             return False
 
     def insert_environment(self, environment: CondaEnvironment) -> bool:
-        """Inserts a new Conda environment."""
+        """
+        Inserts a new Conda environment into the database.
+
+        Args:
+            environment (CondaEnvironment): The Conda environment to insert.
+
+        Returns:
+            bool: True if the insert was successful, False otherwise.
+        """
         try:
             serialized_env = pickle.dumps(environment)
             self.cursor.execute('''
@@ -118,7 +149,18 @@ class Database:
             return False
 
     def delete_environment_by_id(self, env_id: int) -> bool:
-        """Deletes an environment by its ID."""
+        """
+        Deletes an environment from the database by its unique identifier.
+
+        Args:
+            env_id (int): The unique identifier of the environment to delete.
+
+        Returns:
+            bool: True if the environment was successfully deleted, False otherwise.
+
+        Raises:
+            sqlite3.Error: If an error occurs during the database query execution.
+        """
         try:
             self.cursor.execute("DELETE FROM conda_environments WHERE id = ?", (env_id,))
             self.connection.commit()
@@ -127,7 +169,15 @@ class Database:
             return False
 
     def delete_environment_by_name(self, env_name: str) -> bool:
-        """Deletes an environment by its name."""
+        """
+        Deletes an environment from the database by its name.
+
+        Args:
+            env_name (str): Name of the environment to delete.
+
+        Returns:
+            bool: True if the environment was successfully deleted, False otherwise.
+        """
         try:
             self.cursor.execute("DELETE FROM conda_environments WHERE env_name = ?", (env_name,))
             self.connection.commit()
@@ -136,7 +186,18 @@ class Database:
             return False
 
     def locate_environment_by_id(self, env_id: int) -> bool:
-        """Locates an environment by its ID."""
+        """
+        Checks if an environment exists in the database by its unique identifier.
+
+        Args:
+            env_id (int): The unique identifier of the environment to locate.
+
+        Returns:
+            bool: True if the environment exists, False otherwise.
+
+        Raises:
+            sqlite3.Error: If an error occurs during the database query execution.
+        """
         try:
             self.cursor.execute("SELECT * FROM conda_environments WHERE id = ?", (env_id,))
             return self.cursor.fetchone() is not None
@@ -144,7 +205,18 @@ class Database:
             return False
 
     def locate_environment_by_name(self, env_name: str) -> bool:
-        """Locates an environment by its name."""
+        """
+        Checks if an environment exists in the database by its name.
+
+        Args:
+            env_name (str): The name of the environment to locate.
+
+        Returns:
+            bool: True if the environment exists, False otherwise.
+
+        Raises:
+            sqlite3.Error: If an error occurs during the database query execution.
+        """
         try:
             self.cursor.execute("SELECT * FROM conda_environments WHERE env_name = ?", (env_name,))
             return self.cursor.fetchone() is not None
@@ -152,7 +224,19 @@ class Database:
             return False
 
     def get_environment_by_id(self, env_id: int) -> CondaEnvironment | None:
-        """Retrieves a CondaEnvironment by its ID."""
+        """
+        Retrieves a CondaEnvironment object from the database by its unique identifier.
+
+        Args:
+            env_id (int): The unique identifier of the Conda environment to retrieve.
+
+        Returns:
+            CondaEnvironment | None: The CondaEnvironment object if found; otherwise, None.
+
+        Raises:
+            sqlite3.Error: If an error occurs during the database query execution.
+        """
+
         try:
             self.cursor.execute("SELECT serialized_env FROM conda_environments WHERE id = ?", (env_id,))
             row = self.cursor.fetchone()
@@ -165,7 +249,15 @@ class Database:
             return None
 
     def get_environment_by_name(self, env_name: str) -> CondaEnvironment | None:
-        """Retrieves a CondaEnvironment by its name."""
+        """
+        Retrieves a Conda environment by its name from the database.
+
+        Args:
+            env_name (str): Name of the environment to retrieve.
+
+        Returns:
+            CondaEnvironment | None: The retrieved Conda environment or None if not found.
+        """
         try:
             self.cursor.execute("SELECT serialized_env FROM conda_environments WHERE env_name = ?", (env_name,))
             row = self.cursor.fetchone()
@@ -185,6 +277,15 @@ if __name__ == "__main__":
     import os
 
     def delete_environment_cli(db: Database) -> None:
+        """
+        Command-line interface function to delete an environment from the database by its ID.
+
+        Args:
+            db (Database): The database object to interact with.
+
+        Raises:
+            ValueError: If the input is not a valid integer.
+        """
         try:
             env_id = int(input("Enter the ID of the environment to delete: "))
             db.delete_environment_by_id(env_id)
@@ -192,6 +293,15 @@ if __name__ == "__main__":
             print("Please enter a valid integer for the environment ID.")
 
     def select_environment_cli(db: Database) -> None:
+        """
+        Command-line interface function to fetch and display details of an environment from the database by its ID.
+
+        Args:
+            db (Database): The database object to interact with.
+
+        Raises:
+            ValueError: If the input is not a valid integer.
+        """
         try:
             env_name = str(input("Enter the ID of the environment to pull from database: "))
             db.fetch_environment_by_id(env_name)
@@ -199,6 +309,12 @@ if __name__ == "__main__":
             print("Please enter a valid integer for the environment ID.")
 
     def main():
+        """
+        Main function to run the command-line interface for managing environments in the database.
+
+        This function sets up the database connection, provides a menu for user interaction,
+        and handles user commands to list, delete, or fetch environments.
+        """
         db_path = os.path.abspath("/home/mldesk/Desktop/Repos/FocalAI/databases/conda_environments.db")
         db = Database(db_path)
         
