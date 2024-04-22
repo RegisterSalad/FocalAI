@@ -12,14 +12,23 @@ if module_dir not in sys.path:
 from directories import DRAG_N_DROP_DIR
 
 class FileDropWidget(QWidget):
+    """A widget that supports dragging and dropping files into it.
+    
+    Attributes:
+        filesDropped (Signal): Custom signal that emits the path of the dropped file.
+    """
+    
+    
     filesDropped = Signal(str)  # Signal to emit when files have been dropped
 
     def __init__(self):
+        """Initialize the FileDropWidget with drag and drop enabled."""
         super().__init__()
         self.setAcceptDrops(True)
         self.init_ui()
 
     def init_ui(self):
+        """Set up the user interface of the widget."""
         self.setMinimumSize(400, 200)
         self.setStyleSheet("""
             QWidget {
@@ -38,11 +47,13 @@ class FileDropWidget(QWidget):
         self.setLayout(layout)
 
     def dragEnterEvent(self, event):
+        """Handle the event when a drag action enters the widget."""
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
             self.label.setStyleSheet("color: #555555; font-style: normal;")
 
     def dropEvent(self, event):
+        """Handle the event when files are dropped onto the widget."""
         mime_data = event.mimeData()
         if mime_data.hasUrls():
             # Consider only the first file from the drop
