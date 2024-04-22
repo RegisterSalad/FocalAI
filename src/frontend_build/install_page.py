@@ -23,6 +23,18 @@ from conda_env import CondaEnvironment
 from repo import Repository
 
 def run_environment_command(widget, worker_name, command: str, error_message: str) -> bool:
+    """
+    Executes a specified command in a separate thread and updates the widget based on the command's success or failure.
+
+    Args:
+        widget (QWidget): The widget that will display progress and receive updates.
+        worker_name (str): A name identifier for the worker thread.
+        command (str): The command to be executed by the worker.
+        error_message (str): A message to display if the command execution fails.
+
+    Returns:
+        bool: True if the command execution was successful, False otherwise.
+    """
         # Create the worker and thread
         worker = Worker(worker_name, command, error_message)
         thread = QThread()
@@ -58,7 +70,25 @@ def run_environment_command(widget, worker_name, command: str, error_message: st
         return success_flag[0]
 
 class InstallPage(QFrame):
+    """
+    A page in the GUI that handles the installation of a new conda environment and the management of installation commands.
+
+    Attributes:
+        styler (Styler): An instance of the Styler class used to apply UI styles.
+        parent (QWidget): The parent widget, typically the main model page.
+        new_env (CondaEnvironment): An instance representing the new conda environment being managed.
+    """
+    
     def __init__(self, styler, parent, new_env: CondaEnvironment):
+
+            """
+        Initialize the InstallPage with the parent widget, the styler, and the new environment.
+
+        Args:
+            styler (Styler): The styler object to apply UI styles.
+            parent (QWidget): The parent widget.
+            new_env (CondaEnvironment): The new conda environment to be installed.
+        """
             super().__init__(parent)
             self.model_page = parent
             self.styler = styler
@@ -74,6 +104,7 @@ class InstallPage(QFrame):
             
 
     def init_ui(self):
+        """Set up the user interface for the installation page."""
         self.layout = QVBoxLayout(self)
 
         # Install Commands List
@@ -203,6 +234,10 @@ class InstallPage(QFrame):
 
 
     def add_command_to_run(self):
+        """
+        Add selected commands from the install commands list to the commands to run list.
+        Ensures that no duplicates are added.
+        """
         selected_items = self.install_commands_subwidget.selectedItems()
         if not selected_items:
             return
@@ -213,6 +248,10 @@ class InstallPage(QFrame):
                 self.commands_to_run_subwidget.addItem(item.text())
 
     def run_selected_commands(self):
+        """
+        Execute the selected commands necessary for installing the new environment.
+        Handles command execution and updates the installation status.
+        """
         print(f"Running {self.commands_to_run_list}")
         self.commands_to_run_list.append("pip install pyside6 pypandoc pdflatex pydantic")
         formatted_command = " && ".join(self.commands_to_run_list)
@@ -240,15 +279,27 @@ class InstallPage(QFrame):
         print(f"New DB size: {self.db.count}")
 
     def _premature_delete(self) -> None:
+        """
+        Deletes the currently managed conda environment prematurely if installation fails.
+        This method handles the cleanup process by deleting the environment and outputs the success status.
+        """
         delete_tuple = self.new_env.delete()
         delete_succes = run_environment_command(self, worker_name="delete", command=delete_tuple[0], error_message=delete_tuple[1])
         print(f"Environment Deleted: {delete_succes}")
 
     def clear_commands_to_run(self):
+        """
+        Clears all commands from the 'commands to run' list and the associated UI list widget.
+        This method is used to reset the command selection interface.
+        """
+
         self.commands_to_run_list.clear()
         self.commands_to_run_subwidget.clear()
 
     def hide_all(self) -> None:
+        """
+        Hides all child widgets and the frame itself. This method is useful for toggling the visibility of the entire installation interface.
+        """
         # Hide all child widgets
         for i in range(self.layout.count()):
             item = self.layout.itemAt(i)
@@ -260,6 +311,9 @@ class InstallPage(QFrame):
         self.hide()
 
     def show_all(self) -> None:
+        """
+        Shows all child widgets and the frame itself, restoring the visibility of the installation interface after being hidden.
+        """
         # Show all child widgets
         for i in range(self.layout.count()):
             item = self.layout.itemAt(i)
@@ -271,6 +325,10 @@ class InstallPage(QFrame):
         self.show()
 
     def change_to_main_model_page(self):
+        """
+        Transitions from the installation page back to the main model page.
+        It hides the current installation UI and shows the main model management UI.
+        """
         self.hide_all()
         self.remove_from_layout()
         #self.model_page.show_all()
@@ -278,6 +336,10 @@ class InstallPage(QFrame):
                 self.model_page.show_all()  # Ensure model_page is visible
 
     def remove_from_layout(self):
+        """
+        Removes the widget from its parent's layout. This is typically called when the widget needs to be completely removed from view.
+        This method also ensures that the widget is hidden after removal from the layout.
+        """
         #print("Parent:", self.parent())
         #print("Parent's Layout:", self.parent().layout() if self.parent() else "No parent")
         if self.parent() and self.parent().layout():
@@ -288,20 +350,43 @@ class InstallPage(QFrame):
         self.hide()
 
     def set_new_environment(self, new_env):
+        """
+        Sets a new conda environment to be managed by this installation page.
+
+        Args:
+        new_env (CondaEnvironment): The new environment configuration to set.
+        """
         self.new_env = new_env
         self.update_install_commands()
 
     def update_install_commands(self): 
+        """
+        Updates the list of install commands based on the new environment's configuration.
+        This is particularly useful when switching to manage a different conda environment.
+        """
         self.install_commands_subwidget.clear()
         self.install_commands_list = self.new_env.repository.install_commands
         self.install_commands_subwidget.addItems(self.install_commands_list)
 
     
     def update_progress_widget(self, text: str):
-            # Append text to the progress_widget, ensuring thread safety
+        """
+        Appends text to the progress widget, which displays ongoing processes or results.
+
+        Args:
+        text (str): The text to be appended to the progress widget. This text typically includes command outputs or status updates.
+        """
+        
+        # Append text to the progress_widget, ensuring thread safety
         self.progress_subwidget.append(text)
     
     def install_store(self):
+        """
+        Stores all relevant model information in a JSON file. This includes the model's description, name, URL, type, and owner.
+
+        The stored JSON file facilitates later retrieval and management of installed models.
+        """
+        
         #stores the all model information like description, name, url, model type in a .JSON
         repo: Repository = self.new_env.repository
         file = os.path.join(REPO_JSONS_DIR, f"{repo.repo_name}.json")
@@ -316,6 +401,10 @@ class InstallPage(QFrame):
             json.dump(modelInfo, outfile)
 
     def remove_json(self):
+        """
+        Attempts to remove the JSON file associated with the environment's repository.
+        This method is typically called when uninstalling a model or cleaning up resources.
+        """
         repo: Repository = self.new_env.repository
         file = os.path.join(REPO_JSONS_DIR, f"{repo.repo_name}.json")
         try:
