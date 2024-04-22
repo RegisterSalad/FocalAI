@@ -166,6 +166,11 @@ if __name__ == "__main__":
         self.initUI()
 
     def initUI(self):
+        """
+        Sets up the user interface components for the ScriptBuilder. This includes creating and configuring the text editor 
+        for script input, a button for saving and executing scripts, and a label for the widget. It also applies syntax 
+        highlighting to the text editor and sets the overall styling for the widget.
+        """
         self.textEdit = QTextEdit()
         self.textEdit.setPlainText(self.defaultText)
         self.saveButton = QPushButton("Save and Run")
@@ -224,6 +229,18 @@ if __name__ == "__main__":
         """)
 
     def saveAndRunFile(self):
+        """
+        Handles the action of saving the script entered in the text editor to a file and executing it. 
+        This method also handles file dialog interactions, file writing, and script execution logging. 
+        It provides user feedback about the success or failure of the script execution.
+
+         Uses:
+        - QDateTime to format the current date and time for unique logging.
+        - QFile and QTextStream for file operations.
+        - QMessageBox for user feedback.
+        """       
+
+        
         import datetime
         now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         fileName, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Python Files (*.py);;All Files (*)")
