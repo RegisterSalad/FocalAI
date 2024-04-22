@@ -16,7 +16,7 @@ from terminal_widget import TerminalWidget
 from script_builder import ScriptBuilder
 
 class ModelPlayer(QWidget):
-  """
+    """
     A GUI component that serves as a versatile model player, allowing for interactive file management, script building, and terminal emulation.
 
     Attributes:
@@ -27,12 +27,12 @@ class ModelPlayer(QWidget):
         input_path (str | None): Path to the currently focused or selected file.
     """
     def __init__(self, parent=None):  # Changed parent default value to None\
-      """
-      Initializes the ModelPlayer with an optional parent, setting up essential components and UI elements.
+        """
+        Initializes the ModelPlayer with an optional parent, setting up essential components and UI elements.
 
-      Args:
-        parent (QWidget, optional): The parent widget that this `ModelPlayer` belongs to. Defaults to None.
-      """
+        Args:
+            parent (QWidget, optional): The parent widget that this `ModelPlayer` belongs to. Defaults to None.
+        """
         super().__init__()
         self.model_type: str | None = None
         self.setWindowTitle("Model Player")
@@ -44,9 +44,9 @@ class ModelPlayer(QWidget):
         self.init_ui()
 
     def init_styles(self):
-      """
-      Initializes and applies CSS styles to the ModelPlayer components, setting visual aspects like font, color, and layout properties.
-      """
+        """
+        Initializes and applies CSS styles to the ModelPlayer components, setting visual aspects like font, color, and layout properties.
+        """
         self.setStyleSheet("""
             QWidget {
                 font-family: 'Segoe UI', Arial, sans-serif;

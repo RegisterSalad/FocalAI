@@ -73,7 +73,7 @@ class VerticalMenu:
 
 
 class viewModel_widget(QWidget):
-     """
+    """
     A widget designed to display a list of models that a user has access to, pulling information from a JSON source. 
     This class initializes user interface elements necessary to list models in an easily navigable format.
 

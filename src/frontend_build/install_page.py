@@ -23,18 +23,18 @@ from conda_env import CondaEnvironment
 from repo import Repository
 
 def run_environment_command(widget, worker_name, command: str, error_message: str) -> bool:
-    """
-    Executes a specified command in a separate thread and updates the widget based on the command's success or failure.
+        """
+        Executes a specified command in a separate thread and updates the widget based on the command's success or failure.
 
-    Args:
-        widget (QWidget): The widget that will display progress and receive updates.
-        worker_name (str): A name identifier for the worker thread.
-        command (str): The command to be executed by the worker.
-        error_message (str): A message to display if the command execution fails.
+        Args:
+            widget (QWidget): The widget that will display progress and receive updates.
+            worker_name (str): A name identifier for the worker thread.
+            command (str): The command to be executed by the worker.
+            error_message (str): A message to display if the command execution fails.
 
-    Returns:
-        bool: True if the command execution was successful, False otherwise.
-    """
+        Returns:
+            bool: True if the command execution was successful, False otherwise.
+        """
         # Create the worker and thread
         worker = Worker(worker_name, command, error_message)
         thread = QThread()

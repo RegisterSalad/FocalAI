@@ -36,7 +36,7 @@ class RepoWidget(QWidget):
         parent (QWidget, optional): The parent widget. Defaults to None.
     """
     def __init__(self, repo_info, parent=None):
-      """
+        """
         Initializes the RepoWidget with repository information and sets up the UI components.
 
         Args:
@@ -87,7 +87,7 @@ class RepoWidget(QWidget):
         self.setLayout(layout)
 
 class RepoTempObj:
-  """
+    """
     A temporary object for holding repository information.
 
     This class is designed to act as a simple container for repository data,
@@ -107,7 +107,7 @@ class RepoTempObj:
     is_installed: bool
 
     def __init__(self, entry_dict) -> None:
-      """
+        """
         Initializes the RepoTempObj instance with data from a dictionary.
 
         Args:
@@ -123,7 +123,7 @@ class RepoTempObj:
         self.is_installed = True
 
     def __str__(self) -> str:
-       """
+        """
         Provides a string representation of the repository data.
 
         Returns:
@@ -139,7 +139,7 @@ class RepoTempObj:
         return "\n".join(res)
 
 class MainWindow(QMainWindow):
-   """
+    """
     Main application window that hosts the user interface for interacting with repositories.
 
     Attributes:
@@ -151,7 +151,7 @@ class MainWindow(QMainWindow):
         menu (VerticalMenu): The application's menu system.
     """
     def __init__(self, styler: Styler) -> None:
-       """
+        """
         Initializes the main window with a styler instance.
 
         Args:

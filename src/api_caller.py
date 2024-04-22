@@ -74,7 +74,7 @@ class APIManager(QWidget):
                 
     @staticmethod
     def get_readme_contents(repo_url: str) -> str | None:
-         """
+        """
         Retrieves the README.md content of a GitHub repository using the GitHub API.
 
         Args:
@@ -110,7 +110,7 @@ class APIManager(QWidget):
             return self.client.repository_list(name=query)
 
     def is_openai_api_key_valid(self, api_key: str) -> bool:
-         """
+        """
         Validates a PapersWithCode API key by making a test request using the client.
 
         Args:
@@ -128,7 +128,7 @@ class APIManager(QWidget):
             return False
 
     def is_pwc_api_key_valid(self, api_key: str) -> bool:
-         """
+        """
         Validates a PapersWithCode API key by making a test request using the client.
 
         Args:
