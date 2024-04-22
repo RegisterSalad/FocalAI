@@ -24,7 +24,22 @@ from database import DatabaseManager
 from conda_env import CondaEnvironment
 from directories import DB_PATH
 class GPTPlayer(QWidget):
+    """
+    A widget that interacts with a GPT model to perform various tasks like generating sample code, 
+    finding model parameters, datasets, content, writing reports, and managing an API key.
+
+    Attributes:
+        caller (object): The parent object which holds the API caller for making requests.
+        GPT (GPTCaller): An instance of GPTCaller to handle specific GPT model-related operations.
+    """
     def __init__(self, documentation, parent):
+        """
+        Initializes the GPTPlayer with necessary documentation and a reference to the parent widget.
+
+        Args:
+        documentation (str): Documentation or description of the GPT model functionalities.
+        parent (QWidget): The parent widget, typically the main application window.
+        """
         super().__init__()
         self.caller = parent.caller
         self.GPT = GPTCaller(documentation, self.caller)
@@ -32,6 +47,10 @@ class GPTPlayer(QWidget):
         self.initUI()
     
     def initUI(self):
+        """
+        Initializes the user interface components of the GPTPlayer, setting up layout, styles, and interactive elements.
+        Sets the window title and prepares interactive buttons for various operations related to the GPT model.
+        """
         self.setWindowTitle("ChatGPT Assisstant")
         
         # Set the style as provided
@@ -94,6 +113,11 @@ class GPTPlayer(QWidget):
         self.displayMessage("Please Note: the API calls may take a few seconds to respond", "GPT")
 
     def buttonClicked(self):
+        """
+        Handles button click events to perform actions related to the GPT model based on the button's label.
+        Dynamically calls the appropriate GPTCaller method and displays the response in the chat interface.
+        """
+        
         sender = self.sender()
         response: str
         
@@ -122,6 +146,14 @@ class GPTPlayer(QWidget):
 
 
     def displayMessage(self, message, sender):
+        """
+        Displays a formatted message in the chat display area of the UI.
+
+        Args:
+        message (str): The message to display.
+        sender (str or QWidget): Indicates the origin of the message. If 'user', it formats the message as a user message;
+                                 otherwise, it treats it as a response from the GPT model.
+        """
         # Check the sender and format the message accordingly
         if sender == "user":
             message_html = f"""
@@ -147,7 +179,28 @@ class GPTPlayer(QWidget):
 
 
 class ModelPage(QFrame):
+    """
+    A comprehensive GUI component that manages interactions related to Conda environments and repositories.
+    It facilitates model installation, deletion, displaying documentation, and interacting with a GPT model.
+
+    Attributes:
+        styler (Styler): An object responsible for applying styles to the UI components.
+        parent (QWidget): The parent widget that contains this `ModelPage`.
+        caller (object): The parent's API caller used for backend operations.
+        install_page (InstallPage | None): The page used for installing new models, can be None if not initialized.
+        running_env (CondaEnvironment | None): The currently selected or active Conda environment.
+        GPT_Window (QWidget | None): A separate window for interacting with GPT models.
+        db (DatabaseManager): Manages database operations related to model environments.
+        is_showing_progress (bool): Flag to indicate whether progress-related UI should be displayed.
+    """
     def __init__(self, styler: Styler, parent):
+        """
+        Initializes the ModelPage with the necessary styling and parent references.
+
+        Args:
+        styler (Styler): An object that provides styling for UI components.
+        parent (QWidget): The parent widget or container for this page.
+        """
         super().__init__(parent)
         self.caller = parent.caller
         self.install_page: InstallPage | None = None
@@ -159,6 +212,10 @@ class ModelPage(QFrame):
         self.init_ui()
 
     def init_ui(self) -> None:
+        """
+        Sets up the initial user interface for the model management page, including buttons, text display, and layout configurations.
+        """
+        
         self.html_text: str | None = None
         self.css = self.styler.doc_css
         self.button1 = QPushButton("Model Player")
@@ -208,12 +265,27 @@ class ModelPage(QFrame):
         
 
     def display_pop_up(self):
+        """
+        Displays a pop-up window associated with this page. The specific nature of the pop-up is determined by its implementation.
+        """
         self.pop_up_window.show()
     
     def get_repo_name(self, repo_url: str) -> str:
+        """
+        Extracts and returns the repository name from a given repository URL.
+    
+        Args:
+            repo_url (str): The full URL of the repository.
+
+        Returns:
+            str: The extracted name of the repository.
+        """
         return Repository.parse_name(repo_url)
     
     def delete_running_env(self) -> None:
+        """
+        Initiates the deletion of the currently running environment. This method handles the deletion process and updates the UI accordingly.
+        """
         self.is_showing_progress = True
         self.progress_widget = QTextEdit(self)
         self.progress_widget.setReadOnly(True)  
@@ -228,10 +300,21 @@ class ModelPage(QFrame):
         self.update_content(repo_entry=None)
 
     def update_progress_widget(self, text: str):
-            # Append text to the progress_widget, ensuring thread safety
+        """
+        Updates a progress widget with new text, often used to show the status of ongoing operations.
+
+        Args:
+            text (str): The text to be displayed in the progress widget.
+        """
+    
+        
+        # Append text to the progress_widget, ensuring thread safety
         self.progress_widget.append(text)
 
     def create_GPT_interface(self):
+        """
+        Creates and displays a GPT interface if it hasn't been created, or focuses on it if it already exists.
+        """
         print("GPT window")
         if isinstance(self.GPT_Window, QWidget): # Already created
             return
@@ -248,6 +331,9 @@ class ModelPage(QFrame):
         
 
     def create_model_player(self):
+        """
+        Initializes and displays a model player, which is a component used for interacting with the installed models.
+        """
         self.model_player = ModelPlayer(self) # Model Player is inited here because it needs a repo before initialization
         # Set the window to always stay on top when it's first opened
         self.model_player.setWindowFlags(self.model_player.windowFlags() | Qt.WindowStaysOnTopHint)
@@ -259,6 +345,9 @@ class ModelPage(QFrame):
         self.model_player.show()
     
     def hide_all(self) -> None:
+        """
+        Hides all components within the layout of this frame, typically used when switching to another page or state.
+        """
         layout = self.layout()  # Get the layout of the frame
         self.button1.hide()
         self.button2.hide()
@@ -272,6 +361,9 @@ class ModelPage(QFrame):
                     widget.hide()  # Hide the widget
 
     def show_all(self) -> None:
+        """
+        Shows all components that are relevant based on the current state of the model page, such as buttons and displays.
+        """
         if self.install_page.new_env.is_installed:
             self.button1.show()
         self.button2.show()
@@ -287,6 +379,9 @@ class ModelPage(QFrame):
 
 
     def change_to_install_page(self): 
+        """
+        Changes the current display to the install page, initiating the installation process for a new model or updating an existing one.
+        """
         self.hide_all()
         if not self.install_page:
             self.install_page = InstallPage(parent=self,styler=self.styler, new_env=self.running_env)
@@ -296,6 +391,16 @@ class ModelPage(QFrame):
         self.install_page.show_all()
 
     def convert_to_markdown(self, name: str) -> str:
+        """
+        Converts the provided content name to HTML formatted Markdown for display.
+
+        Args:
+            name (str): The attribute name from the repository whose content is to be converted.
+
+        Returns:
+            str: The HTML formatted content ready for display.
+        """
+        
         content = getattr(self.running_env.repository, name, None)
         
         if content:
@@ -307,6 +412,13 @@ class ModelPage(QFrame):
             return self.html_text
             
     def update_content(self, repo_entry) -> None:
+        """
+        Updates the displayed content on the model page based on the provided repository entry.
+
+        Args:
+            repo_entry: The repository data used to update the displayed content.
+        """
+        
         print(repo_entry)
         if self.is_showing_progress:
             self.is_showing_progress = False
@@ -345,6 +457,9 @@ class ModelPage(QFrame):
         self.text_display.setHtml(self.convert_to_markdown('readme_content'))  # Set HTML content
 
     def update_style(self):
+        """
+        Updates the styling of the model page based on the current theme (e.g., dark mode or light mode).
+        """
         if self.styler.dark_mode_enabled:
             self.setStyleSheet("background-color: #333333; color: white;")
             # Update styles for QWebEngineView if necessary
