@@ -14,7 +14,23 @@ from install_page import run_environment_command
 from directories import RUN_LOG_DIR
 
 class PythonSyntaxHighlighter(QSyntaxHighlighter):
+    """
+    A syntax highlighter for Python source code in a QTextDocument. This class configures and applies
+    syntax highlighting rules to enhance the readability of Python code within a text-editing component.
+
+    Attributes:
+        document (QTextDocument): The document object where the syntax highlighting is applied.
+    """
+
+    
     def __init__(self, document):
+        """
+        Initializes the PythonSyntaxHighlighter with a QTextDocument to apply syntax highlighting.
+
+        Args:
+            document (QTextDocument): The document to which the syntax highlighting will be applied.
+        """
+        
         super().__init__(document)
         self.highlightRules = []
 
@@ -81,6 +97,14 @@ class PythonSyntaxHighlighter(QSyntaxHighlighter):
 
         # Highlight Block
     def highlightBlock(self, text):
+        """
+        Applies syntax highlighting to the given block of text using the defined rules and formats. 
+        This method is automatically called by the QSyntaxHighlighter to format text as it's entered or edited.
+
+        Args:
+            text (str): The text block within the document to apply syntax highlighting.
+        """
+
         for pattern, format in self.highlightRules:
             iterator = pattern.globalMatch(text)
             while iterator.hasNext():
@@ -90,6 +114,17 @@ class PythonSyntaxHighlighter(QSyntaxHighlighter):
 
 
 class ScriptBuilder(QWidget):
+    """
+    A widget designed to facilitate the creation and execution of scripts in a specified Conda environment. It provides a text editor for writing scripts, options to save and run them, and integrates environment-specific paths to enhance script functionality.
+
+    Attributes:
+        parent (QWidget): The parent widget that this ScriptBuilder is attached to.
+        running_env (CondaEnvironment): The Conda environment context in which the scripts will be executed, providing necessary paths and settings.
+        repository (Repository): The repository associated with the current environment, containing model-specific data.
+        model_type (str): The type of model that the script is intended to interact with.
+        defaultText (str): The default script template provided in the editor upon initialization.
+    """
+    
     def __init__(self, parent, running_env: CondaEnvironment):
         super().__init__(parent)
         self.running_env = running_env
