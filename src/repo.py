@@ -28,10 +28,12 @@ class Repository:
     """
     def __init__(self, repo_url: str, description) -> None:
         """
-        Initializes the Repository object with a GitHub repo URL and fetches its features.
+        Initializes a Repository instance with a GitHub repository URL and a description. 
+        It extracts features from the repository's README, such as installation commands, tables, and model type.
 
         Args:
-            repo_url (str): URL of the GitHub repository to analyze.
+        repo_url (str): URL of the GitHub repository.
+        description (str): Description of the repository to be analyzed.
         """
         
         self.repo_url: str = repo_url.rstrip('/')
@@ -47,6 +49,15 @@ class Repository:
     
     @staticmethod
     def parse_name(repo_url: str) -> str:
+        """
+        Parses the repository name from a GitHub URL.
+
+        Args:
+            repo_url (str): The complete GitHub repository URL.
+
+        Returns:
+            str: The name of the repository.
+        """
         repo_url: str = repo_url.rstrip('/')
         return repo_url.rstrip('/').split('/')[-1]
 
@@ -60,7 +71,10 @@ class Repository:
 
     def get_model_type(self) -> str | None:
         """
-        Looks through the readme to find the model type using regex patterns.
+        Determines the type of model based on keywords found in the README content.
+
+        Returns:
+            str | None: The identified model type based on key terminology ('ASR', 'OBJ', 'LLM'), or None if no type is identified.
         """
 
         # Pattern for speech recognition
@@ -77,20 +91,20 @@ class Repository:
 
     def extract_code_blocks(self) -> list[str]:
         """
-        Extract code blocks from Markdown content.
+        Extracts code blocks from the repository's README Markdown content.
 
         Returns:
-            list[str]: A list of code blocks.
+            list[str]: A list of extracted code blocks.
         """
         code_blocks = re.findall(r'```[\s\S]+?```', self.readme_content)
         return code_blocks
 
     def extract_tab_code(self) -> list[str]:
         """
-        Extract indented code blocks considered as code in Markdown.
+        Extracts indented code lines from the repository's README Markdown content.
 
         Returns:
-            list[str]: A list of indented code lines with installation commands.
+            list[str]: A list of extracted code lines considered as code due to Markdown indentation.
         """
         tab_code_blocks = re.findall(r'    .+', self.readme_content)
         return [line.strip() for block in tab_code_blocks for line in block.split('\n') if self._check_for_install(line)]
@@ -98,13 +112,13 @@ class Repository:
     @staticmethod
     def extract_commands(install_blocks: list[str]) -> list[str]:
         """
-        Extract commands from code blocks.
+        Extracts installation commands from provided code blocks.
 
         Args:
-            install_blocks (list[str]): list of code blocks.
+            install_blocks (list[str]): List of code blocks potentially containing installation commands.
 
         Returns:
-            list[str]: list of extracted commands.
+            list[str]: List of extracted installation commands.
         """
         commands = []
         for block in install_blocks:
@@ -115,22 +129,22 @@ class Repository:
     @staticmethod
     def _check_for_install(code_block: str) -> bool:
         """
-        Check if a code block contains an installation command.
+        Checks if a code block contains an installation command by searching for the keyword 'install'.
 
         Args:
-            code_block (str): The code block to check.
+            code_block (str): The code block to be checked.
 
         Returns:
-            bool: True if an installation command is found, False otherwise.
+            bool: True if the block contains an installation command, otherwise False.
         """
         return bool(re.search(r'\binstall\b', code_block, re.IGNORECASE))
     
     def parse_readme_contents(self) -> list[str]:
         """
-        Parses README for installation commands and tables.
+        Parses the README content for installation commands and extracts tables and model type.
 
         Returns:
-            list[str]: A list of installation commands.
+            list[str]: A list of installation commands derived from the README.
         """
         code_blocks = self.extract_code_blocks() + self.extract_tab_code()
         install_commands = self.extract_commands(code_blocks)
@@ -139,8 +153,11 @@ class Repository:
         return install_commands
 
     def get_tables(self) -> None:
-        """
-        Finds and stores markdown tables from README.
+         """
+        Extracts markdown tables from the README content stored in this class. 
+        Identifies tables using regular expressions and stores them in a list attribute for further use.
+
+        This method modifies the `tables` attribute of the instance, storing all found tables formatted as strings.
         """
         table_pattern = r'\|.*\|\n\|.*\|'
         self.tables = re.findall(table_pattern, self.readme_content, re.MULTILINE)
@@ -149,7 +166,12 @@ class Repository:
 
     def get_model_type(self) -> str:
         """
-        Looks through the readme to find the model type using regex patterns and keyword lists, correcting syntax for raw strings.
+        Determines the model type based on keywords found in the README content. Utilizes regular expressions to search for
+        specific phrases associated with different types of models.
+
+        Returns:
+            str: The identified model type ('ASR' for audio/speech recognition, 'OBJ' for object detection, 'LLM' for language models),
+                 or 'N/A' if no specific model type can be identified.
         """
 
         # Define keyword lists for each model type
@@ -181,7 +203,13 @@ class Repository:
 
 
     def __str__(self) -> str:
-        """String representation summarizing repository attributes."""
+        """
+        Provides a human-readable string representation of the repository, summarizing its key attributes.
+
+        Returns:
+            str: A formatted string that lists the repository's URL, name, owner, model type, installation commands,
+             markdown tables, and a snippet or the full content of the README.
+        """
         details = [
             f"Repository URL: {self.repo_url}",
             f"Repository Name: {self.repo_name}",
@@ -194,7 +222,13 @@ class Repository:
         return "\n".join(details)
     
     def to_dict(self) -> dict:
-        """Converts the repository object into a dictionary suitable for JSON serialization."""
+        """
+        Converts the repository attributes into a dictionary, making it suitable for serialization, particularly to JSON format.
+
+        Returns:
+            dict: A dictionary representation of the repository, including its URL, name, owner, installation commands,
+              markdown tables, model type, and README content.
+        """
         return {
             "repo_url": self.repo_url,
             "repo_name": self.repo_name,
@@ -206,16 +240,50 @@ class Repository:
         }
 
 class RepositoryEncoder(json.JSONEncoder):
+    """
+    A JSON encoder subclass for serializing Repository objects.
+
+    This encoder extends the default JSONEncoder and provides a method to convert Repository objects into
+    a JSON-serializable format by calling their `to_dict()` method.
+
+    Attributes:
+        Inherits all attributes from json.JSONEncoder.
+
+    Methods:
+        default(obj): Overrides the default method to provide a custom serialization strategy for Repository objects.
+    """
     def default(self, obj):
+        """
+        Convert Repository objects into dictionaries, which are JSON-serializable.
+
+        Args:
+            obj (any): The object to serialize. If it's a Repository instance, it gets converted using its `to_dict()` method.
+
+        Returns:
+            dict: The JSON-serializable dictionary representation of the Repository if the object is an instance of Repository.
+        
+        Raises:
+            TypeError: If the object is not an instance of Repository, it calls the superclass's default method,
+                       which may raise a TypeError if `obj` is not otherwise serializable.
+        """
         if isinstance(obj, Repository):
             return obj.to_dict()
         return super().default(obj)
 
+# If this script is the main program being executed,
+# then perform the following operations:
 if __name__ == "__main__":
+    # Create an instance of the Repository class with a specific GitHub URL
+    # Open a file for writing. The file is named 'to_delete.json'.
     repo = Repository("https://github.com/openai/whisper")
     with open("to_delete.json", "w") as file:
         json.dump(repo, file, cls=RepositoryEncoder)
-
+        # Serialize the `repo` object to a JSON formatted string and write it into the file.
+        # The `cls` parameter specifies a custom JSONEncoder (RepositoryEncoder) that knows how to handle Repository objects.
+    
+    # Open the same file for reading.
+    # Load the JSON content from the file and deserialize it into a Python dictionary.
+    # Print the dictionary to the console.
     with open("to_delete.json", "r") as file:
         data = json.load(file)
         print(data)
