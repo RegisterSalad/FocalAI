@@ -17,6 +17,7 @@ from directories import DRAG_N_DROP_DIR
 from conda_env import CondaEnvironment
 from file_drop_widget import FileDropWidget
 
+# Used for UI 
 global_style = """
             QWidget {
                 font-family: 'Segoe UI', Arial, sans-serif;
@@ -58,11 +59,27 @@ global_style = """
 
 
 class LLMPlayer(QWidget):
+    """
+    A graphical user interface component that serves as a chat interface for interacting with a language model (LLM).
+    It allows for sending prompts to the LLM and displays the model's responses.
+
+    Attributes:
+        chatDisplay (QTextEdit): Displays the chat history and responses from the LLM.
+        textEntry (QLineEdit): Allows the user to type and send messages to the LLM.
+    """
     def __init__(self):
+        """
+        Initializes the LLMPlayer by setting up the UI components and layout.
+        """
         super().__init__()
         self.initUI()
 
     def initUI(self):
+        """
+        Sets up the user interface of the LLMPlayer, including the chat display area and text entry field. 
+        Configures the layout and styles necessary for the interface.
+        """
+        
         self.setWindowTitle("LLM Player")
         
         # Set the style as provided
@@ -85,6 +102,10 @@ class LLMPlayer(QWidget):
         self.setLayout(layout)
 
     def sendPrompt(self):
+        """
+        Captures text from the text entry field when the user presses Enter, sends it to the LLM, and displays the response.
+        Clears the text entry field after sending the message.
+        """
         userText = self.textEntry.text()
         self.displayMessage(userText, "user")
         self.textEntry.clear()
@@ -94,6 +115,13 @@ class LLMPlayer(QWidget):
         self.displayMessage(llmResponse, "llm")
 
     def displayMessage(self, message, sender):
+        """
+        Formats and displays a message in the chat display area with a specific style based on the sender.
+
+        Args:
+            message (str): The message text to display.
+            sender (str): The sender of the message, which can be either 'user' or 'llm'. This parameter affects the styling of the message.
+        """
         # Check the sender and format the message accordingly
         if sender == "user":
             message_html = f"""
@@ -116,8 +144,17 @@ class LLMPlayer(QWidget):
         self.chatDisplay.ensureCursorVisible()  # Auto-scroll to the latest message
 
 class FileDropWidget(QWidget):
+    """
+    A widget that allows files to be dragged and dropped onto it, handling file input operations dynamically.
+
+    Attributes:
+        filesDropped (Signal): A signal emitted when a file is successfully dropped onto the widget.
+    """
     filesDropped = Signal(str)
     def __init__(self):
+        """
+        Initializes the user interface of the file drop widget, including setting up styles and dimensions.
+        """
         super().__init__()
         self.setAcceptDrops(True)
         self.init_ui()
@@ -125,6 +162,10 @@ class FileDropWidget(QWidget):
         os.makedirs(self.stored_files_folder, exist_ok=True)
 
     def init_ui(self):
+        """
+        Sets up the user interface elements of the FileDropWidget, including the layout and styling. It configures a label to indicate that files can be dragged and dropped here.
+        """
+        
         self.setMinimumSize(400, 200)
         self.setStyleSheet(global_style)
         layout = QVBoxLayout()
@@ -136,11 +177,27 @@ class FileDropWidget(QWidget):
         self.setLayout(layout)
 
     def dragEnterEvent(self, event):
+        """
+        Handles the event where a drag operation enters the widget area. If the event contains URLs (files), it accepts the drag operation to allow for a drop.
+
+        Args:
+            event (QDragEnterEvent): The event triggered by dragging something into the widget.
+        """
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
             self.label.setStyleSheet("color: #555555; font-style: normal;")
 
     def dropEvent(self, event):
+        """
+        Handles the event where files are dropped onto the widget. It processes the first file dropped, copies it to a designated folder, and emits a signal with the file's destination path.
+
+        Args:
+            event (QDropEvent): The event triggered by dropping files onto the widget.
+
+        Emits:
+            filesDropped: Signal emitted with the path of the file successfully dropped and copied.
+        """
+        
         mime_data = event.mimeData()
         if mime_data.hasUrls():
             first_file_url = mime_data.urls()[0]
@@ -160,18 +217,46 @@ class FileDropWidget(QWidget):
                         self.error_message(f"Could not copy file: {e}")
 
     def error_message(self, message):
+        """
+        Displays an error message on the widget and prints the error to the console.
+
+        Args:
+            message (str): The error message to display and log.
+        """
+        
         self.label.setText("Error occurred! Check console.")
         self.label.setStyleSheet("color: #ff0000; font-style: normal;")
         print(message)
 
 class DragAndDropPlayer(QWidget):
+    """
+    A specialized widget designed to handle file drag-and-drop interactions for specific model types.
+    This widget can process and display outputs based on the type of model specified (e.g., ASR for audio recognition, OBJ for object detection).
+
+    Attributes:
+        model_type (str): Indicates the type of model the player is intended to work with, such as 'ASR' or 'OBJ'.
+        inputReceived (Signal): A signal emitted when a file is successfully dropped and processed, carrying the file's path as data.
+    """
+
     inputReceived = Signal(str)
     def __init__(self, model_type: str):
+        """
+        Initializes the DragAndDropPlayer with a specified model type.
+
+        Args:
+            model_type (str): The type of model the player is designed to interact with.
+        """
+        
         super().__init__()
         self.model_type = model_type
         self.initUI()
 
     def initUI(self):
+        """
+        Sets up the user interface components, including a file drop widget, output display widget, and a progress widget.
+        Configures the layout based on the specified model type.
+        """
+        
         self.setWindowTitle(f"{self.model_type} Player")
         self.mainLayout = QVBoxLayout()
         self.setLayout(self.mainLayout)
@@ -195,6 +280,12 @@ class DragAndDropPlayer(QWidget):
         self.mainLayout.addWidget(self.progressWidget)
 
     def handleFileDropped(self, file_path):
+        """
+        Processes the dropped file based on the model type. It checks the file extension to ensure it's appropriate for the model.
+
+        Args:
+            file_path (str): The path to the file that was dropped.
+        """
         
         if self.model_type == "ASR":
             valid_extensions = ('.mp3', '.wav', '.aac', '.flac')
@@ -230,11 +321,25 @@ class DragAndDropPlayer(QWidget):
             self.outputWidget.setText("Unsupported output type")
 
     def _get_text_output_widget(self):
+        """
+        Creates and returns a QTextEdit widget configured to display text output.
+
+        Returns:
+            QTextEdit: A read-only text editor widget for displaying text output.
+        """
+        
         textOutput = QTextEdit()
         textOutput.setReadOnly(True)
         return textOutput
 
     def _get_image_output_widget(self):
+
+        """
+        Creates and returns a QLabel widget configured to display image output.
+
+        Returns:
+            QLabel: A label widget configured to display images.
+        """
         imgOutput = QLabel("Image will appear here")
         imgOutput.setAlignment(Qt.AlignmentFlag.AlignCenter)
         imgOutput.setStyleSheet("border: 1px solid black; min-height: 200px;")
