@@ -23,7 +23,33 @@ if module_dir not in sys.path:
 from api_caller import APIManager
 
 class RepoWidget(QWidget):
+    """
+    A widget that displays detailed information about a repository.
+
+    This widget is designed to be used in a graphical user interface to present
+    relevant information about a repository, such as its name, owner, description,
+    and URL. It also indicates whether the repository is available locally.
+
+    Attributes:
+        repo_info (object): An object containing the repository information.
+            It should have `name`, `owner`, `description`, `url`, and optionally `is_installed` attributes.
+        parent (QWidget, optional): The parent widget. Defaults to None.
+    """
     def __init__(self, repo_info, parent=None):
+      """
+        Initializes the RepoWidget with repository information and sets up the UI components.
+
+        Args:
+            repo_info (object): The repository information object with attributes necessary for display.
+            parent (QWidget, optional): The parent widget. Defaults to None.
+
+        The repo_info object must have the following attributes:
+        - name: The name of the repository.
+        - owner: The owner of the repository.
+        - description: A brief description of the repository.
+        - url: The URL to the repository.
+        - is_installed (optional): A boolean indicating if the repository is locally available.
+        """
         super().__init__(parent)
         layout = QVBoxLayout()
 
@@ -61,6 +87,19 @@ class RepoWidget(QWidget):
         self.setLayout(layout)
 
 class RepoTempObj:
+  """
+    A temporary object for holding repository information.
+
+    This class is designed to act as a simple container for repository data,
+    providing easy access and manipulation of its attributes in memory.
+
+    Attributes:
+        name (str): The name of the repository.
+        owner (str): The owner of the repository.
+        description (str): A description of the repository.
+        url (str): The URL to the repository.
+        is_installed (bool): Indicates whether the repository is locally installed.
+    """
     name: str
     owner: str
     description: str
@@ -68,6 +107,15 @@ class RepoTempObj:
     is_installed: bool
 
     def __init__(self, entry_dict) -> None:
+      """
+        Initializes the RepoTempObj instance with data from a dictionary.
+
+        Args:
+            entry_dict (dict): A dictionary containing repository data. 
+            This dictionary must include 'url', 'owner', and 'description' keys.
+
+        The 'url' key is used to extract the repository name using a static method `parse_name` from the `Repository` class.
+        """
         self.url = entry_dict["url"]
         self.name = Repository.parse_name(self.url)
         self.owner = entry_dict["owner"]
@@ -75,6 +123,12 @@ class RepoTempObj:
         self.is_installed = True
 
     def __str__(self) -> str:
+       """
+        Provides a string representation of the repository data.
+
+        Returns:
+            str: A formatted string displaying the attributes of the repository.
+        """
         res = [
         f"name: {self.name}",
         f"owner: {self.owner}",
@@ -85,12 +139,35 @@ class RepoTempObj:
         return "\n".join(res)
 
 class MainWindow(QMainWindow):
+   """
+    Main application window that hosts the user interface for interacting with repositories.
+
+    Attributes:
+        styler (Styler): A Styler object used for applying and managing styles across the application.
+        centralWidget (QWidget): The central widget of the main window.
+        list_widget (QListWidget): Widget displaying a list of repositories.
+        search_bar (QLineEdit): Input field for searching repositories.
+        detail_view (QStackedWidget): Widget that displays detailed views of the selected repository.
+        menu (VerticalMenu): The application's menu system.
+    """
     def __init__(self, styler: Styler) -> None:
+       """
+        Initializes the main window with a styler instance.
+
+        Args:
+            styler (Styler): A Styler object to apply consistent styles across the UI.
+        """
         super().__init__()
 
         self.init_ui(styler=styler)
 
     def init_ui(self, styler: Styler) -> None:
+        """
+        Initializes the user interface elements of the main window.
+
+        Args:
+            styler (Styler): A Styler object for styling UI components.
+        """
         self.styler = styler
         self.styler.register_component(self)
         self.styler.style_me()
@@ -142,9 +219,8 @@ class MainWindow(QMainWindow):
     
     def display_downloads(self):
         """
-        Populates the list widget with downloaded repository information.
-        This method is called on application initialization and potentially
-        after refreshing the list of downloads.
+        Displays downloaded models in the list widget. It reads JSON data from a directory and populates the list.
+        This method sets up initial view state of the application, displaying all downloaded models.
         """
         # Clear the current items in the list widget to refresh the display
         self.list_widget.clear()
@@ -174,14 +250,23 @@ class MainWindow(QMainWindow):
         
 
     def create_menus(self):
+        """
+        Configures the application's menus.
+        """
         self.menu.create_menus()
 
     def setup_detail_views(self):
+        """
+        Sets up the detailed view components of the application.
+        """
         self.model_page = ModelPage(self.styler, self)
         self.detail_view.addWidget(self.model_page)
 
     @Slot()
     def trigger_search(self):
+        """
+        Initiates a search based on the text in the search bar and updates the display accordingly.
+        """
         # Get text from searchBar and initiate search
         searchText = self.search_bar.text()
         if searchText:  # Only search if there's text
@@ -189,13 +274,13 @@ class MainWindow(QMainWindow):
 
     def process_json_files(self, directory: str) -> list[dict]:
         """
-        Processes all JSON files within a specified directory.
+        Reads and processes JSON files from a specified directory to extract repository data.
 
         Args:
-        directory (str): The path to the directory containing the JSON files.
+            directory (str): Path to the directory containing JSON files.
 
         Returns:
-        None
+            list[dict]: A list of dictionaries containing repository data.
         """
         installed_list: list[dict] = []
         # Iterate over each file in the directory
@@ -214,6 +299,12 @@ class MainWindow(QMainWindow):
         return installed_list
 
     def search_items(self, text: str):
+        """
+        Filters repositories based on a search query and updates the list widget with the results.
+
+        Args:
+            text (str): The search query used to filter repository listings.
+        """
         self.list_widget.clear()  # Clear current items
         self.repos.clear()  # Clear the repository list
         found_repos = self.caller.get_repo_list(text.lower().replace(" ", "-"))
@@ -233,12 +324,15 @@ class MainWindow(QMainWindow):
 
     def update_style(self) -> None:
         """
-        Function from styler, is not applicable to main window
+        Updates the style of the main window, typically called after a style change.
         """
         pass
 
     @Slot()
     def display_item(self):
+        """
+        Displays details of the selected repository in the detail view when an item is selected from the list widget.
+        """
         print("displaying item")
         current_row = self.list_widget.currentRow()  # Get the currently selected item's row
         print(current_row)
