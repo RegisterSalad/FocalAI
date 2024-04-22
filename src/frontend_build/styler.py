@@ -10,11 +10,27 @@ if module_dir not in sys.path:
     sys.path.append(module_dir)
 
 class Styler:
+
+    """
+    Manages the application-wide styling, including the dynamic toggling between dark and light themes. 
+    This class also keeps track of components that need style updates when themes are switched.
+
+    Attributes:
+        dark_mode_enabled (bool): Flag to determine if the dark mode is currently enabled.
+        components (list): A list of UI components that require styling updates when the theme changes.
+    """
     def __init__(self):
+        """
+        Initializes the Styler class, setting dark mode to disabled by default and initializing an empty list for components.
+        """
         self.dark_mode_enabled = False
         self.components = []
 
     def style_me(self) -> None:
+        """
+        Applies styling to all registered components. This method is left empty for possible future use or specific implementations.
+        """
+        
         pass
 
         # for component in self.components:
@@ -30,10 +46,22 @@ class Styler:
         #                             )
 
     def register_component(self, component):
+        """
+        Registers a UI component for styling updates. When the theme is toggled, `update_style` will be called on each registered component.
+
+        Args:
+            component (QWidget): The component to register for styling updates.
+        """
+        
         self.components.append(component)
         component.update_style()
 
     def toggle_dark_mode(self):
+        """
+        Toggles the application's color scheme between dark and light modes. This adjusts the color palette of the entire application.
+
+        Utilizes the QApplication instance to change palette settings globally.
+        """
         self.dark_mode_enabled = not self.dark_mode_enabled
         app = QApplication.instance()
         palette = QPalette()
@@ -58,12 +86,21 @@ class Styler:
         self.update_styles()
 
     def update_styles(self):
+        """
+        Updates the styles for all registered components by calling their `update_style` method. This ensures all components reflect the current theme.
+        """
         for component in self.components:
             component.update_style()
     
 
     @property
     def doc_css(self) -> HtmlFormatter:
+        """
+        Generates CSS for HTML content, adjusted for either dark or light mode. This is particularly useful for styling HTML views within the application.
+
+        Returns:
+            str: A string containing CSS rules formatted for HTML content, tailored to the current theme (dark or light).
+        """
         # Common CSS for both dark and light modes
         css = HtmlFormatter().get_style_defs('.codehilite')
         css += """
