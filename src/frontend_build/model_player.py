@@ -16,7 +16,23 @@ from terminal_widget import TerminalWidget
 from script_builder import ScriptBuilder
 
 class ModelPlayer(QWidget):
-    def __init__(self, parent=None):  # Changed parent default value to None
+  """
+    A GUI component that serves as a versatile model player, allowing for interactive file management, script building, and terminal emulation.
+
+    Attributes:
+        model_type (str | None): Specifies the type of model the player is designed to interact with, if applicable.
+        file_list_widget (FileListWidget): Widget for displaying and managing a list of files.
+        file_drop_widget (FileDropWidget): Widget to handle drag-and-drop file operations.
+        script_builder (ScriptBuilder): Component responsible for constructing and managing scripts based on user input.
+        input_path (str | None): Path to the currently focused or selected file.
+    """
+    def __init__(self, parent=None):  # Changed parent default value to None\
+      """
+      Initializes the ModelPlayer with an optional parent, setting up essential components and UI elements.
+
+      Args:
+        parent (QWidget, optional): The parent widget that this `ModelPlayer` belongs to. Defaults to None.
+      """
         super().__init__()
         self.model_type: str | None = None
         self.setWindowTitle("Model Player")
@@ -28,6 +44,9 @@ class ModelPlayer(QWidget):
         self.init_ui()
 
     def init_styles(self):
+      """
+      Initializes and applies CSS styles to the ModelPlayer components, setting visual aspects like font, color, and layout properties.
+      """
         self.setStyleSheet("""
             QWidget {
                 font-family: 'Segoe UI', Arial, sans-serif;
@@ -63,6 +82,9 @@ class ModelPlayer(QWidget):
         """)
 
     def init_ui(self):
+        """
+        Constructs the user interface of the ModelPlayer, organizing various components like menus, file lists, script builders, and terminal widgets into a cohesive layout.
+        """
         main_layout = QHBoxLayout()  # Changed to QHBoxLayout
         main_layout.setContentsMargins(15, 15, 15, 15)
         main_layout.setSpacing(10)
@@ -87,6 +109,12 @@ class ModelPlayer(QWidget):
         self.setGeometry(screen.geometry())
 
     def init_left_section(self, main_layout):
+        """
+        Initializes and arranges the left section of the main UI, which includes file management and terminal widgets.
+
+        Args:
+          main_layout (QVBoxLayout): The layout where the left section widgets will be added.
+        """
         left_section_layout = QVBoxLayout()
         
         # Combine file_drop_widget and file_list_widget into a vertical layout
@@ -122,9 +150,22 @@ class ModelPlayer(QWidget):
 
 
     def get_user_input(self, input_path: str) -> None:
+        """
+        Handles the input from the FileDropWidget, updating the current focus to the new file path.
+
+        Args:
+          input_path (str): The path of the file dropped into the FileDropWidget.
+        """
+      
         self.input_path = input_path
 
     def update_progress_widget(self, text: str):
+        """
+        Updates the progress widget with new text, displaying the status or results of operations such as script execution or file handling.
+
+        Args:
+            text (str): The text to be displayed in the progress widget.
+        """
         # Append text to the progress_widget, ensuring thread safety
         self.progress_widget.append(text)
 
