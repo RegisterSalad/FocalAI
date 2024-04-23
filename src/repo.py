@@ -153,7 +153,7 @@ class Repository:
         return install_commands
 
     def get_tables(self) -> None:
-         """
+        """
         Extracts markdown tables from the README content stored in this class. 
         Identifies tables using regular expressions and stores them in a list attribute for further use.
 

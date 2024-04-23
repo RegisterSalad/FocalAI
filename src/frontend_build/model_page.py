@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame, QSizePolicy, QWidget, QListWidget, QListWidgetItem, QToolTip, QTextEdit, QLineEdit, QInputDialog
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame, QSizePolicy, QWidget, QListWidget, QListWidgetItem, QToolTip, QTextEdit, QLineEdit, QInputDialog, QMessageBox
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from PySide6.QtWebEngineWidgets import QWebEngineView  # Import QWebEngineView
@@ -209,6 +209,7 @@ class ModelPage(QFrame):
         self.db = DatabaseManager(DB_PATH)
         self.is_showing_progress = False
         self.styler = styler
+        self.running_env = None
         self.init_ui()
 
     def init_ui(self) -> None:
@@ -286,15 +287,13 @@ class ModelPage(QFrame):
         """
         Initiates the deletion of the currently running environment. This method handles the deletion process and updates the UI accordingly.
         """
-        self.is_showing_progress = True
-        self.progress_widget = QTextEdit(self)
-        self.progress_widget.setReadOnly(True)  
-        self.progress_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
-        self.progress_widget.show()
         delete_tuple = self.running_env.delete()
         is_deleted = run_environment_command(self, worker_name="delete", command=delete_tuple[0], error_message=delete_tuple[1])
+        if is_deleted:
+            QMessageBox.information(self, "Success", f"Model deleted succesfully")
+        else:
+            QMessageBox.warning(self, f"Failure", "Deletion failed, check log for details.")
         print(f"Environment Deleted: {is_deleted}")
-        self.install_page.remove_json()
         self.install_page.remove_json()
         self.db.delete_environment_by_name(self.running_env.repository.repo_name)
         self.update_content(repo_entry=None)
@@ -430,6 +429,14 @@ class ModelPage(QFrame):
             
             self.html_text = f"<style>{self.css}</style>{self.html_text}"
             self.text_display.setHtml(self.html_text)  # Set HTML content
+            if not isinstance(self.running_env, CondaEnvironment):
+                self.button1.hide()
+                self.button2.setText("Install Model")
+                self.button2.clicked.connect(lambda: self.change_to_install_page())
+            else:
+                self.button2.setText("Delete Model")
+                self.button2.clicked.connect(lambda: self.delete_running_env())
+                self.button1.show()
             return
             
 
@@ -441,14 +448,14 @@ class ModelPage(QFrame):
         # Create a new one if 
         if not isinstance(self.running_env, CondaEnvironment):
             self.button1.hide()
-            self.running_env = CondaEnvironment(python_version="3.10.0",
+            self.running_env = CondaEnvironment(python_version="3.12.1",
                                                 description=repo_entry.description,  
                                                 repository_url=repo_entry.url)
             self.button2.setText("Install Model")
-            self.button2.clicked.connect(lambda: self.change_to_install_page())
+            self.button2.clicked.connect(self.change_to_install_page)
         else:
             self.button2.setText("Delete Model")
-            self.button2.clicked.connect(lambda: self.delete_running_env())
+            self.button2.clicked.connect(self.delete_running_env)
             self.button1.show()
         
         

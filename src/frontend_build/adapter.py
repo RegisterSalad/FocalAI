@@ -1,36 +1,16 @@
 import os
 import sys
-
-# Remove for final build
-module_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-if module_dir not in sys.path:
-    sys.path.append(module_dir)
-
-from directories import DB_PATH
-from PySide6.QtWidgets import (QWidget, QApplication,
-                               QHBoxLayout, QLabel, QVBoxLayout)
+from PySide6.QtWidgets import QWidget, QApplication, QHBoxLayout
 from PySide6.QtCore import Signal
 
 from model_uis import LLMPlayer, DragAndDropPlayer, DefaultPlayer # Implemented elsewhere assume they only return values when the receive them from their user interaction widgets via a slot
 
-from database import DatabaseManager
-from conda_env import CondaEnvironment
-
 class Adapter(QWidget):
     inputReady = Signal(str)  # Defines a signal to emit when input is ready
 
-    def __init__(self, name: str | None = None) -> None:
+    def __init__(self, model_type: str) -> None:
         super().__init__()  # Initialize the QWidget base class
-        
-        self.db = DatabaseManager(DB_PATH)
-        if not isinstance(name, str):
-            raise TypeError(f"Adapter incorrectly initialized: Name cannot be of type [{type(name)}]")
-
-        self.running_env = self.db.get_environment_by_name(name)
-        if not isinstance(self.running_env, CondaEnvironment):
-            raise TypeError(f"Environment fetching unsuccessful, perhaps the name is incorrect? Name used for fetching: [{name}]")
-
-        self.model_type = self.running_env.repository.model_type
+        self.model_type = model_type
         self.init_UI()
 
     def init_UI(self) -> None:
@@ -39,7 +19,7 @@ class Adapter(QWidget):
             "OBJ": DragAndDropPlayer(self.model_type),
             "LLM": LLMPlayer(),
         }
-        self.player = self.model_input_widget_dict.get(self.model_type, DefaultPlayer())
+        self.player = self.model_input_widget_dict[self.model_type]
         self.mainLayout = QHBoxLayout()  # Correctly create an instance of QHBoxLayout
         if not isinstance(self.player, QWidget):
             raise TypeError("Model Player incorrectly initialized")

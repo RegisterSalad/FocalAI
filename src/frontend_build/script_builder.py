@@ -11,7 +11,7 @@ if module_dir not in sys.path:
 
 from conda_env import CondaEnvironment
 from install_page import run_environment_command
-from directories import RUN_LOG_DIR
+from directories import RUN_LOG_DIR, DB_PATH
 
 class PythonSyntaxHighlighter(QSyntaxHighlighter):
     """
@@ -135,7 +135,6 @@ class ScriptBuilder(QWidget):
         secondary_path = current_working_dir + "/src/frontend_build"
         self.defaultText: str = f"""
 # import <model> # Import model specific packages
-import whisper
 # Adapter import
 import sys
 
@@ -143,9 +142,8 @@ sys.path.append("{primary_path}")
 sys.path.append("{secondary_path}")
 from adapter import Adapter
 from PySide6.QtWidgets import QApplication
-# Model Initialization and configuration  
 
-# Initialize the adapter and set up pipes into and out of it
+# Initialize your model here  
 
 
 def process_model_input(model_input: str): # Only runs when the app receives valid input from user
@@ -158,7 +156,7 @@ def process_model_input(model_input: str): # Only runs when the app receives val
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)  # Create an application object for PyQt
-    adapter = Adapter('whisper') # name automatically set from rest of app
+    adapter = Adapter("{self.repository.model_type}") # name automatically set from rest of app
     adapter.inputReady.connect(process_model_input)  # Connect the signal to processing function
     adapter.show()
     sys.exit(app.exec())  # Start the event loop and exit the application appropriately
@@ -255,7 +253,7 @@ if __name__ == "__main__":
 
             # Prepare to run the saved script as a subprocess
             logging_directory = RUN_LOG_DIR
-            log_file_name = os.join(RUN_LOG_DIR, f"log_{now}.log")  # You can also make this more dynamic or user-defined
+            log_file_name = os.path.join(RUN_LOG_DIR, f"log_{now}.log")  # You can also make this more dynamic or user-defined
 
             command = f"python {fileName}"
             call_tuple = self.running_env(command)

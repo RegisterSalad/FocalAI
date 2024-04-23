@@ -89,9 +89,7 @@ class GPTCaller:
         str. A string containing the sample code.
         """
         request = "With this given documentation, give me just the sample code needed to run this"
-        obj = APIManager()
-        obj.__init__()
-        documentation : str = obj.get_readme_contents(self.doc_url)
+        documentation : str = self.caller.get_readme_contents(self.doc_url)
         sample_code = self.get_chat_response(self.api_key, documentation, request)
         return sample_code
     
@@ -103,9 +101,7 @@ class GPTCaller:
         str. A string containing the parameters
         """
         request = "With this given documentation, what are the parameters needed to run this?"
-        obj = APIManager()
-        obj.__init__()
-        documentation : str = obj.get_readme_contents(self.doc_url)
+        documentation : str = self.caller.get_readme_contents(self.doc_url)
         ret = self.get_chat_response(self.api_key, documentation, request)
         return ret
 
@@ -117,9 +113,7 @@ class GPTCaller:
         str. A string containing the datasets.
         """
         request = "With this given documentation, what are the datasets this model uses?"
-        obj = APIManager()
-        obj.__init__()
-        documentation : str = obj.get_readme_contents(self.doc_url)
+        documentation : str = self.caller.get_readme_contents(self.doc_url)
         ret = self.get_chat_response(self.api_key, documentation, request)
         return ret
 
@@ -131,9 +125,7 @@ class GPTCaller:
         str. A string containing the location for more info.
         """
         request = "With this given documentation, where can i find more information on this model?"
-        obj = APIManager()
-        obj.__init__()
-        documentation : str = obj.get_readme_contents(self.doc_url)
+        documentation : str = self.caller.get_readme_contents(self.doc_url)
         ret = self.get_chat_response(self.api_key, documentation, request)
         return ret
 
@@ -145,9 +137,7 @@ class GPTCaller:
         str. A string containing the report.
         """
         request = "With this given documentation, give me a basic report about the model"
-        obj = APIManager()
-        obj.__init__()
-        documentation : str = obj.get_readme_contents(self.doc_url)
+        documentation : str = self.caller.get_readme_contents(self.doc_url)
         ret = self.get_chat_response(self.api_key, documentation, request)
         return ret
     
